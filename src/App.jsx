@@ -1,30 +1,25 @@
-import { ThemeProvider } from "@emotion/react";
+import { Outlet } from "react-router-dom";
 import "./App.css";
 import Header from "./components/Header";
-import { createTheme } from "@mui/material";
+import { Container } from "@mui/material";
 
 function App() {
-  const theme = createTheme({
-    spacing: 10,
-    palette: {
-      primary: {
-        main: "#000072",
-        light: "#00009b",
-        dark: "#000035",
-        mainGradient: "linear-gradient(to right, tomato, cyan)",
-      },
-    },
-  });
-
   return (
-    <ThemeProvider theme={theme}>
+    <>
       {/* <CssBaseline /> */}
-
       <Header />
-      <div
-        style={{ height: "200vh", backgroundColor: "#ccc", width: "99vw" }}
-      ></div>
-    </ThemeProvider>
+      <Container
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          mt: 8,
+        }}
+      >
+        <Outlet />
+      </Container>
+    </>
   );
 }
 

@@ -29,31 +29,30 @@ function Header() {
               justifyContent: "space-between",
             }}
           >
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="menu"
-              sx={{
-                mr: {
-                  md: 10.5,
-                },
-              }}
-            >
-              <SportsSoccerIcon />
-            </IconButton>
+            <Link to="/">
+              <IconButton edge="start" color="inherit" aria-label="menu">
+                <SportsSoccerIcon />
+              </IconButton>
+            </Link>
             <List
               sx={{
                 display: "flex",
               }}
             >
-              <ListItem>
-                <Link to="/">Men</Link>
+              <ListItem
+                sx={{
+                  ml: {
+                    md: 10.5,
+                  },
+                }}
+              >
+                <Link to="/men">Men</Link>
               </ListItem>
               <ListItem>
-                <Link to="/">Women</Link>
+                <Link to="/women">Women</Link>
               </ListItem>
               <ListItem>
-                <Link to="/">Kids</Link>
+                <Link to="/kids">Kids</Link>
               </ListItem>
             </List>
             <Box sx={{ padding: 0, display: { md: "flex", xs: "none" } }}>

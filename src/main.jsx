@@ -3,7 +3,11 @@ import App from "./App.jsx";
 import "./index.css";
 import { ThemeProvider, createTheme } from "@mui/material";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import Home from "./components/Home/index.jsx";
+import Home from "./pages/Home/index.jsx";
+import Women from "./pages/Women/index.jsx";
+import Men from "./pages/Men/index.jsx";
+import Kids from "./pages/Kids/index.jsx";
+import Item from "./pages/Item/index.jsx";
 
 const router = createBrowserRouter([
   {
@@ -14,6 +18,30 @@ const router = createBrowserRouter([
         index: true,
         element: <Home />,
       },
+      {
+        path: "women",
+        element: <Women />,
+      },
+      {
+        path: "women/:id",
+        element: <Item />,
+      },
+      {
+        path: "men",
+        element: <Men />,
+      },
+      {
+        path: "men/:id",
+        element: <Item />,
+      },
+      {
+        path: "kids",
+        element: <Kids />,
+      },
+      {
+        path: "kids/:id",
+        element: <Item />,
+      },
     ],
   },
 ]);
@@ -21,10 +49,11 @@ const router = createBrowserRouter([
 const theme = createTheme({
   spacing: 10,
   palette: {
+    mode: "dark",
     primary: {
-      main: "#000072",
-      light: "#00009b",
-      dark: "#00002b",
+      main: "#646cff",
+      dark: "#00009b",
+      darker: "#00002b",
     },
   },
   typography: {

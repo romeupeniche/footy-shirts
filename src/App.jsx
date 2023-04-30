@@ -3,8 +3,21 @@ import "./App.css";
 import Header from "./components/Header";
 import { Container } from "@mui/material";
 import Footer from "./components/Footer";
+import { useEffect } from "react";
+import { onAuthStateChanged } from "@firebase/auth";
+import { auth } from "./firebase-config";
+import { useDispatch } from "react-redux";
+import { setUser } from "./store/accountSlice";
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      dispatch(setUser(user));
+    });
+  }, []);
+
   return (
     <>
       {/* <CssBaseline /> */}

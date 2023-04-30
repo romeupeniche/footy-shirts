@@ -56,14 +56,16 @@ function Header() {
               </ListItem>
             </List>
             <Box sx={{ padding: 0, display: { md: "flex", xs: "none" } }}>
-              <IconButton
-                edge="start"
-                color="inherit"
-                aria-label="menu"
-                sx={{ mr: 2 }}
-              >
-                <ShoppingCartIcon />
-              </IconButton>
+              <Link to="/cart">
+                <IconButton
+                  edge="start"
+                  color="inherit"
+                  aria-label="menu"
+                  sx={{ mr: 2 }}
+                >
+                  <ShoppingCartIcon />
+                </IconButton>
+              </Link>
               <IconButton
                 edge="start"
                 color="inherit"
@@ -72,9 +74,11 @@ function Header() {
               >
                 <SearchIcon />
               </IconButton>
-              <IconButton edge="start" color="inherit" aria-label="menu">
-                <PersonIcon />
-              </IconButton>
+              <Link to="/account">
+                <IconButton edge="start" color="inherit" aria-label="menu">
+                  <PersonIcon />
+                </IconButton>
+              </Link>
             </Box>
             <IconButton
               edge="start"

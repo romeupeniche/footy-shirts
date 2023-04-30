@@ -8,6 +8,10 @@ import Women from "./pages/Women/index.jsx";
 import Men from "./pages/Men/index.jsx";
 import Kids from "./pages/Kids/index.jsx";
 import Item from "./pages/Item/index.jsx";
+import store from "./store";
+import { Provider } from "react-redux";
+import Cart from "./pages/Cart/index.jsx";
+import Account from "./pages/Account/index.jsx";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +46,14 @@ const router = createBrowserRouter([
         path: "kids/:id",
         element: <Item />,
       },
+      {
+        path: "cart",
+        element: <Cart />,
+      },
+      {
+        path: "account",
+        element: <Account />,
+      },
     ],
   },
 ]);
@@ -62,7 +74,9 @@ const theme = createTheme({
 });
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <ThemeProvider theme={theme}>
-    <RouterProvider router={router} />
-  </ThemeProvider>
+  <Provider store={store}>
+    <ThemeProvider theme={theme}>
+      <RouterProvider router={router} />
+    </ThemeProvider>
+  </Provider>
 );

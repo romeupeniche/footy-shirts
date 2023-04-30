@@ -13,13 +13,17 @@ import {
   RadioGroup,
   Typography,
 } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { addItem } from "../../store/cartSlice";
 
 function Item() {
   const [shirt, setShirt] = useState(null);
   const [img, setImg] = useState(null);
+  const [size, setSize] = useState(null);
   const url = useLocation().pathname;
   const page = url.split("/")[1];
   const id = useParams().id;
+  const dispatch = useDispatch();
 
   useEffect(() => {
     onValue(ref(db), (snapshot) => {
@@ -36,10 +40,29 @@ function Item() {
     });
   }, [page, id]);
 
-  console.log(shirt);
+  // console.log(shirt);
 
-  const changeImg = (i) => {
+  const changeImg = (e) => {
+    const i = e.target.value;
     setImg(shirt.imgs[i]);
+  };
+
+  const setSizeHandler = (e) => {
+    const value = e.target.value;
+    if (value) {
+      setSize(value);
+    }
+  };
+
+  const addToCartHandler = () => {
+    const item = {
+      id: page + id + size,
+      name: shirt.name,
+      price: shirt.price,
+      img: shirt.imgs[0],
+      size,
+    };
+    dispatch(addItem(item));
   };
 
   return (
@@ -79,13 +102,13 @@ function Item() {
                     value="0"
                     sx={{ height: "45px" }}
                     control={<Radio />}
-                    onChange={(e) => changeImg(e.target.value)}
+                    onChange={changeImg}
                   />
                   <FormControlLabel
                     value="1"
                     sx={{ height: "45px" }}
                     control={<Radio />}
-                    onChange={(e) => changeImg(e.target.value)}
+                    onChange={changeImg}
                   />
                 </RadioGroup>
                 <img src={img} style={{ borderRadius: "20px" }} />
@@ -125,24 +148,28 @@ function Item() {
                     value={shirt.sizes.S ? "s" : "disabled"}
                     disabled={!shirt.sizes.S}
                     control={<Radio />}
+                    onClick={setSizeHandler}
                     label="S"
                   />
                   <FormControlLabel
                     value={shirt.sizes.M ? "m" : "disabled"}
                     disabled={!shirt.sizes.M}
                     control={<Radio />}
+                    onClick={setSizeHandler}
                     label="M"
                   />
                   <FormControlLabel
                     value={shirt.sizes.L ? "l" : "disabled"}
                     disabled={!shirt.sizes.L}
                     control={<Radio />}
+                    onClick={setSizeHandler}
                     label="L"
                   />
                   <FormControlLabel
                     value={shirt.sizes.XL ? "xl" : "disabled"}
                     disabled={!shirt.sizes.XL}
                     control={<Radio />}
+                    onClick={setSizeHandler}
                     label="XL"
                   />
                 </RadioGroup>
@@ -154,6 +181,8 @@ function Item() {
                     fontSize: "1.3rem",
                     width: 400,
                   }}
+                  disabled={!size}
+                  onClick={addToCartHandler}
                 >
                   Add To Cart
                 </Button>

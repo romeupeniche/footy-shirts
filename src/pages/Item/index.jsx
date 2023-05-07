@@ -1,6 +1,6 @@
 import { onValue, ref } from "firebase/database";
 import { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { db } from "../../firebase-config";
 import {
   Box,
@@ -20,8 +20,7 @@ function Item() {
   const [shirt, setShirt] = useState(null);
   const [img, setImg] = useState(null);
   const [size, setSize] = useState(null);
-  const url = useLocation().pathname;
-  const page = url.split("/")[1];
+  const gender = useParams().gender;
   const id = useParams().id;
   const dispatch = useDispatch();
 
@@ -29,7 +28,7 @@ function Item() {
     onValue(ref(db), (snapshot) => {
       const data = snapshot.val();
       if (data !== null) {
-        let shirtsList = data.shirts[page];
+        let shirtsList = data.shirts[gender];
         for (let team in shirtsList) {
           if (shirtsList[team].id == id) {
             setShirt(shirtsList[team]);
@@ -38,9 +37,7 @@ function Item() {
         }
       }
     });
-  }, [page, id]);
-
-  // console.log(shirt);
+  }, [gender, id]);
 
   const changeImg = (e) => {
     const i = e.target.value;
@@ -54,9 +51,12 @@ function Item() {
     }
   };
 
-  const addToCartHandler = () => {
+  const addToCartHandler = async () => {
     const item = {
-      id: page + id + size,
+      id: gender + id + size,
+      gender,
+      quantity: 1,
+      totalPrice: shirt.price,
       name: shirt.name,
       price: shirt.price,
       img: shirt.imgs[0],
@@ -70,7 +70,7 @@ function Item() {
       {shirt && (
         <>
           <Typography variant="h3" sx={{ mb: 5 }}>
-            {page.toUpperCase()}
+            {gender.toUpperCase()}
           </Typography>
           <Container key={shirt.id}>
             <ImageList

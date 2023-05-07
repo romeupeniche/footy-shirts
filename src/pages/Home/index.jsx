@@ -10,7 +10,6 @@ function Home() {
   useEffect(() => {
     onValue(ref(db), (snapshot) => {
       const data = snapshot.val();
-      console.log(data);
       if (data !== null) {
         const shirts = data.shirts;
         let genderTitles = Object.keys(shirts);

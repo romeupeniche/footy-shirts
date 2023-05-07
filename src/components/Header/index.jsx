@@ -1,5 +1,6 @@
 import {
   AppBar,
+  Avatar,
   Box,
   IconButton,
   List,
@@ -14,9 +15,11 @@ import { Link } from "react-router-dom";
 import PersonIcon from "@mui/icons-material/Person";
 import SearchIcon from "@mui/icons-material/Search";
 import MenuIcon from "@mui/icons-material/Menu";
+import { useSelector } from "react-redux";
 
 function Header() {
   const trigger = useScrollTrigger();
+  const currentUser = useSelector((state) => state.account).user;
 
   return (
     <>
@@ -76,7 +79,14 @@ function Header() {
               </IconButton>
               <Link to="/account">
                 <IconButton edge="start" color="inherit" aria-label="menu">
-                  <PersonIcon />
+                  {currentUser.photoURL ? (
+                    <Avatar
+                      sx={{ width: 24, height: 24 }}
+                      src={currentUser.photoURL}
+                    />
+                  ) : (
+                    <PersonIcon />
+                  )}
                 </IconButton>
               </Link>
             </Box>

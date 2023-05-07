@@ -4,14 +4,12 @@ import "./index.css";
 import { ThemeProvider, createTheme } from "@mui/material";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Home from "./pages/Home/index.jsx";
-import Women from "./pages/Women/index.jsx";
-import Men from "./pages/Men/index.jsx";
-import Kids from "./pages/Kids/index.jsx";
 import Item from "./pages/Item/index.jsx";
 import store from "./store";
 import { Provider } from "react-redux";
 import Cart from "./pages/Cart/index.jsx";
 import Account from "./pages/Account/index.jsx";
+import GenderPage from "./pages/GenderPage/index.jsx";
 
 const router = createBrowserRouter([
   {
@@ -23,27 +21,11 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "women",
-        element: <Women />,
+        path: ":gender",
+        element: <GenderPage />,
       },
       {
-        path: "women/:id",
-        element: <Item />,
-      },
-      {
-        path: "men",
-        element: <Men />,
-      },
-      {
-        path: "men/:id",
-        element: <Item />,
-      },
-      {
-        path: "kids",
-        element: <Kids />,
-      },
-      {
-        path: "kids/:id",
+        path: ":gender/:id",
         element: <Item />,
       },
       {

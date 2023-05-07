@@ -14,7 +14,8 @@ const accountSlice = createSlice({
       state.cart = action.payload.cart;
     },
     logoutUser(state) {
-      state = initialAccountState;
+      state.user = initialAccountState.user;
+      state.cart = initialAccountState.cart;
     },
   },
 });

@@ -15,8 +15,8 @@ import YouTubeIcon from "@mui/icons-material/YouTube";
 function Footer() {
   const footerLinks = [
     { title: "About Us", links: ["Contact", "Careers", "News"] },
-    { title: "About Us", links: ["Contact", "Careers", "News"] },
-    { title: "About Us", links: ["Contact", "Careers", "News"] },
+    { title: "About Us2", links: ["Contact", "Careers", "News"] },
+    { title: "About Us3", links: ["Contact", "Careers", "News"] },
   ];
 
   return (

@@ -13,9 +13,9 @@ import SportsSoccerIcon from "@mui/icons-material/SportsSoccer";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { Link } from "react-router-dom";
 import PersonIcon from "@mui/icons-material/Person";
-import SearchIcon from "@mui/icons-material/Search";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useSelector } from "react-redux";
+import SearchButton from "./Search";
 
 function Header() {
   const trigger = useScrollTrigger();
@@ -32,23 +32,23 @@ function Header() {
               justifyContent: "space-between",
             }}
           >
-            <Link to="/">
-              <IconButton edge="start" color="inherit" aria-label="menu">
-                <SportsSoccerIcon />
-              </IconButton>
-            </Link>
+            <Box
+              minWidth={{
+                md: 180,
+              }}
+            >
+              <Link to="/">
+                <IconButton edge="start" color="inherit" aria-label="menu">
+                  <SportsSoccerIcon />
+                </IconButton>
+              </Link>
+            </Box>
             <List
               sx={{
                 display: "flex",
               }}
             >
-              <ListItem
-                sx={{
-                  ml: {
-                    md: 10.5,
-                  },
-                }}
-              >
+              <ListItem>
                 <Link to="/men">Men</Link>
               </ListItem>
               <ListItem>
@@ -58,7 +58,14 @@ function Header() {
                 <Link to="/kids">Kids</Link>
               </ListItem>
             </List>
-            <Box sx={{ padding: 0, display: { md: "flex", xs: "none" } }}>
+            <Box
+              sx={{
+                padding: 0,
+                display: { md: "flex", xs: "none" },
+                alignItems: "center",
+                minWidth: 180,
+              }}
+            >
               <Link to="/cart">
                 <IconButton
                   edge="start"
@@ -69,16 +76,14 @@ function Header() {
                   <ShoppingCartIcon />
                 </IconButton>
               </Link>
-              <IconButton
-                edge="start"
-                color="inherit"
-                aria-label="menu"
-                sx={{ mr: 2 }}
-              >
-                <SearchIcon />
-              </IconButton>
+              <SearchButton />
               <Link to="/account">
-                <IconButton edge="start" color="inherit" aria-label="menu">
+                <IconButton
+                  edge="start"
+                  color="inherit"
+                  aria-label="menu"
+                  sx={{ ml: 2 }}
+                >
                   {currentUser.photoURL ? (
                     <Avatar
                       sx={{ width: 24, height: 24 }}

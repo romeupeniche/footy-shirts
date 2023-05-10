@@ -4,37 +4,33 @@ import {
   ImageListItem,
   Typography,
 } from "@mui/material";
-import { onValue, ref } from "firebase/database";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
-import { db } from "../../firebase-config";
 
 function GenderPage() {
   const gender = useParams().gender;
-
+  const currentShirts = useSelector((state) => state.shirts);
   const [genderShirts, setGenderShirts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
-    onValue(ref(db), (snapshot) => {
-      const data = snapshot.val();
-      if (data !== null) {
-        const shirts = data.shirts[gender];
-        const loadedShirts = Object.keys(shirts).map(
-          (shirtTitle) => shirts[shirtTitle]
-        );
-
-        setGenderShirts(loadedShirts);
-      }
-    });
+    if (Object.keys(currentShirts.shirts).length) {
+      const shirts = currentShirts.shirts[gender];
+      const loadedShirts = Object.keys(shirts).map(
+        (shirtTitle) => shirts[shirtTitle]
+      );
+      setGenderShirts(loadedShirts);
+    }
     setIsLoading(false);
-  }, [gender]);
+  }, [gender, currentShirts]);
 
   return (
     <>
       <Typography variant="h2" sx={{ mt: 5, mb: 10 }}>
         {gender.toUpperCase()}
+        {`'`}s JERSEYS
       </Typography>
       {isLoading ? (
         <CircularProgress />

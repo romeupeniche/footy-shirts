@@ -1,30 +1,27 @@
 import { Box, Grid, ImageListItem, Typography } from "@mui/material";
-import { db } from "../../firebase-config";
-import { useEffect, useState } from "react";
-import { onValue, ref } from "firebase/database";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 function Home() {
   const [newShirts, setNewShirts] = useState(null);
+  const currentShirts = useSelector((state) => state.shirts);
 
   useEffect(() => {
-    onValue(ref(db), (snapshot) => {
-      const data = snapshot.val();
-      if (data !== null) {
-        const shirts = data.shirts;
-        let genderTitles = Object.keys(shirts);
-        let firstKidsShirt = shirts.kids[Object.keys(shirts.kids)[0]];
-        let firstMenShirt = shirts.men[Object.keys(shirts.men)[0]];
-        let firstWomenShirt = shirts.women[Object.keys(shirts.women)[0]];
+    if (Object.keys(currentShirts.shirts).length) {
+      const shirts = currentShirts.shirts;
+      let genderTitles = Object.keys(shirts);
+      let firstKidsShirt = shirts.kids[Object.keys(shirts.kids)[0]];
+      let firstMenShirt = shirts.men[Object.keys(shirts.men)[0]];
+      let firstWomenShirt = shirts.women[Object.keys(shirts.women)[0]];
 
-        setNewShirts([
-          { ...firstKidsShirt, gender: genderTitles[0] },
-          { ...firstMenShirt, gender: genderTitles[1] },
-          { ...firstWomenShirt, gender: genderTitles[2] },
-        ]);
-      }
-    });
-  }, []);
+      setNewShirts([
+        { ...firstKidsShirt, gender: genderTitles[0] },
+        { ...firstMenShirt, gender: genderTitles[1] },
+        { ...firstWomenShirt, gender: genderTitles[2] },
+      ]);
+    }
+  }, [currentShirts]);
 
   return (
     <>

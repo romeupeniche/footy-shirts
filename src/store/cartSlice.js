@@ -3,19 +3,8 @@ import { auth, db } from "../firebase-config";
 import { ref, set } from "firebase/database";
 
 const initialCartState = {
-  items: [
-    {
-      name: "Vasco",
-      id: "macaco",
-      totalPrice: 22,
-      price: 22,
-      size: "S",
-      quantity: 1,
-      gender: "macaco",
-      img: "https://static.netshoes.com.br/produtos/camisa-vasco-ii-2021-sn-torcedor-kappa-masculina/28/D24-2436-028/D24-2436-028_zoom1.jpg?ts=1596557480&ims=544x",
-    },
-  ],
-  totalAmount: 22,
+  items: [],
+  totalAmount: 0,
 };
 
 const updateDatabase = async (cart) => {

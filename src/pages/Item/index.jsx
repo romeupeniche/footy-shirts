@@ -1,7 +1,5 @@
-import { onValue, ref } from "firebase/database";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { db } from "../../firebase-config";
 import {
   Box,
   Button,
@@ -13,10 +11,11 @@ import {
   RadioGroup,
   Typography,
 } from "@mui/material";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addItem } from "../../store/cartSlice";
 
 function Item() {
+  const currentShirts = useSelector((state) => state.shirts);
   const [shirt, setShirt] = useState(null);
   const [img, setImg] = useState(null);
   const [size, setSize] = useState(null);
@@ -25,19 +24,16 @@ function Item() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    onValue(ref(db), (snapshot) => {
-      const data = snapshot.val();
-      if (data !== null) {
-        let shirtsList = data.shirts[gender];
-        for (let team in shirtsList) {
-          if (shirtsList[team].id == id) {
-            setShirt(shirtsList[team]);
-            setImg(shirtsList[team].imgs[0]);
-          }
+    if (currentShirts !== null) {
+      let shirtsList = currentShirts.shirts[gender];
+      for (let team in shirtsList) {
+        if (shirtsList[team].id == id) {
+          setShirt(shirtsList[team]);
+          setImg(shirtsList[team].imgs[0]);
         }
       }
-    });
-  }, [gender, id]);
+    }
+  }, [gender, id, currentShirts]);
 
   const changeImg = (e) => {
     const i = e.target.value;

@@ -9,9 +9,23 @@ import { useDispatch } from "react-redux";
 import { setUser } from "./store/accountSlice";
 import { setItems } from "./store/cartSlice";
 import { onValue, ref } from "firebase/database";
+import { useEffect } from "react";
+import { setShirts } from "./store/shirtsSlice";
+import ScrollToTop from "./helpers/ScrollToTop";
 
 function App() {
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    onValue(ref(db), (snapshot) => {
+      const data = snapshot.val();
+      if (data !== null) {
+        const shirts = data.shirts;
+
+        dispatch(setShirts(shirts));
+      }
+    });
+  });
 
   onAuthStateChanged(auth, (user) => {
     dispatch(
@@ -48,6 +62,7 @@ function App() {
         }}
       >
         <Outlet />
+        <ScrollToTop />
       </Container>
       <Footer />
     </>

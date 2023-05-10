@@ -10,6 +10,7 @@ import { Provider } from "react-redux";
 import Cart from "./pages/Cart/index.jsx";
 import Account from "./pages/Account/index.jsx";
 import GenderPage from "./pages/GenderPage/index.jsx";
+import SearchPage from "./pages/SearchPage/index.jsx";
 
 const router = createBrowserRouter([
   {
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
       {
         path: "account",
         element: <Account />,
+      },
+      {
+        path: "search/:search",
+        element: <SearchPage />,
       },
     ],
   },

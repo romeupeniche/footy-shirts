@@ -39,6 +39,8 @@ function GenderPage() {
           container
           justifyContent="center"
           rowSpacing={4}
+          spacing={{ xs: 2, md: 3 }}
+          columns={{ xs: 2, sm: 6, md: 12 }}
           columnSpacing={{ xs: 1, sm: 2, md: 3 }}
         >
           {genderShirts.map((shirt, i) => {

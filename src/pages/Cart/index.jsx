@@ -49,93 +49,122 @@ function Cart() {
                 columns={16}
                 sx={{
                   justifyContent: "space-between",
+                  alignItems: {
+                    xs: "center",
+                    md: "normal",
+                  },
                   flexDirection: {
                     md: "row",
                     xs: "column-reverse",
                   },
                 }}
               >
-                <Grid item xs={8}>
-                  {currentCart.items.map((item) => (
-                    <Container
-                      key={item.id}
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        bgcolor: "#111",
-                        mb: 2,
-                        flexDirection: {
-                          md: "row",
-                          xs: "column",
-                        },
-                      }}
-                    >
-                      <img src={item.img} width={200} />
-                      <Box
+                <Grid item>
+                  {currentCart.items.map((item) => {
+                    const itemIdx = item.id.match(/\d+/)[0];
+                    return (
+                      <Container
+                        key={item.id}
                         sx={{
                           display: "flex",
-                          bgcolor: "#222",
-                          flexDirection: "column",
-                          justifyContent: "space-evenly",
+                          justifyContent: "space-between",
                           alignItems: "center",
-                          ml: {
-                            md: 4,
+                          bgcolor: "#111",
+                          my: 2,
+                          flexDirection: {
+                            md: "row",
+                            xs: "column",
                           },
-                          width: {
-                            md: 200,
-                            lg: 270,
-                          },
+                          width: { xs: "80vw", sm: 500, md: 600 },
                         }}
                       >
-                        <Typography
-                          variant="h6"
-                          textAlign="center"
-                          sx={{ color: "primary.main" }}
+                        <Box
+                          m={{ xs: 1 }}
+                          sx={{ width: { xs: "fit-content" } }}
                         >
-                          {item.name}
-                        </Typography>
-                        <Typography color="#ccc" fontSize=".8rem">
-                          {item.gender?.toUpperCase()}
-                          {`'`}s Jersey, Size: {item.size?.toUpperCase()}
-                        </Typography>
-                        <Typography color="#3e9c35">
-                          ${item.price * item.quantity}{" "}
-                          <span style={{ fontSize: ".9rem", color: "#ccc" }}>
-                            (x{item.quantity})
-                          </span>{" "}
-                          <span style={{ fontSize: ".7rem", color: "#888" }}>
-                            (${item.price}/item)
-                          </span>
-                        </Typography>
-                        <Box>
-                          <IconButton
-                            onClick={() => addItemHandler(item.id, item.size)}
-                          >
-                            <AddCircleOutlineIcon color="success" />
-                          </IconButton>
-                          <IconButton
-                            onClick={() => removeItemHandler(item.id)}
-                          >
-                            <RemoveCircleOutlineIcon color="error" />
-                          </IconButton>
-                          <IconButton
-                            onClick={() => deleteAllItemsHandler(item.id)}
-                          >
-                            <DeleteIcon sx={{ color: "#ba0c00" }} />
-                          </IconButton>
+                          <img src={item.img} width="100%" />
                         </Box>
-                      </Box>
-                    </Container>
-                  ))}
+                        <Box
+                          sx={{
+                            display: "flex",
+                            bgcolor: "#222",
+                            flexDirection: "column",
+                            justifyContent: "space-evenly",
+                            alignItems: "center",
+                            ml: {
+                              md: 4,
+                            },
+                            width: {
+                              xs: 270,
+                              sm: 400,
+                              md: 500,
+                            },
+                            height: {
+                              xs: 200,
+                              md: 270,
+                            },
+                            p: {
+                              xs: 1,
+                              sm: 0,
+                            },
+                          }}
+                        >
+                          <Typography
+                            variant="h6"
+                            textAlign="center"
+                            lineHeight={1}
+                          >
+                            <Link to={`/${item.gender}/${itemIdx}`}>
+                              {item.name}
+                            </Link>
+                          </Typography>
+                          <Typography color="#ccc" fontSize=".8rem">
+                            {item.gender?.toUpperCase()}
+                            {`'`}s Jersey, Size: {item.size?.toUpperCase()}
+                          </Typography>
+                          <Typography color="#3e9c35">
+                            ${item.price * item.quantity}{" "}
+                            <span style={{ fontSize: ".9rem", color: "#ccc" }}>
+                              (x{item.quantity})
+                            </span>{" "}
+                            <span style={{ fontSize: ".7rem", color: "#888" }}>
+                              (${item.price}/item)
+                            </span>
+                          </Typography>
+                          <Box>
+                            <IconButton
+                              onClick={() => addItemHandler(item.id, item.size)}
+                            >
+                              <AddCircleOutlineIcon color="success" />
+                            </IconButton>
+                            <IconButton
+                              onClick={() => removeItemHandler(item.id)}
+                            >
+                              <RemoveCircleOutlineIcon color="error" />
+                            </IconButton>
+                            <IconButton
+                              onClick={() => deleteAllItemsHandler(item.id)}
+                            >
+                              <DeleteIcon sx={{ color: "#ba0c00" }} />
+                            </IconButton>
+                          </Box>
+                        </Box>
+                      </Container>
+                    );
+                  })}
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item>
                   <Container
                     sx={{
                       bgcolor: "#111",
+                      width: { xs: "80vw", md: 300 },
                       p: 2,
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "center",
+                      mt: {
+                        md: 2,
+                      },
                     }}
                   >
                     <Typography variant="h5" mb={2}>

@@ -10,7 +10,6 @@ const shirtsSlice = createSlice({
   reducers: {
     setShirts(state, action) {
       state.shirts = action.payload;
-      console.log(state.shirts);
     },
   },
 });

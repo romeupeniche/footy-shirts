@@ -50,7 +50,6 @@ function App() {
 
   return (
     <>
-      {/* <CssBaseline /> */}
       <Header />
       <Container
         sx={{

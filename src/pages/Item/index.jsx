@@ -82,9 +82,15 @@ function Item() {
             >
               <ImageListItem
                 sx={{
-                  width: 400,
+                  width: {
+                    xs: 300,
+                    md: 400,
+                  },
                   display: "flex",
-                  flexDirection: "row",
+                  flexDirection: {
+                    xs: "column-reverse",
+                    md: "row",
+                  },
                 }}
               >
                 <RadioGroup
@@ -107,7 +113,10 @@ function Item() {
                     onChange={changeImg}
                   />
                 </RadioGroup>
-                <img src={img} style={{ borderRadius: "20px" }} />
+                <img
+                  src={img}
+                  style={{ borderRadius: "20px", width: "100%" }}
+                />
               </ImageListItem>
               <Box
                 sx={{

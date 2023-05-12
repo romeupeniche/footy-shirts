@@ -11,18 +11,28 @@ import Cart from "./pages/Cart/index.jsx";
 import Account from "./pages/Account/index.jsx";
 import GenderPage from "./pages/GenderPage/index.jsx";
 import SearchPage from "./pages/SearchPage/index.jsx";
+import ErrorPage from "./pages/ErrorPage/index.jsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+    errorElement: <ErrorPage />,
     children: [
       {
         index: true,
         element: <Home />,
       },
       {
-        path: ":gender",
+        path: "men",
+        element: <GenderPage />,
+      },
+      {
+        path: "kids",
+        element: <GenderPage />,
+      },
+      {
+        path: "women",
         element: <GenderPage />,
       },
       {

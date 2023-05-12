@@ -6,10 +6,10 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 function GenderPage() {
-  const gender = useParams().gender;
+  const gender = useLocation().pathname.replace("/", "");
   const currentShirts = useSelector((state) => state.shirts);
   const [genderShirts, setGenderShirts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);

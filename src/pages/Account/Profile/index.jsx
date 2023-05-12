@@ -2,6 +2,7 @@ import { Container } from "@mui/material";
 import ChangeProfile from "./ChangeProfile";
 import { useState } from "react";
 import ProfileInfo from "./ProfileInfo";
+import ProfileCart from "./ProfileCart";
 
 function Profile() {
   const [isChangingProfile, setIsChangingProfile] = useState(false);
@@ -27,6 +28,7 @@ function Profile() {
             toggleChangingProfileHandler={toggleChangingProfileHandler}
           />
           {/* Cart... */}
+          <ProfileCart />
         </>
       )}
     </Container>

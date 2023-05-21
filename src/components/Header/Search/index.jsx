@@ -54,7 +54,6 @@ const ResponsiveStyledInputBase = styled(InputBase)(({ theme }) => ({
 function SearchButton(props) {
   const [searchInputValue, setSearchInputValue] = useState("");
   const navigate = useNavigate();
-  console.log(props?.disableAnimation);
 
   const setSearchInputValueHandler = (e) => {
     const input = e.target.value;

@@ -7,10 +7,12 @@ import {
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
+import AddNewItemBox from "./AddNewItemBox";
 
 function GenderPage() {
   const gender = useLocation().pathname.replace("/", "");
   const currentShirts = useSelector((state) => state.shirts);
+  const isAdmin = useSelector((state) => state.account.isAdmin);
   const [genderShirts, setGenderShirts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -55,16 +57,20 @@ function GenderPage() {
                       bgcolor: "#111",
                       p: 1,
                       borderRadius: 2,
+                      pt: 1
                     }}
                   >
+                    <img src={shirt.imgs[0]} />
                     <Typography
-                      variant="h5"
-                      sx={{
-                        my: 1,
+                      fontSize="1.1rem"
+                      mt={2}
+                      maxWidth={{
+                        lg: 300,
+                        md: 200,
+                        sm: 300,
                       }}
-                    ></Typography>
-                    <img src={shirt.imgs[0]} width={300} />
-                    <Typography fontSize="1.1rem" mt={2}>
+                      noWrap
+                    >
                       {shirt.name}
                     </Typography>
                     <Typography variant="h6" color="green">
@@ -75,6 +81,7 @@ function GenderPage() {
               </Grid>
             );
           })}
+          {isAdmin && <AddNewItemBox />}
         </Grid>
       )}
     </>

@@ -3,15 +3,16 @@ import App from "./App.jsx";
 import "./index.css";
 import { ThemeProvider, createTheme } from "@mui/material";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import Home from "./pages/Home/index.jsx";
-import Item from "./pages/Item/index.jsx";
+import Home from "./pages/Home";
+import Item from "./pages/Item";
 import store from "./store";
 import { Provider } from "react-redux";
-import Cart from "./pages/Cart/index.jsx";
-import Account from "./pages/Account/index.jsx";
-import GenderPage from "./pages/GenderPage/index.jsx";
-import SearchPage from "./pages/SearchPage/index.jsx";
-import ErrorPage from "./pages/ErrorPage/index.jsx";
+import Cart from "./pages/Cart";
+import Account from "./pages/Account";
+import GenderPage from "./pages/GenderPage";
+import SearchPage from "./pages/SearchPage";
+import ErrorPage from "./pages/ErrorPage";
+import AddNewShirtPage from "./pages/AddNewShirtPage";
 
 const router = createBrowserRouter([
   {
@@ -46,6 +47,10 @@ const router = createBrowserRouter([
       {
         path: "account",
         element: <Account />,
+      },
+      {
+        path: "add",
+        element: <AddNewShirtPage />
       },
       {
         path: "search/:search",

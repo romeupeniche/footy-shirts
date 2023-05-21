@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialAccountState = {
   user: {},
-  cart: {},
+  isAdmin: false,
 };
 
 const accountSlice = createSlice({
@@ -11,11 +11,10 @@ const accountSlice = createSlice({
   reducers: {
     setUser(state, action) {
       state.user = action.payload.user;
-      state.cart = action.payload.cart;
+      state.isAdmin = action.payload.isAdmin;
     },
     logoutUser(state) {
       state.user = initialAccountState.user;
-      state.cart = initialAccountState.cart;
     },
   },
 });

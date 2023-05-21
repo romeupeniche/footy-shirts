@@ -25,27 +25,36 @@ function App() {
         dispatch(setShirts(shirts));
       }
     });
-  });
+  }, [dispatch]);
 
   onAuthStateChanged(auth, (user) => {
-    dispatch(
-      setUser({
-        user: {
-          displayName: user?.displayName,
-          email: user?.email,
-          photoURL: user?.photoURL,
-          uid: user?.uid,
-        },
-      })
-    );
+    onValue(ref(db), async (snapshot) => {
+      const data = await snapshot.val();
+      if (data !== null) {
+        const admins = data.admins;
+        if (user) {
+          const isAdmin =
+            admins.filter((adminId) => adminId === user?.uid).length > 0;
+          dispatch(
+            setUser({
+              user: {
+                displayName: user.displayName,
+                email: user.email,
+                photoURL: user.photoURL,
+                uid: user.uid,
+              },
+              isAdmin,
+            })
+          );
 
-    if (user) {
-      const userCartRef = ref(db, "carts/" + user.uid + "/cart");
-      onValue(userCartRef, (snapshot) => {
-        const currentCart = snapshot.val();
-        dispatch(setItems(currentCart));
-      });
-    }
+          const userCartRef = ref(db, "carts/" + user.uid + "/cart");
+          onValue(userCartRef, (snapshot) => {
+            const currentCart = snapshot.val();
+            dispatch(setItems(currentCart));
+          });
+        }
+      }
+    });
   });
 
   return (

@@ -144,7 +144,7 @@ function ChangeProfile({ toggleChangingProfileHandler }) {
         />
         <TextField
           variant="standard"
-          type="email"
+          type="text"
           label="New Photo URL"
           value={newPhoto}
           onChange={setNewPhotoHandler}

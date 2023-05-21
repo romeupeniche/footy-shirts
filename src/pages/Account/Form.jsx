@@ -1,4 +1,10 @@
-import { Button, CircularProgress, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  CircularProgress,
+  TextField,
+  Typography,
+  Container,
+} from "@mui/material";
 import { auth } from "../../firebase-config";
 import { useState } from "react";
 import {
@@ -65,7 +71,9 @@ function Form() {
   };
 
   const resetWrongPassHandler = () => {
-    setIsWrongPass(false);
+    if (isWrongPass) {
+      setIsWrongPass(false);
+    }
   };
 
   const isAbleToRegister =
@@ -73,15 +81,24 @@ function Form() {
   const isAbleToLogIn = currentPassword.length >= 6;
 
   return (
-    <>
+    <Container
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        flexDirection: "column",
+        justifyContent: "space-around",
+        height: "60vh",
+      }}
+    >
       {isLoading ? (
         <CircularProgress />
       ) : (
         <>
           <Typography
-            variant="h4"
+            variant="h3"
             sx={{
               textAlign: "center",
+              my: 4,
               fontSize: {
                 xs: "1.6rem",
                 sm: "2rem",
@@ -96,54 +113,61 @@ function Form() {
               ? "Become one of us!"
               : "You are not logged in yet. Log in now!"}
           </Typography>
-          <TextField
-            id="logInEmail"
-            label="E-Mail"
-            variant="standard"
-            type="email"
-            value={currentEmail}
-            onChange={(e) => setCurrentEmail(e.target.value)}
-            error={isWrongPass}
-            helperText={isWrongPass && "Your e-mail may be wrong."}
-            onFocus={isWrongPass && resetWrongPassHandler}
-          />
-          <TextField
-            id="logInPassword"
-            label="Password"
-            variant="standard"
-            type="password"
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-            error={isWrongPass}
-            helperText={isWrongPass && "Your password may be wrong."}
-            onFocus={isWrongPass && resetWrongPassHandler}
-          />
-          {isSigningUp && (
+          <Container
+            sx={{ display: "flex", flexDirection: "column", width: "70%" }}
+          >
             <TextField
-              id="registerCheckPass"
-              label="Re-Enter Password"
+              id="logInEmail"
+              label="E-Mail"
+              variant="standard"
+              type="email"
+              value={currentEmail}
+              onChange={(e) => setCurrentEmail(e.target.value)}
+              error={isWrongPass}
+              helperText={isWrongPass && "Your e-mail may be wrong."}
+              onFocus={resetWrongPassHandler}
+            />
+            <TextField
+              id="logInPassword"
+              label="Password"
               variant="standard"
               type="password"
-              value={checkPass}
-              onChange={(e) => setCheckPass(e.target.value)}
+              sx={{ my: 3 }}
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              error={isWrongPass}
+              helperText={isWrongPass && "Your password may be wrong."}
+              onFocus={resetWrongPassHandler}
             />
-          )}
+            {isSigningUp && (
+              <TextField
+                id="registerCheckPass"
+                label="Re-Enter Password"
+                variant="standard"
+                type="password"
+                value={checkPass}
+                onChange={(e) => setCheckPass(e.target.value)}
+              />
+            )}
 
-          <Button
-            disabled={
-              isLoading || isSigningUp ? !isAbleToRegister : !isAbleToLogIn
-            }
-            onClick={isSigningUp ? registerHandler : logInHandler}
-          >
-            {isSigningUp ? "Register" : "Login"}
-          </Button>
+            <Button
+              disabled={
+                isLoading || isSigningUp ? !isAbleToRegister : !isAbleToLogIn
+              }
+              onClick={isSigningUp ? registerHandler : logInHandler}
+            >
+              {isSigningUp ? "Register" : "Login"}
+            </Button>
 
-          <Button sx={{ fontSize: ".7rem" }} onClick={toggleSignIn}>
-            {isSigningUp ? "I do have an account" : "I do not have an account"}
-          </Button>
+            <Button sx={{ fontSize: ".7rem" }} onClick={toggleSignIn}>
+              {isSigningUp
+                ? "I do have an account"
+                : "I do not have an account"}
+            </Button>
+          </Container>
         </>
       )}
-    </>
+    </Container>
   );
 }
 

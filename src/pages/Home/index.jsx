@@ -83,7 +83,12 @@ function Home() {
                         {title.gender.toUpperCase()}
                       </Typography>
                       <img src={title.imgs[0]} />
-                      <Typography fontSize="1.1rem" mt={2}>
+                      <Typography
+                        fontSize="1.1rem"
+                        mt={2}
+                        maxWidth={300}
+                        noWrap
+                      >
                         {title.name}
                       </Typography>
                       <Typography variant="h6" color="green">

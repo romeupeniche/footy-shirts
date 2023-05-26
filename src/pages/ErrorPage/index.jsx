@@ -4,8 +4,13 @@ import ScrollToTop from "../../helpers/ScrollToTop";
 import Footer from "../../components/Footer";
 import SportsSoccerIcon from "@mui/icons-material/SportsSoccer";
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { changeURLDueToError } from "../../helpers/ChangeURL";
 
 function ErrorPage() {
+  useEffect(() => {
+    changeURLDueToError();
+  });
   return (
     <>
       <Header />

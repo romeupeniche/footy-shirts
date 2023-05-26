@@ -1,14 +1,23 @@
-import { Box, Grid, ImageListItem, Typography } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Grid,
+  ImageListItem,
+  Typography,
+} from "@mui/material";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 function Home() {
   const [newShirts, setNewShirts] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const currentShirts = useSelector((state) => state.shirts);
 
   useEffect(() => {
+    setIsLoading(true);
     if (Object.keys(currentShirts.shirts).length) {
+      setIsLoading(false);
       const shirts = currentShirts.shirts;
       let genderTitles = Object.keys(shirts);
       let firstKidsShirt = shirts.kids[Object.keys(shirts.kids)[0]];
@@ -41,7 +50,7 @@ function Home() {
         sx={{
           mt: "70vh",
           fontSize: "2rem",
-          color: "#646cff",
+          color: "primary.main",
         }}
       >
         New Releases!
@@ -60,45 +69,51 @@ function Home() {
               justifyContent: "center",
             }}
           >
-            {newShirts.map((title) => {
-              return (
-                <Grid item xs={2} sm={4} key={title.gender}>
-                  <Link to={`${title.gender}/0`}>
-                    <ImageListItem
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        bgcolor: "#111",
-                        p: 1,
-                        borderRadius: 2,
-                      }}
-                    >
-                      <Typography
-                        variant="h5"
-                        sx={{
-                          my: 1,
-                        }}
-                      >
-                        {title.gender.toUpperCase()}
-                      </Typography>
-                      <img src={title.imgs[0]} />
-                      <Typography
-                        fontSize="1.1rem"
-                        mt={2}
-                        maxWidth={300}
-                        noWrap
-                      >
-                        {title.name}
-                      </Typography>
-                      <Typography variant="h6" color="green">
-                        ${title.price}
-                      </Typography>
-                    </ImageListItem>
-                  </Link>
-                </Grid>
-              );
-            })}
+            {isLoading ? (
+              <CircularProgress />
+            ) : (
+              <>
+                {newShirts.map((title) => {
+                  return (
+                    <Grid item xs={2} sm={4} key={title.gender}>
+                      <Link to={`${title.gender}/0`}>
+                        <ImageListItem
+                          sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            bgcolor: "#111",
+                            p: 1,
+                            borderRadius: 2,
+                          }}
+                        >
+                          <Typography
+                            variant="h5"
+                            sx={{
+                              my: 1,
+                            }}
+                          >
+                            {title.gender.toUpperCase()}
+                          </Typography>
+                          <img src={title.imgs[0]} />
+                          <Typography
+                            fontSize="1.1rem"
+                            mt={2}
+                            maxWidth={300}
+                            noWrap
+                          >
+                            {title.name}
+                          </Typography>
+                          <Typography variant="h6" color="green">
+                            ${title.price}
+                          </Typography>
+                        </ImageListItem>
+                      </Link>
+                    </Grid>
+                  );
+                })}
+              </>
+            )}
           </Grid>
         </Box>
       )}

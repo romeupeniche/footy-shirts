@@ -1,16 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { ref, set } from "firebase/database";
+import { child, push, ref, set } from "firebase/database";
 import { db } from "../firebase-config";
 
 const initialShirtsState = {
   shirts: {},
 };
 
-// const updateDatabase = async (gender, shirts) => {
-//   await set(ref(db, "carts/" + gender), {
-//     cart,
-//   });
-// };
+const updateDatabase = async (gender, shirt, id) => {
+  await set(ref(db, `shirts/${gender}/${id}`), {
+    ...shirt,
+    id,
+  });
+};
 
 const shirtsSlice = createSlice({
   name: "shirts",
@@ -22,18 +23,29 @@ const shirtsSlice = createSlice({
     setNewShirt(state, action) {
       const gender = action.payload.gender;
       const newItem = action.payload.newItem;
-      const lastItem =
-        state.shirts[gender][
-          Object.keys(state.shirts[gender])[
-            Object.keys(state.shirts[gender]).length - 1
-          ]
-        ];
-      const id = lastItem.id + 1;
+
+      let id;
+      if (newItem?.id) {
+        id = newItem.id;
+      } else {
+        const newShirtKey = push(child(ref(db), "shirts/" + gender)).key;
+        const newShirtId =
+          newItem.name.replace(/[^A-Z0-9]/gi, "_").toLowerCase() +
+          "_" +
+          newShirtKey;
+        // const lastItem =
+        //   state.shirts[gender][
+        //     Object.keys(state.shirts[gender])[
+        //       Object.keys(state.shirts[gender]).length - 1
+        //     ]
+        //   ];
+        id = newShirtId;
+      }
       state.shirts = {
         ...state.shirts,
-        gender: {
+        [gender]: {
           ...state.shirts[gender],
-          name: {
+          [id]: {
             id,
             imgs: newItem.imgs,
             price: newItem.price,
@@ -43,6 +55,7 @@ const shirtsSlice = createSlice({
           },
         },
       };
+      updateDatabase(gender, newItem, id);
     },
   },
 });

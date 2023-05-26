@@ -1,38 +1,38 @@
-import { Grid, ImageListItem, Typography, Box } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Grid, Typography, Box, Link, Container } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 
 function AddNewItemBox() {
   return (
     <Grid item xs={2} sm={4}>
-      <Link to={`/add`}>
-        <ImageListItem
+      <Link component={RouterLink} to="/add" sx={{ textDecoration: "none" }}>
+        <Container
           sx={{
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            justifyContent: "space-between",
             bgcolor: "#111",
             p: 1,
             borderRadius: 2,
+            pt: 1,
+            height: 480,
           }}
         >
           <Box
-            width="100%"
-            height={{
-              md: "34vw",
-              sm: "70vw",
-              xs: "100vw"
-            }}
-            maxHeight={{
-              md: 425,
-
+            sx={{
+              maxHeight: "420px",
+              borderRadius: 2,
+              width: "100%",
+              height: "100%",
+              alignItems: "center",
             }}
             bgcolor="#333"
             display="flex"
             alignItems="center"
             justifyContent="center"
           >
-            <AddIcon sx={{transform: "scale(10)"}} />
+            <AddIcon sx={{ transform: "scale(10)" }} />
           </Box>
           <Typography fontSize="1.1rem" mt={2} color="warning.main">
             Admin only!
@@ -40,7 +40,7 @@ function AddNewItemBox() {
           <Typography variant="h6" color="green">
             Add New Item
           </Typography>
-        </ImageListItem>
+        </Container>
       </Link>
     </Grid>
   );

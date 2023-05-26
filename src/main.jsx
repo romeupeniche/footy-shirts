@@ -13,6 +13,7 @@ import GenderPage from "./pages/GenderPage";
 import SearchPage from "./pages/SearchPage";
 import ErrorPage from "./pages/ErrorPage";
 import AddNewShirtPage from "./pages/AddNewShirtPage";
+import EditShirtPage from "./pages/EditShirtPage/index.jsx";
 
 const router = createBrowserRouter([
   {
@@ -45,12 +46,16 @@ const router = createBrowserRouter([
         element: <Cart />,
       },
       {
+        path: "edit",
+        element: <EditShirtPage />,
+      },
+      {
         path: "account",
         element: <Account />,
       },
       {
         path: "add",
-        element: <AddNewShirtPage />
+        element: <AddNewShirtPage />,
       },
       {
         path: "search/:search",

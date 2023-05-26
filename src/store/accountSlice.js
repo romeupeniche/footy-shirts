@@ -10,8 +10,13 @@ const accountSlice = createSlice({
   initialState: initialAccountState,
   reducers: {
     setUser(state, action) {
-      state.user = action.payload.user;
-      state.isAdmin = action.payload.isAdmin;
+      if (action.payload === null) {
+        state.user = initialAccountState.user;
+        state.isAdmin = initialAccountState.isAdmin;
+      } else {
+        state.user = action.payload.user;
+        state.isAdmin = action.payload.isAdmin;
+      }
     },
     logoutUser(state) {
       state.user = initialAccountState.user;

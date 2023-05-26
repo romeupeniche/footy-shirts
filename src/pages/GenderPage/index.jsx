@@ -1,12 +1,14 @@
 import {
+  Box,
   CircularProgress,
+  Container,
   Grid,
-  ImageListItem,
+  Link,
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Link, useLocation } from "react-router-dom";
+import { Link as RouterLink, useLocation } from "react-router-dom";
 import AddNewItemBox from "./AddNewItemBox";
 
 function GenderPage() {
@@ -45,38 +47,63 @@ function GenderPage() {
           columns={{ xs: 2, sm: 6, md: 12 }}
           columnSpacing={{ xs: 1, sm: 2, md: 3 }}
         >
-          {genderShirts.map((shirt, i) => {
+          {genderShirts.map((shirt) => {
             return (
-              <Grid item xs={2} sm={4} key={i}>
-                <Link to={`${i}`}>
-                  <ImageListItem
+              <Grid item xs={2} sm={4} key={shirt.id}>
+                <Link
+                  component={RouterLink}
+                  to={`${shirt.id}`}
+                  sx={{ textDecoration: "none" }}
+                >
+                  <Container
                     sx={{
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "center",
+                      justifyContent: "space-between",
                       bgcolor: "#111",
                       p: 1,
                       borderRadius: 2,
-                      pt: 1
+                      pt: 1,
+                      height: 480,
                     }}
                   >
-                    <img src={shirt.imgs[0]} />
-                    <Typography
-                      fontSize="1.1rem"
-                      mt={2}
-                      maxWidth={{
-                        lg: 300,
-                        md: 200,
-                        sm: 300,
+                    <Box
+                      sx={{
+                        display: "flex",
+                        height: "100%",
+                        alignItems: "center",
                       }}
-                      noWrap
                     >
-                      {shirt.name}
-                    </Typography>
-                    <Typography variant="h6" color="green">
-                      ${shirt.price}
-                    </Typography>
-                  </ImageListItem>
+                      <Box
+                        component="img"
+                        src={shirt.imgs[0]}
+                        sx={{
+                          maxHeight: "380px",
+                          borderRadius: 2,
+                          width: "100%",
+                          alignItems: "center",
+                        }}
+                      />
+                    </Box>
+                    <Box textAlign="center">
+                      <Typography
+                        fontSize="1.1rem"
+                        mt={2}
+                        maxWidth={{
+                          lg: 300,
+                          md: 200,
+                          sm: 300,
+                        }}
+                        noWrap
+                      >
+                        {shirt.name}
+                      </Typography>
+                      <Typography variant="h6" color="green">
+                        ${shirt.price}
+                      </Typography>
+                    </Box>
+                  </Container>
                 </Link>
               </Grid>
             );

@@ -12,6 +12,7 @@ import { onValue, ref } from "firebase/database";
 import { useEffect } from "react";
 import { setShirts } from "./store/shirtsSlice";
 import ScrollToTop from "./helpers/ScrollToTop";
+import ChangeURL from "./helpers/ChangeURL";
 
 function App() {
   const dispatch = useDispatch();
@@ -52,6 +53,8 @@ function App() {
             const currentCart = snapshot.val();
             dispatch(setItems(currentCart));
           });
+        } else {
+          dispatch(setUser(null));
         }
       }
     });
@@ -71,6 +74,7 @@ function App() {
       >
         <Outlet />
         <ScrollToTop />
+        <ChangeURL />
       </Container>
       <Footer />
     </>

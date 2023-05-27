@@ -56,6 +56,7 @@ function Header() {
               display: "flex",
               justifyContent: "space-between",
               bgcolor: "primary.header",
+              minHeight: "56px",
             }}
           >
             <Box

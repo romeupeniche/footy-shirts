@@ -5,7 +5,7 @@ import {
   styled,
   useMediaQuery,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { changeTheme } from "../../../store/accountSlice";
 
@@ -59,19 +59,16 @@ const ThemeSwitch = styled(Switch)(({ theme }) => ({
 function ThemeButton() {
   const currentTheme = useSelector((state) => state.account).theme;
   const dispatch = useDispatch();
-  const [theme, setTheme] = useState("dark");
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
 
   const changeThemeHandler = () => {
     dispatch(changeTheme());
-    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
   };
 
   useEffect(() => {
     if (!prefersDarkMode) {
       changeThemeHandler();
     }
-    console.log("teste");
   });
   return (
     <FormGroup>
@@ -79,9 +76,8 @@ function ThemeButton() {
         control={
           <ThemeSwitch
             sx={{ m: 1 }}
-            defaultChecked={currentTheme === "dark"}
             onChange={changeThemeHandler}
-            checked={theme === "dark"}
+            checked={currentTheme === "dark"}
           />
         }
         label={

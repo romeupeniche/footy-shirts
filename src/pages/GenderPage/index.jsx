@@ -93,7 +93,7 @@ function GenderPage() {
                         maxWidth={{
                           lg: 300,
                           md: 200,
-                          sm: 300,
+                          xs: 300,
                         }}
                         noWrap
                       >

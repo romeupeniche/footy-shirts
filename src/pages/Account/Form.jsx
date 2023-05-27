@@ -88,6 +88,7 @@ function Form() {
         flexDirection: "column",
         justifyContent: "space-around",
         height: "60vh",
+        width: 600,
       }}
     >
       {isLoading ? (
@@ -151,6 +152,7 @@ function Form() {
             )}
 
             <Button
+              sx={{ mt: 2 }}
               disabled={
                 isLoading || isSigningUp ? !isAbleToRegister : !isAbleToLogIn
               }

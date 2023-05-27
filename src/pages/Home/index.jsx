@@ -126,11 +126,11 @@ function Home() {
               <CircularProgress />
             ) : (
               <>
-                {newShirts.map((title) => {
+                {newShirts.map((item) => {
                   return (
-                    <Grid item xs={2} sm={4} key={title.gender}>
+                    <Grid item xs={2} sm={4} key={item.gender}>
                       <Link
-                        to={`${title.gender}/0`}
+                        to={`${item.gender}/${item.id}`}
                         component={RouterLink}
                         sx={{ color: "primary.main" }}
                       >
@@ -150,19 +150,19 @@ function Home() {
                               my: 1,
                             }}
                           >
-                            {title.gender.toUpperCase()}
+                            {item.gender.toUpperCase()}
                           </Typography>
-                          <img src={title.imgs[0]} />
+                          <img src={item.imgs[0]} />
                           <Typography
                             fontSize="1.1rem"
                             mt={2}
                             maxWidth={300}
                             noWrap
                           >
-                            {title.name}
+                            {item.name}
                           </Typography>
                           <Typography variant="h6" color="green">
-                            ${title.price}
+                            ${item.price}
                           </Typography>
                         </ImageListItem>
                       </Link>

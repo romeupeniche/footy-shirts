@@ -33,12 +33,6 @@ const shirtsSlice = createSlice({
           newItem.name.replace(/[^A-Z0-9]/gi, "_").toLowerCase() +
           "_" +
           newShirtKey;
-        // const lastItem =
-        //   state.shirts[gender][
-        //     Object.keys(state.shirts[gender])[
-        //       Object.keys(state.shirts[gender]).length - 1
-        //     ]
-        //   ];
         id = newShirtId;
       }
       state.shirts = {

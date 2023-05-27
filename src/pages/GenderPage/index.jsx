@@ -61,7 +61,7 @@ function GenderPage() {
                       flexDirection: "column",
                       alignItems: "center",
                       justifyContent: "space-between",
-                      bgcolor: "#111",
+                      bgcolor: "bg.light",
                       p: 1,
                       borderRadius: 2,
                       pt: 1,

@@ -66,7 +66,7 @@ const cartSlice = createSlice({
     },
     setItems(state, action) {
       const newCart = action.payload;
-      state.items = newCart.items;
+      state.items = newCart.items ?? initialCartState.items;
       state.totalAmount = newCart.totalAmount;
     },
   },

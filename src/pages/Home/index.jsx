@@ -4,8 +4,9 @@ import {
   Grid,
   ImageListItem,
   Typography,
+  Link,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -38,7 +39,6 @@ function Home() {
         variant="h2"
         sx={{
           mt: 10,
-          fontFamily: "'Inter', sans-serif",
           letterSpacing: "-.75px",
           fontSize: "5rem",
         }}
@@ -76,13 +76,17 @@ function Home() {
                 {newShirts.map((title) => {
                   return (
                     <Grid item xs={2} sm={4} key={title.gender}>
-                      <Link to={`${title.gender}/0`}>
+                      <Link
+                        to={`${title.gender}/0`}
+                        component={RouterLink}
+                        sx={{ color: "primary.main" }}
+                      >
                         <ImageListItem
                           sx={{
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
-                            bgcolor: "#111",
+                            bgcolor: "bg.light",
                             p: 1,
                             borderRadius: 2,
                           }}

@@ -1,5 +1,4 @@
 import { Outlet } from "react-router-dom";
-import "./App.css";
 import Header from "./components/Header";
 import { Container } from "@mui/material";
 import Footer from "./components/Footer";
@@ -69,6 +68,7 @@ function App() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
+          minHeight: "70vh",
           mt: 8,
         }}
       >

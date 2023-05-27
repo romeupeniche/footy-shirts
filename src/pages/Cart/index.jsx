@@ -5,6 +5,7 @@ import {
   Grid,
   IconButton,
   Typography,
+  Link,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
@@ -12,7 +13,7 @@ import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { addItem, deleteAllItems, removeItem } from "../../store/cartSlice";
 import { auth } from "../../firebase-config";
-import { Link } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 
 function Cart() {
   const currentCart = useSelector((state) => state.cart);
@@ -61,15 +62,14 @@ function Cart() {
               >
                 <Grid item>
                   {currentCart.items.map((item) => {
-                    const itemIdx = item.id.match(/\d+/)[0];
                     return (
                       <Container
-                        key={item.id}
+                        key={`${item.gender}&${item.id}&${item.size}`}
                         sx={{
                           display: "flex",
                           justifyContent: "space-between",
                           alignItems: "center",
-                          bgcolor: "#111",
+                          bgcolor: "bg.light",
                           my: 2,
                           flexDirection: {
                             md: "row",
@@ -87,7 +87,7 @@ function Cart() {
                         <Box
                           sx={{
                             display: "flex",
-                            bgcolor: "#222",
+                            bgcolor: "bg.lighter",
                             flexDirection: "column",
                             justifyContent: "space-evenly",
                             alignItems: "center",
@@ -114,22 +114,41 @@ function Cart() {
                             textAlign="center"
                             lineHeight={1}
                           >
-                            <Link to={`/${item.gender}/${itemIdx}`}>
+                            <Link
+                              to={`/${item.gender}/${item.id}`}
+                              component={RouterLink}
+                              sx={{
+                                color: "primary.main",
+                                textDecoration: "none",
+                              }}
+                            >
                               {item.name}
                             </Link>
                           </Typography>
-                          <Typography color="#ccc" fontSize=".8rem">
+                          <Typography fontSize=".8rem">
                             {item.gender?.toUpperCase()}
                             {`'`}s Jersey, Size: {item.size?.toUpperCase()}
                           </Typography>
-                          <Typography color="#3e9c35">
+                          <Typography color="typography.money">
                             ${item.price * item.quantity}{" "}
-                            <span style={{ fontSize: ".9rem", color: "#ccc" }}>
+                            <Box
+                              component="span"
+                              sx={{
+                                fontSize: 15,
+                                color: "typography.light",
+                              }}
+                            >
                               (x{item.quantity})
-                            </span>{" "}
-                            <span style={{ fontSize: ".7rem", color: "#888" }}>
+                            </Box>{" "}
+                            <Box
+                              component="span"
+                              sx={{
+                                fontSize: 10,
+                                color: "typography.ghost",
+                              }}
+                            >
                               (${item.price}/item)
-                            </span>
+                            </Box>
                           </Typography>
                           <Box>
                             <IconButton
@@ -145,7 +164,7 @@ function Cart() {
                             <IconButton
                               onClick={() => deleteAllItemsHandler(item.id)}
                             >
-                              <DeleteIcon sx={{ color: "#ba0c00" }} />
+                              <DeleteIcon sx={{ color: "utils.delete" }} />
                             </IconButton>
                           </Box>
                         </Box>
@@ -156,7 +175,7 @@ function Cart() {
                 <Grid item>
                   <Container
                     sx={{
-                      bgcolor: "#111",
+                      bgcolor: "bg.light",
                       width: { xs: "80vw", md: 300 },
                       p: 2,
                       display: "flex",
@@ -178,7 +197,7 @@ function Cart() {
                       }}
                     >
                       <Typography>Subtotal:</Typography>
-                      <Typography color="#3e9c35">
+                      <Typography color="typography.money">
                         ${currentCart.totalAmount.toFixed(2)}
                       </Typography>
                     </Box>
@@ -191,7 +210,9 @@ function Cart() {
                       }}
                     >
                       <Typography>Shipping:</Typography>
-                      <Typography color="#3e9c35">${shippingValue}</Typography>
+                      <Typography color="typography.money">
+                        ${shippingValue}
+                      </Typography>
                     </Box>
                     <Box
                       sx={{
@@ -202,7 +223,7 @@ function Cart() {
                       }}
                     >
                       <Typography>Tax:</Typography>
-                      <Typography color="#3e9c35">
+                      <Typography color="typography.money">
                         ${(currentCart.totalAmount * 0.13).toFixed(2)}
                       </Typography>
                     </Box>
@@ -215,7 +236,7 @@ function Cart() {
                       }}
                     >
                       <Typography>Total:</Typography>
-                      <Typography color="#3e9c35">
+                      <Typography color="typography.money">
                         $
                         {(
                           currentCart.totalAmount * 1.13 +
@@ -236,8 +257,15 @@ function Cart() {
       ) : (
         <Box sx={{ display: "flex", alignItems: "center", height: "80vh" }}>
           <Typography variant="h4" textAlign="center">
-            You are not logged. Try <Link to="/account">logging in</Link> to
-            setup your cart.
+            You are not logged. Try{" "}
+            <Link
+              to="/account"
+              component={RouterLink}
+              sx={{ color: "primary.main" }}
+            >
+              logging in
+            </Link>{" "}
+            to setup your cart.
           </Typography>
         </Box>
       )}

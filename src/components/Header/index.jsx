@@ -12,10 +12,11 @@ import {
   Toolbar,
   Typography,
   useScrollTrigger,
+  Link,
 } from "@mui/material";
 import SportsSoccerIcon from "@mui/icons-material/SportsSoccer";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { Link } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import PersonIcon from "@mui/icons-material/Person";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useSelector } from "react-redux";
@@ -54,6 +55,7 @@ function Header() {
             sx={{
               display: "flex",
               justifyContent: "space-between",
+              bgcolor: "primary.header",
             }}
           >
             <Box
@@ -62,7 +64,11 @@ function Header() {
                 md: 180,
               }}
             >
-              <Link to="/">
+              <Link
+                component={RouterLink}
+                to="/"
+                sx={{ color: "primary.main" }}
+              >
                 <IconButton edge="start" color="inherit" aria-label="menu">
                   <SportsSoccerIcon />
                 </IconButton>
@@ -74,13 +80,31 @@ function Header() {
               }}
             >
               <ListItem>
-                <Link to="/men">Men</Link>
+                <Link
+                  component={RouterLink}
+                  to="/men"
+                  sx={{ color: "primary.main" }}
+                >
+                  Men
+                </Link>
               </ListItem>
               <ListItem>
-                <Link to="/women">Women</Link>
+                <Link
+                  component={RouterLink}
+                  to="/women"
+                  sx={{ color: "primary.main" }}
+                >
+                  Women
+                </Link>
               </ListItem>
               <ListItem>
-                <Link to="/kids">Kids</Link>
+                <Link
+                  component={RouterLink}
+                  to="/kids"
+                  sx={{ color: "primary.main" }}
+                >
+                  Kids
+                </Link>
               </ListItem>
             </List>
             <Box
@@ -91,7 +115,11 @@ function Header() {
                 minWidth: 180,
               }}
             >
-              <Link to="/cart">
+              <Link
+                component={RouterLink}
+                to="/cart"
+                sx={{ color: "primary.main" }}
+              >
                 <IconButton
                   edge="start"
                   color="inherit"
@@ -102,7 +130,11 @@ function Header() {
                 </IconButton>
               </Link>
               <SearchButton />
-              <Link to="/account">
+              <Link
+                to="/account"
+                component={RouterLink}
+                sx={{ color: "primary.main" }}
+              >
                 <IconButton
                   edge="start"
                   color="inherit"
@@ -163,13 +195,25 @@ function Header() {
               transformOrigin={{ horizontal: "right", vertical: "top" }}
               anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
-              <Link to="/men">
+              <Link
+                component={RouterLink}
+                to="/men"
+                sx={{ color: "primary.main" }}
+              >
                 <MenuItem>Men</MenuItem>
               </Link>
-              <Link to="/women">
+              <Link
+                component={RouterLink}
+                to="/women"
+                sx={{ color: "primary.main" }}
+              >
                 <MenuItem>Women</MenuItem>
               </Link>
-              <Link to="/kids">
+              <Link
+                component={RouterLink}
+                to="/kids"
+                sx={{ color: "primary.main" }}
+              >
                 <MenuItem>Kids</MenuItem>
               </Link>
               <Divider />
@@ -177,16 +221,24 @@ function Header() {
                 closeMenuWhenDoneSearchHandler={closeMenuWhenDoneSearchHandler}
                 disableAnimation={true}
               />
-              <Link to="/cart">
+              <Link
+                to="/cart"
+                component={RouterLink}
+                sx={{ color: "primary.main" }}
+              >
                 <MenuItem>
                   <ShoppingCartIcon />{" "}
                   <Typography ml={1.35}>
                     {" "}
-                    Cart ({currentCart.items.length})
+                    Cart ({currentCart.items?.length})
                   </Typography>
                 </MenuItem>
               </Link>
-              <Link to="/account">
+              <Link
+                component={RouterLink}
+                to="/account"
+                sx={{ color: "primary.main" }}
+              >
                 <MenuItem>
                   {currentUser.photoURL ? (
                     <Avatar

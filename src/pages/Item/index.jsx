@@ -74,7 +74,7 @@ function Item() {
 
   const addToCartHandler = async () => {
     const item = {
-      id: `${gender}&${id}&${size}`,
+      id,
       gender,
       quantity: 1,
       totalPrice: shirt.price,
@@ -116,7 +116,7 @@ function Item() {
           <Typography variant="h3" sx={{ mb: 5 }}>
             {gender.toUpperCase()}
           </Typography>
-          <Container key={shirt.id}>
+          <Container>
             <ImageList
               sx={{
                 display: "flex",
@@ -168,14 +168,14 @@ function Item() {
               </ImageListItem>
               <Box
                 sx={{
-                  bgcolor: "#111",
+                  bgcolor: "bg.light",
                   minHeight: "60vh",
                   mt: {
                     xs: 4,
                     md: 0,
                   },
                   width: {
-                    xs: "80vw",
+                    xs: "100%",
                     md: 500,
                   },
                   borderRadius: 5,
@@ -232,7 +232,10 @@ function Item() {
                     mb: 3,
                     borderRadius: 5,
                     fontSize: "1.3rem",
-                    width: 400,
+                    width: {
+                      xs: "90%",
+                      md: 400,
+                    },
                   }}
                   disabled={!size}
                   onClick={addToCartHandler}
@@ -243,7 +246,7 @@ function Item() {
                   <Box
                     sx={{
                       bgcolor: "primary.darker",
-                      width: "100%",
+                      width: "90%",
                       display: "flex",
                       justifyContent: "space-around",
                       alignItems: "center",
@@ -272,7 +275,7 @@ function Item() {
               <Box sx={modalStyle}>
                 <Typography variant="h6" component="h2">
                   Are you sure you want to{" "}
-                  <Box component="span" sx={{ color: "#F44336" }}>
+                  <Box component="span" sx={{ color: "utils.delete" }}>
                     DELETE
                   </Box>{" "}
                   this item?

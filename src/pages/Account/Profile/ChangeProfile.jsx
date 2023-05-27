@@ -42,23 +42,13 @@ function ChangeProfile({ toggleChangingProfileHandler }) {
     setProvidedConfirmPassword(e.target.value);
   };
 
-  // const updateUser = async () => {
-  //   const updatedProfile = await updateProfile(auth.currentUser, {
-  //     displayName: newDisplayName ?? auth.currentUser.displayName,
-  //     email: newEmail ?? auth.currentUser.email,
-  //     photoURL: newPhoto ?? auth.currentUser.photoURL,
-  //   });
-  // };
-
-  // WORKING ON THAT...
-
   const isPhotoInputValid = newPhoto.trim().length > 0;
   const isDisplayNameInputValid = newDisplayName.trim().length > 0;
 
   const areInputsValid =
     newPhoto.trim().length > 0
       ? isPhotoInputValid
-      : isDisplayNameInputValid || isPhotoInputValid; // and photo
+      : isDisplayNameInputValid || isPhotoInputValid;
   const isAbleToUpdate = areInputsValid && providedConfirmPassword.length > 3;
 
   const verifyPassword = async () => {
@@ -68,8 +58,6 @@ function ChangeProfile({ toggleChangingProfileHandler }) {
         currentUser.email,
         providedConfirmPassword
       );
-
-      // passed the verification
 
       const displayName =
         newDisplayName.trim() !== ""
@@ -129,8 +117,8 @@ function ChangeProfile({ toggleChangingProfileHandler }) {
           px: 4,
           py: 2,
           mt: 2,
-          width: 217,
-          height: 200,
+          width: 300,
+          height: 300,
         }}
       >
         <TextField

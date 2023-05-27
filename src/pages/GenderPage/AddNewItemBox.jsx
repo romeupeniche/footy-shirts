@@ -12,7 +12,7 @@ function AddNewItemBox() {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "space-between",
-            bgcolor: "#111",
+            bgcolor: "bg.light",
             p: 1,
             borderRadius: 2,
             pt: 1,
@@ -26,11 +26,10 @@ function AddNewItemBox() {
               width: "100%",
               height: "100%",
               alignItems: "center",
+              bgcolor: "bg.lightest",
+              display: "flex",
+              justifyContent: "center",
             }}
-            bgcolor="#333"
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
           >
             <AddIcon sx={{ transform: "scale(10)" }} />
           </Box>

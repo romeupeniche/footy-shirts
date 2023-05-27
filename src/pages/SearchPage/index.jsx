@@ -3,11 +3,12 @@ import {
   Grid,
   ImageListItem,
   Typography,
+  Link,
 } from "@mui/material";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { Link as RouterLink, useParams } from "react-router-dom";
 
 function SearchPage() {
   const currentShirts = useSelector((state) => state.shirts);
@@ -69,13 +70,17 @@ function SearchPage() {
                     <Typography variant="h6" textAlign="center">
                       {shirt.gender.toUpperCase()}
                     </Typography>
-                    <Link to={`/${shirt.gender}/${shirt.id}`}>
+                    <Link
+                      to={`/${shirt.gender}/${shirt.id}`}
+                      component={RouterLink}
+                      sx={{ color: "primary.main" }}
+                    >
                       <ImageListItem
                         sx={{
                           display: "flex",
                           flexDirection: "column",
                           alignItems: "center",
-                          bgcolor: "#111",
+                          bgcolor: "bg.light",
                           p: 1,
                           borderRadius: 2,
                         }}

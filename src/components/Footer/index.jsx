@@ -23,7 +23,7 @@ function Footer() {
     <Box
       sx={{
         borderRadius: 2,
-        bgcolor: "#111",
+        bgcolor: "bg.light",
         mt: 5,
       }}
     >
@@ -47,11 +47,11 @@ function Footer() {
                   return (
                     <ListItem
                       key={link}
-                      sx={{ color: "#999", fontSize: ".8rem" }}
+                      sx={{ color: "bg.gray", fontSize: ".8rem" }}
                     >
                       <MUILink
                         underline="none"
-                        sx={{ color: "#999", cursor: "pointer" }}
+                        sx={{ color: "bg.gray", cursor: "pointer" }}
                       >
                         {link}
                       </MUILink>

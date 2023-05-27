@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialAccountState = {
   user: {},
   isAdmin: false,
+  theme: "dark",
 };
 
 const accountSlice = createSlice({
@@ -21,8 +22,11 @@ const accountSlice = createSlice({
     logoutUser(state) {
       state.user = initialAccountState.user;
     },
+    changeTheme(state) {
+      state.theme = state.theme === "dark" ? "light" : "dark";
+    },
   },
 });
 
 export default accountSlice.reducer;
-export const { setUser, logoutUser } = accountSlice.actions;
+export const { setUser, logoutUser, changeTheme } = accountSlice.actions;

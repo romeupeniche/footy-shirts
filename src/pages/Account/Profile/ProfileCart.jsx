@@ -1,7 +1,7 @@
-import { Grid, ImageListItem, Typography } from "@mui/material";
+import { Grid, Typography, Link } from "@mui/material";
 import { Box } from "@mui/system";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
 function ProfileCart() {
@@ -14,12 +14,16 @@ function ProfileCart() {
       <Box
         sx={{
           mt: 2,
-          bgcolor: "#00000D",
+          bgcolor: "primary.darkest",
           borderRadius: 10,
           p: 2,
         }}
       >
-        <Link to="/cart">
+        <Link
+          component={RouterLink}
+          to={"/cart"}
+          sx={{ textDecoration: "none" }}
+        >
           <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
             <OpenInNewIcon />
             <Typography sx={{ fontSize: 20, ml: 1 }}>Cart</Typography>
@@ -35,12 +39,12 @@ function ProfileCart() {
             {currentCart.items.map((item) => {
               return (
                 <Grid item xs={2} sm={4} key={item.id}>
-                  <ImageListItem
+                  <Box
                     sx={{
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "center",
-                      bgcolor: "#111",
+                      bgcolor: "bg.light",
                       p: 1,
                       borderRadius: 2,
                     }}
@@ -48,17 +52,24 @@ function ProfileCart() {
                     <Typography>
                       {item.gender.toUpperCase()} : {item.size.toUpperCase()}
                     </Typography>
-                    <img src={item.img} />
+                    <Box
+                      component="img"
+                      src={item.img}
+                      sx={{ width: "100%" }}
+                    />
                     <Typography
                       noWrap
                       fontSize="1.1rem"
                       mt={2}
-                      maxWidth={300}
+                      maxWidth={{
+                        xs: 250,
+                        md: 300,
+                      }}
                       textAlign="center"
                     >
                       {item.name}
                     </Typography>
-                  </ImageListItem>
+                  </Box>
                 </Grid>
               );
             })}

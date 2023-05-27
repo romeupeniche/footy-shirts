@@ -1,9 +1,9 @@
-import { Box, Button, Container, Typography } from "@mui/material";
+import { Box, Button, Container, Typography, Link } from "@mui/material";
 import Header from "../../components/Header";
 import ScrollToTop from "../../helpers/ScrollToTop";
 import Footer from "../../components/Footer";
 import SportsSoccerIcon from "@mui/icons-material/SportsSoccer";
-import { Link } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import { useEffect } from "react";
 import { changeURLDueToError } from "../../helpers/ChangeURL";
 
@@ -29,7 +29,7 @@ function ErrorPage() {
           </Typography>
 
           <Box sx={{ height: "50vh", display: "flex", alignItems: "center" }}>
-            <Link to="/">
+            <Link to="/" component={RouterLink} sx={{ color: "primary.main" }}>
               <Button variant="outlined" sx={{ p: 1 }}>
                 <Box sx={{ display: "flex", alignItems: "center", mr: 1 }}>
                   <SportsSoccerIcon />

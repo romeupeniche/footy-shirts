@@ -3,7 +3,7 @@ import Form from "../../components/Form";
 import { setNewShirt } from "../../store/shirtsSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { Typography, Box } from "@mui/material";
+import { Typography } from "@mui/material";
 
 function EditShirtPage() {
   const isAdmin = useSelector((state) => state.account.isAdmin);
@@ -27,7 +27,7 @@ function EditShirtPage() {
   return (
     <>
       <Typography variant="h3" mt={2}>
-        Edit: <Box color="primary.main">{item.name}</Box>
+        Edit: <Typography component="span">{item.name}</Typography>
       </Typography>
       <Form
         submitHandler={submitHandler}

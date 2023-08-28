@@ -1,6 +1,6 @@
 import { Container } from "@mui/material";
 import ChangeProfile from "./ChangeProfile";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ProfileInfo from "./ProfileInfo";
 import ProfileCart from "./ProfileCart";
 import { useSelector } from "react-redux";
@@ -11,10 +11,6 @@ function Profile() {
   const toggleChangingProfileHandler = () => {
     setIsChangingProfile((prev) => !prev);
   };
-
-  useEffect(() => {
-    console.log(currentCart);
-  });
 
   return (
     <Container

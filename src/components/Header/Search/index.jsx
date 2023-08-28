@@ -3,6 +3,7 @@ import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -67,7 +68,8 @@ function SearchButton(props) {
     if (searchInputValue.trim().length) {
       navigate(`/search/${searchInputValue}`);
       setSearchInputValue("");
-      props?.closeMenuWhenDoneSearchHandler();
+      props.closeMenuWhenDoneSearchHandler &&
+        props.closeMenuWhenDoneSearchHandler();
     }
   };
 
@@ -77,7 +79,7 @@ function SearchButton(props) {
         <>
           <Search>
             <SearchIconWrapper>
-              <SearchIcon color="primary" />
+              <SearchIcon sx={{ color: props.color }} />
             </SearchIconWrapper>
             <form onSubmit={submitSearchHandler}>
               <ResponsiveStyledInputBase
@@ -93,7 +95,7 @@ function SearchButton(props) {
         <>
           <Search>
             <SearchIconWrapper>
-              <SearchIcon color="primary" />
+              <SearchIcon sx={{ color: props.color }} />
             </SearchIconWrapper>
             <form onSubmit={submitSearchHandler}>
               <StyledInputBase
@@ -111,3 +113,9 @@ function SearchButton(props) {
 }
 
 export default SearchButton;
+
+SearchButton.propTypes = {
+  disableAnimation: PropTypes.bool.isRequired,
+  color: PropTypes.string.isRequired,
+  closeMenuWhenDoneSearchHandler: PropTypes.func.isRequired,
+};

@@ -5,8 +5,6 @@ import {
   Button,
   Container,
   FormControlLabel,
-  ImageList,
-  ImageListItem,
   Radio,
   RadioGroup,
   Typography,
@@ -16,7 +14,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { addItem } from "../../store/cartSlice";
 import { changeURLWithShirtTitle } from "../../helpers/ChangeURL";
 import { ref, remove } from "firebase/database";
-import { db } from "../../firebase-config";
+import { auth, db } from "../../firebase-config";
+import ZoomableImage from "./ZoomableImage";
 
 const modalStyle = {
   position: "absolute",
@@ -38,11 +37,12 @@ function Item() {
   const currentShirts = useSelector((state) => state.shirts);
   const isAdmin = useSelector((state) => state.account.isAdmin);
   const [shirt, setShirt] = useState(null);
-  const [img, setImg] = useState(null);
+  const [shirtImg, setShirtImg] = useState(null);
   const [size, setSize] = useState(null);
   const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] =
     useState(false);
   const gender = useParams().gender;
+  const capitalizedGender = gender.charAt(0).toUpperCase() + gender.slice(1);
   const id = useParams().id;
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -53,17 +53,12 @@ function Item() {
       for (let team in shirtsList) {
         if (shirtsList[team].id === id) {
           setShirt(shirtsList[team]);
-          setImg(shirtsList[team].imgs[0]);
+          setShirtImg(shirtsList[team].imgs[0]);
           changeURLWithShirtTitle(shirtsList[team].name);
         }
       }
     }
   }, [gender, id, currentShirts]);
-
-  const changeImg = (e) => {
-    const i = e.target.value;
-    setImg(shirt.imgs[i]);
-  };
 
   const setSizeHandler = (e) => {
     const value = e.target.value;
@@ -73,6 +68,10 @@ function Item() {
   };
 
   const addToCartHandler = async () => {
+    if (!auth.currentUser) {
+      navigate("/account");
+      return;
+    }
     const item = {
       id,
       gender,
@@ -113,11 +112,8 @@ function Item() {
     <>
       {shirt && (
         <>
-          <Typography variant="h3" sx={{ mb: 5 }}>
-            {gender.toUpperCase()}
-          </Typography>
           <Container>
-            <ImageList
+            <Box
               sx={{
                 display: "flex",
                 alignItems: "center",
@@ -128,13 +124,14 @@ function Item() {
                 },
               }}
             >
-              <ImageListItem
+              <Box
                 sx={{
                   width: {
                     xs: 300,
-                    md: 400,
+                    md: 600,
                   },
                   display: "flex",
+                  alignItems: "center",
                   flexDirection: {
                     xs: "column-reverse",
                     md: "row",
@@ -142,33 +139,38 @@ function Item() {
                 }}
               >
                 <RadioGroup
-                  row
-                  aria-labelledby="demo-row-radio-buttons-group-label"
-                  name="row-radio-buttons-group"
                   defaultValue="0"
-                  sx={{ ml: 1 }}
+                  sx={{
+                    flexDirection: { xs: "row", md: "column" },
+                    mt: { xs: 4, md: 0 },
+                  }}
                 >
-                  <FormControlLabel
-                    value="0"
-                    sx={{ height: "45px" }}
-                    control={<Radio />}
-                    onChange={changeImg}
-                  />
-                  <FormControlLabel
-                    value="1"
-                    sx={{ height: "45px" }}
-                    control={<Radio />}
-                    onChange={changeImg}
-                  />
+                  {shirt.imgs.map((img, i) => {
+                    return (
+                      <FormControlLabel
+                        key={i}
+                        sx={{ height: "45px", mb: 10 }}
+                        control={
+                          <Box
+                            component="img"
+                            sx={{
+                              transition: "400ms",
+                              boxShadow: shirtImg === img ? 1 : 0,
+                              borderRadius: 5,
+                            }}
+                            onMouseOver={() => setShirtImg(img)}
+                            width={80}
+                            src={img}
+                          />
+                        }
+                      />
+                    );
+                  })}
                 </RadioGroup>
-                <img
-                  src={img}
-                  style={{ borderRadius: "20px", width: "100%" }}
-                />
-              </ImageListItem>
+                <ZoomableImage src={shirtImg} />
+              </Box>
               <Box
                 sx={{
-                  bgcolor: "bg.light",
                   minHeight: "60vh",
                   mt: {
                     xs: 4,
@@ -185,47 +187,34 @@ function Item() {
                   alignItems: "center",
                 }}
               >
-                <Typography variant="h4" sx={{ mt: 3, ml: 2 }}>
-                  {shirt.name}
-                </Typography>
-                <Typography color="green" variant="h5">
-                  ${shirt.price}
-                </Typography>
-                <Typography sx={{ mt: 6 }}>Sizes:</Typography>
-                <RadioGroup
-                  row
-                  aria-labelledby="demo-row-radio-buttons-group-label"
-                  name="row-radio-buttons-group"
-                >
-                  <FormControlLabel
-                    value={shirt.sizes.S ? "s" : "disabled"}
-                    disabled={!shirt.sizes.S}
-                    control={<Radio />}
-                    onClick={setSizeHandler}
-                    label="S"
-                  />
-                  <FormControlLabel
-                    value={shirt.sizes.M ? "m" : "disabled"}
-                    disabled={!shirt.sizes.M}
-                    control={<Radio />}
-                    onClick={setSizeHandler}
-                    label="M"
-                  />
-                  <FormControlLabel
-                    value={shirt.sizes.L ? "l" : "disabled"}
-                    disabled={!shirt.sizes.L}
-                    control={<Radio />}
-                    onClick={setSizeHandler}
-                    label="L"
-                  />
-                  <FormControlLabel
-                    value={shirt.sizes.XL ? "xl" : "disabled"}
-                    disabled={!shirt.sizes.XL}
-                    control={<Radio />}
-                    onClick={setSizeHandler}
-                    label="XL"
-                  />
-                </RadioGroup>
+                <Box>
+                  <Typography variant="h4" fontWeight={500} sx={{ mt: 3 }}>
+                    {shirt.name}
+                  </Typography>
+                  <Typography fontWeight={400}>
+                    {capitalizedGender}&apos;s Nike Dri-FIT ADV Football Shirt
+                  </Typography>
+                  <Typography variant="h5" sx={{ mt: 2 }} fontWeight={400}>
+                    ${shirt.price}
+                  </Typography>
+                </Box>
+                <Box width="100%">
+                  <Typography sx={{ mt: 6 }}>Sizes:</Typography>
+                  <Box sx={{ display: "flex", justifyContent: "center" }}>
+                    <RadioGroup row>
+                      {["S", "M", "L", "XL"].map((size) => (
+                        <FormControlLabel
+                          key={size}
+                          value={shirt.sizes[size] ? size : "disabled"}
+                          disabled={!shirt.sizes[size]}
+                          control={<Radio />}
+                          onClick={setSizeHandler}
+                          label={size}
+                        />
+                      ))}
+                    </RadioGroup>
+                  </Box>
+                </Box>
                 <Button
                   variant="contained"
                   sx={{
@@ -267,7 +256,7 @@ function Item() {
                   </Box>
                 )}
               </Box>
-            </ImageList>
+            </Box>
             <Modal
               open={isConfirmDeleteModalOpen}
               onClose={closeConfirmDeleteModalHandler}
@@ -275,9 +264,9 @@ function Item() {
               <Box sx={modalStyle}>
                 <Typography variant="h6" component="h2">
                   Are you sure you want to{" "}
-                  <Box component="span" sx={{ color: "utils.delete" }}>
+                  <Typography component="span" sx={{ color: "utils.delete" }}>
                     DELETE
-                  </Box>{" "}
+                  </Typography>{" "}
                   this item?
                 </Typography>
                 <Box

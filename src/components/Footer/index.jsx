@@ -1,82 +1,220 @@
 import {
   Box,
-  Container,
   IconButton,
-  List,
-  ListItem,
   Typography,
   Link as MUILink,
+  TextField,
+  Button,
 } from "@mui/material";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import YouTubeIcon from "@mui/icons-material/YouTube";
+import PhoneIcon from "@mui/icons-material/Phone";
+import EmailIcon from "@mui/icons-material/Email";
+import { styled } from "@mui/material/styles";
+
+const StyledIconButton = styled(IconButton)(({ theme }) => ({
+  margin: "0 5px",
+  color: theme.palette.primary.main,
+  "&:hover": {
+    color: theme.palette.secondary.main,
+  },
+}));
 
 function Footer() {
-  const footerLinks = [
-    { title: "About Us", links: ["Contact", "Careers", "News"] },
-    { title: "About Us2", links: ["Contact", "Careers", "News"] },
-    { title: "About Us3", links: ["Contact", "Careers", "News"] },
-  ];
-
   return (
     <Box
       sx={{
         borderRadius: 2,
-        bgcolor: "bg.light",
+        boxShadow: 2,
         mt: 5,
+        pb: 5,
       }}
     >
       <Typography
         variant="h3"
         sx={{
-          pt: 2,
-          display: "flex",
-          justifyContent: "center",
+          pt: 5,
+          mb: 2,
+          textAlign: "center",
         }}
       >
         Footy Shirts
       </Typography>
-      <Container sx={{ display: "flex", justifyContent: "space-between" }}>
-        <List sx={{ display: "flex" }}>
-          {footerLinks.map((item) => {
-            return (
-              <List key={item.title} sx={{ mx: 1 }}>
-                <ListItem>{item.title}</ListItem>
-                {item.links.map((link) => {
-                  return (
-                    <ListItem
-                      key={link}
-                      sx={{ color: "bg.gray", fontSize: ".8rem" }}
-                    >
-                      <MUILink
-                        underline="none"
-                        sx={{ color: "bg.gray", cursor: "pointer" }}
-                      >
-                        {link}
-                      </MUILink>
-                    </ListItem>
-                  );
-                })}
-              </List>
-            );
-          })}
-        </List>
-        <List sx={{ my: 1.5 }}>
-          <IconButton sx={{ mx: "5px" }}>
-            <YouTubeIcon sx={{ fontSize: "2rem" }} />
-          </IconButton>
-          <IconButton sx={{ mx: "5px" }}>
-            <InstagramIcon sx={{ fontSize: "2rem" }} />
-          </IconButton>
-          <IconButton sx={{ mx: "5px" }}>
-            <FacebookIcon sx={{ fontSize: "2rem" }} />
-          </IconButton>
-          <IconButton sx={{ mx: "5px" }}>
-            <TwitterIcon sx={{ fontSize: "2rem" }} />
-          </IconButton>
-        </List>
-      </Container>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: { xs: "center", lg: "space-around" },
+          alignItems: { xs: "center", lg: "stretch" },
+          flexDirection: { xs: "column", lg: "row" },
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            width: 300,
+          }}
+        >
+          <Typography
+            sx={{
+              textAlign: "center",
+              width: 500,
+              fontSize: "1.5rem",
+              fontWeight: "bold",
+            }}
+          >
+            ABOUT US
+          </Typography>
+          <MUILink
+            underline="none"
+            sx={{
+              color: "bg.gray",
+              cursor: "pointer",
+              fontWeight: "light",
+              mt: 1,
+            }}
+          >
+            Careers
+          </MUILink>
+          <MUILink
+            underline="none"
+            sx={{
+              color: "bg.gray",
+              cursor: "pointer",
+              fontWeight: "light",
+              mt: 1,
+            }}
+          >
+            News
+          </MUILink>
+          <MUILink
+            underline="none"
+            sx={{
+              color: "bg.gray",
+              cursor: "pointer",
+              fontWeight: "light",
+              mt: 1,
+            }}
+          >
+            Blog
+          </MUILink>
+          <MUILink
+            underline="none"
+            sx={{
+              color: "bg.gray",
+              cursor: "pointer",
+              fontWeight: "light",
+              mt: 1,
+            }}
+          >
+            How we work
+          </MUILink>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            my: 1,
+          }}
+        >
+          <Typography
+            sx={{
+              textAlign: "center",
+              width: { xs: 400, md: 500 },
+              color: "typography.ghost",
+            }}
+          >
+            Browse through our extensive collection of soccer jerseys for all
+            your fandom needs. We have the perfect jerseys to match your style.
+          </Typography>
+          <Typography
+            sx={{
+              display: "flex",
+              width: 500,
+              my: 2,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <PhoneIcon sx={{ mr: 1 }} /> (123) 456-789
+          </Typography>
+          <Typography
+            sx={{
+              display: "flex",
+              width: 500,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <EmailIcon sx={{ mr: 1 }} /> footyshirts@email.com
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              mt: 2,
+            }}
+          >
+            <StyledIconButton>
+              <YouTubeIcon sx={{ fontSize: "2rem" }} />
+            </StyledIconButton>
+            <StyledIconButton>
+              <InstagramIcon sx={{ fontSize: "2rem" }} />
+            </StyledIconButton>
+            <StyledIconButton>
+              <FacebookIcon sx={{ fontSize: "2rem" }} />
+            </StyledIconButton>
+            <StyledIconButton>
+              <TwitterIcon sx={{ fontSize: "2rem" }} />
+            </StyledIconButton>
+          </Box>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            width: 300,
+          }}
+        >
+          <Typography
+            sx={{
+              textAlign: "center",
+              width: 500,
+              fontSize: "1.5rem",
+              fontWeight: "bold",
+            }}
+          >
+            NEWSLETTER
+          </Typography>
+          <Typography
+            sx={{
+              textAlign: "center",
+              fontWeight: "light",
+              width: 300,
+            }}
+          >
+            Stay updated with our newsletter for the latest jersey releases and
+            news.
+          </Typography>
+          <Box sx={{ width: 250 }}>
+            <TextField
+              sx={{ my: 1 }}
+              label="Enter Email Address"
+              placeholder="john@doe.com"
+              type="email"
+            />
+            <Button variant="outlined" sx={{ width: "100%" }}>
+              Subscribe
+            </Button>
+          </Box>
+        </Box>
+      </Box>
     </Box>
   );
 }

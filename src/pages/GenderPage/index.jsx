@@ -3,20 +3,30 @@ import {
   CircularProgress,
   Container,
   Grid,
-  Link,
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Link as RouterLink, useLocation } from "react-router-dom";
+import { useLoaderData } from "react-router-dom";
 import AddNewItemBox from "./AddNewItemBox";
+import Filter from "../../components/Filter";
+import Card from "../../components/Card";
 
 function GenderPage() {
-  const gender = useLocation().pathname.replace("/", "");
+  const gender = useLoaderData();
   const currentShirts = useSelector((state) => state.shirts);
   const isAdmin = useSelector((state) => state.account.isAdmin);
   const [genderShirts, setGenderShirts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const capitalizedGender = gender.charAt(0).toUpperCase() + gender.slice(1);
+
+  const [selectedOptions, setSelectedOptions] = useState([]);
+  const filterOptions = [
+    { name: "Small", value: "S" },
+    { name: "Medium", value: "M" },
+    { name: "Large", value: "L" },
+    { name: "Extra Large", value: "XL" },
+  ];
 
   useEffect(() => {
     setIsLoading(true);
@@ -30,12 +40,37 @@ function GenderPage() {
     setIsLoading(false);
   }, [gender, currentShirts]);
 
+  const filteredShirts =
+    selectedOptions.length === 0
+      ? genderShirts
+      : genderShirts.filter((shirt) =>
+          selectedOptions.every((size) => shirt.sizes[size])
+        );
+
   return (
-    <>
-      <Typography variant="h2" sx={{ mt: 5, mb: 10 }}>
-        {gender.toUpperCase()}
-        {`'`}s JERSEYS
-      </Typography>
+    <Container>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "flex-end",
+          justifyContent: "space-between",
+        }}
+      >
+        <Box>
+          <Typography variant="h2" sx={{ mt: 5 }} fontWeight={700}>
+            {capitalizedGender}
+            {`'`}s Jerseys
+          </Typography>
+          <Typography variant="h6" sx={{ ml: 1, mb: 10 }}>
+            /{gender}
+          </Typography>
+        </Box>
+        <Filter
+          options={filterOptions}
+          label="Filter By Size"
+          onSelectOptions={setSelectedOptions}
+        />
+      </Box>
       {isLoading ? (
         <CircularProgress />
       ) : (
@@ -47,72 +82,31 @@ function GenderPage() {
           columns={{ xs: 2, sm: 6, md: 12 }}
           columnSpacing={{ xs: 1, sm: 2, md: 3 }}
         >
-          {genderShirts.map((shirt) => {
-            return (
-              <Grid item xs={2} sm={4} key={shirt.id}>
-                <Link
-                  component={RouterLink}
-                  to={`${shirt.id}`}
-                  sx={{ textDecoration: "none" }}
-                >
-                  <Container
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      bgcolor: "bg.light",
-                      p: 1,
-                      borderRadius: 2,
-                      pt: 1,
-                      height: 480,
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        display: "flex",
-                        height: "100%",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Box
-                        component="img"
-                        src={shirt.imgs[0]}
-                        sx={{
-                          maxHeight: "380px",
-                          borderRadius: 2,
-                          width: "100%",
-                          alignItems: "center",
-                        }}
-                      />
-                    </Box>
-                    <Box textAlign="center">
-                      <Typography
-                        fontSize="1.1rem"
-                        mt={2}
-                        maxWidth={{
-                          lg: 300,
-                          md: 200,
-                          xs: 300,
-                        }}
-                        noWrap
-                      >
-                        {shirt.name}
-                      </Typography>
-                      <Typography variant="h6" color="green">
-                        ${shirt.price}
-                      </Typography>
-                    </Box>
-                  </Container>
-                </Link>
-              </Grid>
-            );
-          })}
+          {filteredShirts.length > 0 ? (
+            filteredShirts.map((shirt) => {
+              return <Card key={shirt.id} shirt={shirt} />;
+            })
+          ) : (
+            <Typography mt={10}>
+              {selectedOptions.length > 0
+                ? "No shirts are available in the selected size(s). Please explore other options."
+                : "No shirts are currently available. Check back later for more selections."}
+            </Typography>
+          )}
           {isAdmin && <AddNewItemBox />}
         </Grid>
       )}
-    </>
+    </Container>
   );
 }
 
 export default GenderPage;
+
+export function loader({ params }) {
+  const gender = params.gender;
+  if (gender !== "men" && gender !== "women" && gender !== "kids") {
+    throw new Response("Not Found", { status: 404 });
+  }
+
+  return gender;
+}

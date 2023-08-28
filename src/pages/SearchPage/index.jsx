@@ -1,14 +1,8 @@
-import {
-  CircularProgress,
-  Grid,
-  ImageListItem,
-  Typography,
-  Link,
-} from "@mui/material";
-import { Box } from "@mui/system";
+import { CircularProgress, Grid, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Link as RouterLink, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import Card from "../../components/Card";
 
 function SearchPage() {
   const currentShirts = useSelector((state) => state.shirts);
@@ -44,11 +38,11 @@ function SearchPage() {
   return (
     <>
       <Typography variant="h3" mt={2} maxWidth="80vw">
-        Showing results for: "
-        <Box display="inline" color="primary.main">
+        Showing results for: &quot;
+        <Typography component="span" variant="h3" color="secondary">
           {search}
-        </Box>
-        "
+        </Typography>
+        &quot;
       </Typography>
       {isLoading ? (
         <CircularProgress />
@@ -64,43 +58,9 @@ function SearchPage() {
               columns={{ xs: 2, sm: 6, md: 12 }}
               columnSpacing={{ xs: 1, sm: 2, md: 3 }}
             >
-              {foundItems.map((shirt, i) => {
+              {foundItems.map((shirt) => {
                 return (
-                  <Grid item xs={2} sm={4} key={i}>
-                    <Typography variant="h6" textAlign="center">
-                      {shirt.gender.toUpperCase()}
-                    </Typography>
-                    <Link
-                      to={`/${shirt.gender}/${shirt.id}`}
-                      component={RouterLink}
-                      sx={{ color: "primary.main" }}
-                    >
-                      <ImageListItem
-                        sx={{
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          bgcolor: "bg.light",
-                          p: 1,
-                          borderRadius: 2,
-                        }}
-                      >
-                        <Typography
-                          variant="h5"
-                          sx={{
-                            my: 1,
-                          }}
-                        ></Typography>
-                        <img src={shirt.imgs[0]} width={300} />
-                        <Typography fontSize="1.1rem" mt={2}>
-                          {shirt.name}
-                        </Typography>
-                        <Typography variant="h6" color="green">
-                          ${shirt.price}
-                        </Typography>
-                      </ImageListItem>
-                    </Link>
-                  </Grid>
+                  <Card key={shirt.id} shirt={shirt} gender={shirt.gender} />
                 );
               })}
             </Grid>

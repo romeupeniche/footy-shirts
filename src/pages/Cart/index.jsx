@@ -261,7 +261,7 @@ function Cart() {
             <Link
               to="/account"
               component={RouterLink}
-              sx={{ color: "primary.main" }}
+              sx={{ color: "secondary.main" }}
             >
               logging in
             </Link>{" "}

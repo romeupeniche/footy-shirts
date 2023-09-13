@@ -25,6 +25,7 @@ const StyledIconButton = styled(IconButton)(({ theme }) => ({
 function Footer() {
   return (
     <Box
+      component="footer"
       sx={{
         borderRadius: 2,
         boxShadow: 2,
@@ -48,6 +49,7 @@ function Footer() {
           justifyContent: { xs: "center", lg: "space-around" },
           alignItems: { xs: "center", lg: "stretch" },
           flexDirection: { xs: "column", lg: "row" },
+          overflowX: "hidden",
         }}
       >
         <Box
@@ -124,7 +126,7 @@ function Footer() {
           <Typography
             sx={{
               textAlign: "center",
-              width: { xs: 400, md: 500 },
+              width: { xs: 350, md: 500 },
               color: "typography.ghost",
             }}
           >

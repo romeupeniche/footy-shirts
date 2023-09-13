@@ -57,7 +57,7 @@ function GenderPage() {
         }}
       >
         <Box>
-          <Typography variant="h2" sx={{ mt: 5 }} fontWeight={700}>
+          <Typography variant="h2" sx={{ mt: 5 }} fontWeight={500}>
             {capitalizedGender}
             {`'`}s Jerseys
           </Typography>

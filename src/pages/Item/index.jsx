@@ -11,11 +11,12 @@ import {
   Modal,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { addItem } from "../../store/cartSlice";
+import { addItem } from "../../store/bagSlice";
 import { changeURLWithShirtTitle } from "../../helpers/ChangeURL";
 import { ref, remove } from "firebase/database";
-import { auth, db } from "../../firebase-config";
+import { db } from "../../firebase-config";
 import ZoomableImage from "./ZoomableImage";
+import useBagNotification from "../../hooks/useBagNotification";
 
 const modalStyle = {
   position: "absolute",
@@ -46,6 +47,7 @@ function Item() {
   const id = useParams().id;
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const triggerBagNotification = useBagNotification();
 
   useEffect(() => {
     if (currentShirts !== null) {
@@ -67,11 +69,12 @@ function Item() {
     }
   };
 
-  const addToCartHandler = async () => {
-    if (!auth.currentUser) {
-      navigate("/account");
-      return;
-    }
+  const addToBagHandler = () => {
+    triggerBagNotification({
+      name: shirt.name,
+      gender: capitalizedGender,
+      size,
+    });
     const item = {
       id,
       gender,
@@ -167,7 +170,7 @@ function Item() {
                     );
                   })}
                 </RadioGroup>
-                <ZoomableImage src={shirtImg} />
+                <ZoomableImage src={shirtImg} alt={shirt.name} />
               </Box>
               <Box
                 sx={{
@@ -227,9 +230,9 @@ function Item() {
                     },
                   }}
                   disabled={!size}
-                  onClick={addToCartHandler}
+                  onClick={addToBagHandler}
                 >
-                  Add To Cart
+                  Add To Bag
                 </Button>
                 {isAdmin && (
                   <Box

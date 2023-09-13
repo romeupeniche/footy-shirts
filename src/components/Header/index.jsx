@@ -11,34 +11,52 @@ import {
   Link,
 } from "@mui/material";
 import SportsSoccerIcon from "@mui/icons-material/SportsSoccer";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import PersonIcon from "@mui/icons-material/Person";
 import { useSelector } from "react-redux";
 import SearchButton from "./Search";
 import ResponsiveMenu from "./ResponsiveMenu";
+import BagNotification from "./BagNotification";
+import PropTypes from "prop-types";
 
-function Header() {
+function HideOnScroll(props) {
+  const { children, window } = props;
+  const trigger = useScrollTrigger({
+    target: window ? window() : undefined,
+  });
+
+  return (
+    <Slide appear={false} direction="down" in={!trigger}>
+      {children}
+    </Slide>
+  );
+}
+
+HideOnScroll.propTypes = {
+  children: PropTypes.element.isRequired,
+  window: PropTypes.func,
+};
+
+function Header(props) {
   const path = useLocation().pathname.split("/")[1];
-
-  const trigger = useScrollTrigger();
   const currentUser = useSelector((state) => state.account).user;
   const availablePaths = ["Men", "Women", "Kids"];
 
   return (
     <>
-      <Slide in={!trigger}>
+      <HideOnScroll {...props}>
         <AppBar
           sx={{
             boxShadow: 2,
+            bgcolor: "background.header",
+            backdropFilter: "blur(5px)",
           }}
         >
           <Toolbar
-            variant="dense"
             sx={{
               display: "flex",
               justifyContent: "space-between",
-              bgcolor: "primary.header",
               minHeight: "56px",
             }}
           >
@@ -92,9 +110,9 @@ function Header() {
             >
               <Link
                 component={RouterLink}
-                to="/cart"
+                to="/bag"
                 sx={{
-                  color: path === "cart" ? "secondary.main" : "primary.main",
+                  color: path === "bag" ? "secondary.main" : "primary.main",
                 }}
               >
                 <IconButton
@@ -103,7 +121,7 @@ function Header() {
                   aria-label="menu"
                   sx={{ mr: 2 }}
                 >
-                  <ShoppingCartIcon />
+                  <ShoppingBagIcon />
                 </IconButton>
               </Link>
               <SearchButton
@@ -136,7 +154,8 @@ function Header() {
             <ResponsiveMenu currentUser={currentUser} />
           </Toolbar>
         </AppBar>
-      </Slide>
+      </HideOnScroll>
+      <BagNotification />
     </>
   );
 }

@@ -6,7 +6,7 @@ import { onAuthStateChanged } from "@firebase/auth";
 import { auth, db } from "./firebase-config";
 import { useDispatch } from "react-redux";
 import { setUser } from "./store/accountSlice";
-import { setItems } from "./store/cartSlice";
+import { setItems } from "./store/bagSlice";
 import { onValue, ref } from "firebase/database";
 import { useEffect } from "react";
 import { setShirts } from "./store/shirtsSlice";
@@ -47,10 +47,10 @@ function App() {
             })
           );
 
-          const userCartRef = ref(db, "carts/" + user.uid + "/cart");
-          onValue(userCartRef, (snapshot) => {
-            const currentCart = snapshot.val();
-            dispatch(setItems(currentCart));
+          const userBagRef = ref(db, "carts/" + user.uid + "/cart");
+          onValue(userBagRef, (snapshot) => {
+            const currentBag = snapshot.val();
+            dispatch(setItems(currentBag));
           });
         } else {
           dispatch(setUser(null));
@@ -61,7 +61,6 @@ function App() {
 
   return (
     <>
-      <Header />
       <Container
         sx={{
           display: "flex",
@@ -72,6 +71,7 @@ function App() {
           mt: 8,
         }}
       >
+        <Header />
         <Outlet />
         <ScrollToTop />
         <ChangeURL />

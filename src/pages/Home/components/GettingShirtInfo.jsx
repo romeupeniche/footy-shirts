@@ -97,7 +97,7 @@ function GettingShirtInfo() {
               sx={{ color: "typography.ghost", maxWidth: 300 }}
             >
               Select the jerseys you love from our diverse assortment and add
-              them to your shopping cart.
+              them to your shopping bag.
             </Typography>
           </StyledStep>
           <StyledStep sx={{ mt: { xs: 5, md: 0 } }}>

@@ -12,12 +12,12 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { Link as RouterLink } from "react-router-dom";
 import SearchButton from "./Search";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import PersonIcon from "@mui/icons-material/Person";
 import PropTypes from "prop-types";
 
 export default function ResponsiveMenu({ currentUser }) {
-  const currentCart = useSelector((state) => state.cart);
+  const currentBag = useSelector((state) => state.bag);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const displayMenuHandler = (event) => {
@@ -93,13 +93,10 @@ export default function ResponsiveMenu({ currentUser }) {
           closeMenuWhenDoneSearchHandler={closeMenuWhenDoneSearchHandler}
           disableAnimation
         />
-        <Link to="/cart" component={RouterLink} sx={{ color: "primary.main" }}>
+        <Link to="/bag" component={RouterLink} sx={{ color: "primary.main" }}>
           <MenuItem>
-            <ShoppingCartIcon />{" "}
-            <Typography ml={1.35}>
-              {" "}
-              Cart ({currentCart.items?.length})
-            </Typography>
+            <ShoppingBagIcon />{" "}
+            <Typography ml={1.35}> Bag ({currentBag.items?.length})</Typography>
           </MenuItem>
         </Link>
         <Link

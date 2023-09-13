@@ -58,9 +58,6 @@ export default function Filter({ options, label, onSelectOptions }) {
               ))}
             </Box>
           )}
-          MenuProps={{
-            disableScrollLock: true,
-          }}
         >
           {options.map(({ name }) => (
             <MenuItem

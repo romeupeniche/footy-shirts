@@ -4,8 +4,8 @@ import { useSelector } from "react-redux";
 import { Link as RouterLink } from "react-router-dom";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
-function ProfileCart() {
-  const currentCart = useSelector((state) => state.cart);
+function ProfileBag() {
+  const currentBag = useSelector((state) => state.bag);
   return (
     <>
       <Typography mt={5} variant="h5" textAlign="center">
@@ -21,12 +21,12 @@ function ProfileCart() {
       >
         <Link
           component={RouterLink}
-          to={"/cart"}
+          to={"/bag"}
           sx={{ textDecoration: "none" }}
         >
           <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
             <OpenInNewIcon />
-            <Typography sx={{ fontSize: 20, ml: 1 }}>Cart</Typography>
+            <Typography sx={{ fontSize: 20, ml: 1 }}>Bag</Typography>
           </Box>
           <Grid
             container
@@ -36,7 +36,7 @@ function ProfileCart() {
               justifyContent: "space-evenly",
             }}
           >
-            {currentCart.items.map((item) => {
+            {currentBag.items.map((item) => {
               return (
                 <Grid item xs={2} sm={4} key={item.id}>
                   <Box
@@ -80,4 +80,4 @@ function ProfileCart() {
   );
 }
 
-export default ProfileCart;
+export default ProfileBag;

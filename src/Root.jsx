@@ -1,4 +1,4 @@
-import Cart from "./pages/Cart";
+import Bag from "./pages/Bag";
 import Account from "./pages/Account";
 import GenderPage, { loader as genderLoader } from "./pages/GenderPage";
 import SearchPage from "./pages/SearchPage";
@@ -10,6 +10,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Home from "./pages/Home";
 import Item from "./pages/Item";
 import App from "./App.jsx";
+import Checkout from "./pages/Checkout";
 
 const router = createBrowserRouter([
   {
@@ -31,8 +32,12 @@ const router = createBrowserRouter([
         element: <Item />,
       },
       {
-        path: "cart",
-        element: <Cart />,
+        path: "bag",
+        element: <Bag />,
+      },
+      {
+        path: "bag/checkout",
+        element: <Checkout />,
       },
       {
         path: "edit",
@@ -67,19 +72,22 @@ function Root() {
       background: {
         default: "#f6f6f6",
         dark: "#f6f6f6af",
+        transparentBlack: "rgba(0, 0, 0, .5)",
+        header: "rgba(246, 246, 246, 0.7)", // header and bagNotification
       },
       primary: {
         main: "#000",
         dark: "#00009b",
         darker: "#75b1ff",
         darkest: "#888",
-        header: "#f6f6f6",
       },
       secondary: {
         main: "#3741ff",
+        light: "#75b1ff",
         shade: "rgba(55, 65, 255, 0.25)",
       },
       bg: {
+        // remove
         main: "#f6f6f6",
         light: "#c8c8c8",
         lighter: "#b4b4b4",
@@ -88,7 +96,7 @@ function Root() {
       },
       typography: {
         money: "#3e9c35",
-        light: "#ccc",
+        light: "#b7b7b7",
         ghost: "#888",
       },
       utils: {

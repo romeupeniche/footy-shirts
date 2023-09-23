@@ -63,9 +63,10 @@ function Root() {
   const theme = createTheme({
     spacing: 10,
     shadows: [
-      "",
+      "none",
       "rgba(55, 65, 255, 0.25) 0px 30px 60px -12px, rgba(0, 0, 155) 0px 18px 36px -18px",
       "rgba(0, 0, 155, 0.15) 48px 0px 100px 0px", // header
+      ...Array(20).fill("none"),
     ],
     palette: {
       // light mode settings
@@ -124,9 +125,17 @@ function Root() {
       MuiButton: {
         styleOverrides: {
           iconSizeMedium: {
-            "& > *:first-child": {
+            "& > *:first-of-type": {
               fontSize: "1rem",
             },
+          },
+        },
+      },
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            boxShadow:
+              "rgba(0, 0, 0, 0.2) 0px 5px 5px -3px, rgba(0, 0, 0, 0.14) 0px 8px 10px 1px, rgba(0, 0, 0, 0.12) 0px 3px 14px 2px",
           },
         },
       },

@@ -22,7 +22,7 @@ function CustomerReviews() {
           justifyContent: "center",
           alignItems: "center",
           textAlign: "center",
-          width: 600,
+          width: { xs: 300, md: 600 },
         }}
       >
         <Typography variant="h3" fontSize="1.5rem" fontWeight="light">
@@ -51,7 +51,6 @@ function CustomerReviews() {
             flexDirection: { xs: "column", lg: "row" },
             justifyContent: "space-between",
             alignItems: "center",
-            width: 1000,
           }}
         >
           <CustomerQuotation

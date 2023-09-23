@@ -19,6 +19,7 @@ function Card({ shirt, gender }) {
             p: 1,
             borderRadius: 2,
             transition: "400ms",
+            overflow: "hidden",
             "&:hover": {
               boxShadow: 1,
             },

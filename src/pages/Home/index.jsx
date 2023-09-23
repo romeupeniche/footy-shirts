@@ -37,9 +37,11 @@ function Home() {
       <GetSize />
       <GettingShirtInfo />
       <CustomerReviews />
-      <Faq />
+      {/* <Faq /> */}
     </Container>
   );
 }
+
+// CustomerReviews (in the CustomerQuotation) and FAQ are with an overflow problem
 
 export default Home;

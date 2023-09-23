@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useLocation } from "react-router-dom";
 import SearchButton from "./Search";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import PersonIcon from "@mui/icons-material/Person";
@@ -18,6 +18,7 @@ import PropTypes from "prop-types";
 
 export default function ResponsiveMenu({ currentUser }) {
   const currentBag = useSelector((state) => state.bag);
+  const path = useLocation().pathname.split("/")[1];
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const displayMenuHandler = (event) => {
@@ -90,6 +91,7 @@ export default function ResponsiveMenu({ currentUser }) {
         </Link>
         <Divider />
         <SearchButton
+          color={path === "search" ? "secondary.main" : "primary.main"}
           closeMenuWhenDoneSearchHandler={closeMenuWhenDoneSearchHandler}
           disableAnimation
         />
@@ -122,7 +124,5 @@ export default function ResponsiveMenu({ currentUser }) {
 }
 
 ResponsiveMenu.propTypes = {
-  currentUser: {
-    photoURL: PropTypes.string,
-  },
+  currentUser: PropTypes.object.isRequired,
 };

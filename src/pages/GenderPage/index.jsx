@@ -33,7 +33,7 @@ function GenderPage() {
     if (Object.keys(currentShirts.shirts).length) {
       const shirts = currentShirts.shirts[gender];
       const loadedShirts = Object.keys(shirts).map(
-        (shirtTitle) => shirts[shirtTitle]
+        (shirtTitle) => shirts[shirtTitle],
       );
       setGenderShirts(loadedShirts);
     }
@@ -44,7 +44,7 @@ function GenderPage() {
     selectedOptions.length === 0
       ? genderShirts
       : genderShirts.filter((shirt) =>
-          selectedOptions.every((size) => shirt.sizes[size])
+          selectedOptions.every((size) => shirt.sizes[size]),
         );
 
   return (
@@ -84,7 +84,7 @@ function GenderPage() {
         >
           {filteredShirts.length > 0 ? (
             filteredShirts.map((shirt) => {
-              return <Card key={shirt.id} shirt={shirt} />;
+              return <Card key={shirt.id} shirt={shirt} gender={gender} />;
             })
           ) : (
             <Typography mt={10}>

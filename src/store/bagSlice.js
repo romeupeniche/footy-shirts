@@ -6,6 +6,7 @@ const initialBagState = {
   items: [],
   totalAmount: 0,
   bagNotification: [false, {}], // isBagShown, item
+  checkoutInputs: [],
 };
 
 const updateDatabase = async (bag) => {
@@ -23,7 +24,7 @@ const bagSlice = createSlice({
     changeItemQuantity(state, action) {
       const { id, size, quantity } = action.payload;
       const existingItemIndex = state.items.findIndex(
-        (item) => item.id === id && item.size === size
+        (item) => item.id === id && item.size === size,
       );
       const existingItem = state.items[existingItemIndex];
       const valueToBeAdded =
@@ -36,7 +37,7 @@ const bagSlice = createSlice({
     addItem(state, action) {
       const newItem = action.payload;
       const existingItemIndex = state.items.findIndex(
-        (item) => item.id === newItem.id && item.size === newItem.size
+        (item) => item.id === newItem.id && item.size === newItem.size,
       );
 
       if (existingItemIndex !== -1) {
@@ -62,13 +63,13 @@ const bagSlice = createSlice({
       const { id, size } = action.payload;
 
       const existingItem = state.items.find(
-        (item) => item.id === id && item.size === size
+        (item) => item.id === id && item.size === size,
       );
       const itemTotal = existingItem.price * existingItem.quantity;
       state.totalAmount -= itemTotal;
 
       state.items = state.items.filter(
-        (item) => !(item.id === id && item.size === size)
+        (item) => !(item.id === id && item.size === size),
       );
 
       updateDatabase(state);
@@ -88,6 +89,28 @@ const bagSlice = createSlice({
     clearBagNotificationMessage: (state) => {
       state.bagNotification[1] = {};
     },
+    addCheckoutInputValidity: (state, action) => {
+      const [isValid, itemLabel] = action.payload;
+      const newItem = { label: itemLabel, isValid };
+      const itemIdx = state.checkoutInputs.findIndex((item) => {
+        return item.label === itemLabel;
+      });
+      const itemExists = itemIdx !== -1 ? true : false;
+      let newArray;
+      if (itemExists) {
+        newArray = state.checkoutInputs.map((item) => {
+          if (item.label !== itemLabel) {
+            return item;
+          } else {
+            return newItem;
+          }
+        });
+      } else {
+        newArray = [...state.checkoutInputs, newItem];
+      }
+
+      state.checkoutInputs = newArray;
+    },
   },
 });
 
@@ -100,4 +123,5 @@ export const {
   triggerBagNotification,
   hideBagNotification,
   clearBagNotificationMessage,
+  addCheckoutInputValidity,
 } = bagSlice.actions;

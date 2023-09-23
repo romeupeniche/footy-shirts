@@ -44,7 +44,7 @@ function App() {
                 uid: user.uid,
               },
               isAdmin,
-            })
+            }),
           );
 
           const userBagRef = ref(db, "carts/" + user.uid + "/cart");

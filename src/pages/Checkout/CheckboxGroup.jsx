@@ -13,7 +13,7 @@ function CheckboxGroup({ data, setIsFullyChecked }) {
         i,
       };
     });
-    setInputs(newInputs);
+    setInputs(newInputs); // Ta jogando erro no console. "bad setState"
   }, [setInputs, data]);
 
   const handleChange = (event) => {
@@ -33,13 +33,12 @@ function CheckboxGroup({ data, setIsFullyChecked }) {
         key={i}
         required
         control={
-          <Checkbox checked={checked} onChange={handleChange} name={i} />
+          <Checkbox checked={checked} onChange={handleChange} name={`${i}`} />
         }
         label={label}
       />
     );
   });
-
   const allChecked = inputs.reduce((accumulator, currentObj) => {
     if (!currentObj.checked) {
       return false;
@@ -48,11 +47,13 @@ function CheckboxGroup({ data, setIsFullyChecked }) {
     }
   }, true);
 
-  if (allChecked) {
-    setIsFullyChecked(true);
-  } else {
-    setIsFullyChecked(false);
-  }
+  useEffect(() => {
+    if (allChecked) {
+      setIsFullyChecked(true);
+    } else {
+      setIsFullyChecked(false);
+    }
+  }, [allChecked]);
 
   return <>{content}</>;
 }

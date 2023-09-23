@@ -1,6 +1,8 @@
 import { MenuItem, TextField } from "@mui/material";
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { addCheckoutInputValidity } from "../../store/bagSlice";
 
 function Input({
   type = "string",
@@ -12,8 +14,25 @@ function Input({
   data = [],
   placeholder = "",
 }) {
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState(defaultValue);
   const [isError, setIsError] = useState(false);
+  const dispatch = useDispatch();
+
+  // funcionando, porem nao ta na melhor execucao.
+  // useEffect ta reinicializando o componente toda vez que o input muda
+  // talvez olhar na resolucao do curso de react.
+  useEffect(() => {
+    let isInputValid;
+    if (defaultValue !== "" || !required) {
+      isInputValid = true;
+    } else if (input.toString() === "") {
+      isInputValid = false;
+    } else {
+      isInputValid = !isError;
+    }
+    const itemProps = [isInputValid, label];
+    dispatch(addCheckoutInputValidity(itemProps));
+  }, [isError, input]);
 
   const onStringChange = (e) => {
     setIsError(false);

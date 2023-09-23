@@ -115,7 +115,7 @@ function SearchButton(props) {
 export default SearchButton;
 
 SearchButton.propTypes = {
-  disableAnimation: PropTypes.bool.isRequired,
+  disableAnimation: PropTypes.bool,
   color: PropTypes.string.isRequired,
-  closeMenuWhenDoneSearchHandler: PropTypes.func.isRequired,
+  closeMenuWhenDoneSearchHandler: PropTypes.func,
 };

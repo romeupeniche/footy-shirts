@@ -30,7 +30,6 @@ const provinces = [
   "Saskatchewan",
   "Yukon Territory",
 ];
-
 const paymentInputs = ["Name on card", "Card Number", "MM/YY", "CVV"];
 const agreementInputs = [
   <Typography key="input1">
@@ -47,9 +46,10 @@ const agreementInputs = [
   </Typography>,
   "I confirm my order details are correct.",
   "I acknowledge Footy Shirts is not liable for any information errors.",
-  "I understand that I will receive email updates about the status and delivery of my order.",
+  // "I understand that I will receive email updates about the status and delivery of my order.",
+  "I acknowledge that this website is a personal project and not a real store.",
+  "I acknowledge that my information won't be stored or used for any other purposes.",
 ];
-
 const firstInputs = [
   "First Name",
   "Last Name",
@@ -58,19 +58,28 @@ const firstInputs = [
 ];
 
 function Checkout() {
-  const currentBag = useSelector((state) => state.bag);
+  const currentBagItems = useSelector((state) => state.bag.items);
   const [isAllCheckboxesChecked, setIsAllCheckboxesChecked] = useState(false);
   const { state } = useLocation();
   const navigate = useNavigate();
+  const allInputsValidity = useSelector((state) => state.bag.checkoutInputs);
+
+  const setIsAllCheckboxesCheckedHandler = (value) => {
+    setIsAllCheckboxesChecked(value);
+  };
 
   useEffect(() => {
-    if (!state?.isFromBagPage || currentBag.items.length <= 0) {
+    if (!state?.isFromBagPage || currentBagItems.length <= 0) {
       navigate("/bag");
       return;
     }
   });
 
-  const isAbleToContinueToPayment = isAllCheckboxesChecked && true;
+  const isAllInputsValid = allInputsValidity.reduce((prevBool, item) => {
+    return item.isValid && prevBool;
+  }, true);
+
+  const isAbleToContinueToPayment = isAllCheckboxesChecked && isAllInputsValid;
   return (
     <Container>
       <Typography
@@ -88,7 +97,7 @@ function Checkout() {
           sx={{ color: "secondary.light", fontWeight: "100", ml: 2 }}
         />
       </Typography>
-      {!currentBag.items.length ? (
+      {!currentBagItems.length ? (
         <Typography>Your bag is empty! Start buying!</Typography>
       ) : (
         <>
@@ -146,7 +155,7 @@ function Checkout() {
                 <Box display="flex" flexDirection="column" mt={8}>
                   <CheckboxGroup
                     data={agreementInputs}
-                    setIsFullyChecked={setIsAllCheckboxesChecked}
+                    setIsFullyChecked={setIsAllCheckboxesCheckedHandler}
                   />
                   <Button
                     disabled={!isAbleToContinueToPayment}

@@ -28,11 +28,11 @@ function calculateSize(userChest, userWaist) {
   for (const size of sizes) {
     const chestDistance = Math.min(
       Math.abs(userChest - size.chestRange[0]),
-      Math.abs(userChest - size.chestRange[1])
+      Math.abs(userChest - size.chestRange[1]),
     );
     const waistDistance = Math.min(
       Math.abs(userWaist - size.waistRange[0]),
-      Math.abs(userWaist - size.waistRange[1])
+      Math.abs(userWaist - size.waistRange[1]),
     );
     const totalDistance = chestDistance + waistDistance;
 
@@ -152,7 +152,7 @@ function GetSize() {
           Calculate
         </Button>
       </Box>
-      <TableContainer component={Paper} sx={{ mt: 5, boxShadow: "none" }}>
+      <TableContainer sx={{ mt: 5, boxShadow: "none" }}>
         <Typography sx={{ textAlign: "center", fontSize: "1.5rem" }}>
           Size Guide
         </Typography>

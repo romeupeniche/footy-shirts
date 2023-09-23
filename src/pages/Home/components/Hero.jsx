@@ -33,11 +33,12 @@ function Hero({ newShirts }) {
         <Box
           sx={{
             height: "85vh",
+            minHeight: 500,
             display: "flex",
             justifyContent: "space-around",
             alignItems: "center",
             flexDirection: { xs: "column", lg: "row" },
-            mt: { xs: 40, sm: 30, lg: 0 },
+            mt: { xs: 40, md: 30, lg: 0 },
             mb: { lg: 0, xs: 50 },
           }}
         >
@@ -115,7 +116,11 @@ function Hero({ newShirts }) {
             }}
           >
             <Box
-              sx={{ width: "auto", height: 550, pointerEvents: "none" }}
+              sx={{
+                width: "auto",
+                height: { xs: 480, md: 550 },
+                pointerEvents: "none",
+              }}
               component="img"
               loading="lazy"
               src={newShirts[0].imgs[0]}
@@ -125,7 +130,7 @@ function Hero({ newShirts }) {
               title="New Release"
               sx={{
                 position: "absolute",
-                right: "5%",
+                right: "8%",
                 top: { xs: "70%", md: "20%" },
               }}
             />

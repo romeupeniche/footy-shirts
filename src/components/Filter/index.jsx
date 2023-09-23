@@ -27,7 +27,7 @@ export default function Filter({ options, label, onSelectOptions }) {
       target: { value },
     } = event;
     setSelectedOptionsNames(
-      typeof value === "string" ? value.split(",") : value
+      typeof value === "string" ? value.split(",") : value,
     );
 
     const nameToValueMap = {};
@@ -77,6 +77,5 @@ export default function Filter({ options, label, onSelectOptions }) {
 Filter.propTypes = {
   options: PropTypes.array.isRequired,
   label: PropTypes.string.isRequired,
-  selectedOptions: PropTypes.array.isRequired,
   onSelectOptions: PropTypes.func.isRequired,
 };

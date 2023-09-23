@@ -24,7 +24,7 @@ const bagSlice = createSlice({
     changeItemQuantity(state, action) {
       const { id, size, quantity } = action.payload;
       const existingItemIndex = state.items.findIndex(
-        (item) => item.id === id && item.size === size,
+        (item) => item.id === id && item.size === size
       );
       const existingItem = state.items[existingItemIndex];
       const valueToBeAdded =
@@ -37,7 +37,7 @@ const bagSlice = createSlice({
     addItem(state, action) {
       const newItem = action.payload;
       const existingItemIndex = state.items.findIndex(
-        (item) => item.id === newItem.id && item.size === newItem.size,
+        (item) => item.id === newItem.id && item.size === newItem.size
       );
 
       if (existingItemIndex !== -1) {
@@ -63,21 +63,21 @@ const bagSlice = createSlice({
       const { id, size } = action.payload;
 
       const existingItem = state.items.find(
-        (item) => item.id === id && item.size === size,
+        (item) => item.id === id && item.size === size
       );
       const itemTotal = existingItem.price * existingItem.quantity;
       state.totalAmount -= itemTotal;
 
       state.items = state.items.filter(
-        (item) => !(item.id === id && item.size === size),
+        (item) => !(item.id === id && item.size === size)
       );
 
       updateDatabase(state);
     },
     setItems(state, action) {
       const newBag = action.payload;
-      state.items = newBag.items ?? initialBagState.items;
-      state.totalAmount = newBag.totalAmount;
+      state.items = newBag?.items ?? initialBagState.items;
+      state.totalAmount = newBag?.totalAmount ?? initialBagState.totalAmount;
     },
     triggerBagNotification(state, action) {
       state.bagNotification[0] = true;

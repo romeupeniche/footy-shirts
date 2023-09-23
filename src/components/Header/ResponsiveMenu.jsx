@@ -55,7 +55,6 @@ export default function ResponsiveMenu({ currentUser }) {
         open={open}
         onClose={closeMenuHandler}
         onClick={closeMenuHandler}
-        getContentAnchorEl={null}
         keepMounted
         disableScrollLock
         transformOrigin={{ horizontal: "right", vertical: "top" }}

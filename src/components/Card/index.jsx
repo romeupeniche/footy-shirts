@@ -1,15 +1,26 @@
 import { Box, Container, Grid, Link, Typography } from "@mui/material";
 import PropTypes from "prop-types";
 import { Link as RouterLink } from "react-router-dom";
+import AddIcon from "@mui/icons-material/Add";
 
-function Card({ shirt, gender }) {
+function Card({ shirt = null, gender = null, newItemCard = false }) {
+  let linkTo = "";
+  if (gender) {
+    linkTo = `/${gender}/${shirt.id}`;
+  } else if (!gender && shirt) {
+    linkTo = `${shirt.id}`;
+  } else {
+    linkTo = "/add";
+  }
+
+  let title = "";
+
+  if (gender) {
+    title = gender.toUpperCase();
+  }
   return (
     <Grid item xs={2} sm={4}>
-      <Link
-        component={RouterLink}
-        to={gender ? `/${gender}/${shirt.id}` : `${shirt.id}`}
-        sx={{ textDecoration: "none" }}
-      >
+      <Link component={RouterLink} to={linkTo} sx={{ textDecoration: "none" }}>
         <Container
           sx={{
             display: "flex",
@@ -25,9 +36,7 @@ function Card({ shirt, gender }) {
             },
           }}
         >
-          {gender && (
-            <Typography variant="h5">{gender.toUpperCase()}</Typography>
-          )}
+          <Typography variant="h5">{title}</Typography>
           <Box
             sx={{
               display: "flex",
@@ -35,32 +44,46 @@ function Card({ shirt, gender }) {
               alignItems: "center",
             }}
           >
-            <Box
-              component="img"
-              src={shirt.imgs[0]}
-              sx={{
-                maxHeight: "380px",
-                borderRadius: 2,
-              }}
-            />
+            {!newItemCard ? (
+              <Box
+                component="img"
+                src={shirt.imgs[0]}
+                sx={{
+                  maxHeight: "380px",
+                  borderRadius: 2,
+                }}
+              />
+            ) : (
+              <Box
+                component="div"
+                sx={{
+                  width: "304px",
+                  height: "380px",
+                  borderRadius: 2,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <AddIcon sx={{ transform: "scale(10)" }} />
+              </Box>
+            )}
           </Box>
-          <Box textAlign="center">
-            <Typography
-              fontSize="1.1rem"
-              mt={2}
-              maxWidth={{
-                lg: 300,
-                md: 200,
-                xs: 300,
-              }}
-              noWrap
-            >
-              {shirt.name}
-            </Typography>
-            <Typography variant="h6" color="green">
-              ${shirt.price}
-            </Typography>
-          </Box>
+          <Typography
+            fontSize="1.1rem"
+            mt={2}
+            maxWidth={{
+              lg: 300,
+              md: 200,
+              xs: 300,
+            }}
+            noWrap
+          >
+            {!newItemCard ? shirt.name : "Admin only!"}
+          </Typography>
+          <Typography variant="h6" color="green">
+            {!newItemCard ? `$${shirt.price}` : "Add New Item"}
+          </Typography>
         </Container>
       </Link>
     </Grid>
@@ -70,6 +93,7 @@ function Card({ shirt, gender }) {
 export default Card;
 
 Card.propTypes = {
-  shirt: PropTypes.object.isRequired,
-  gender: PropTypes.string.isRequired,
+  shirt: PropTypes.object,
+  gender: PropTypes.string,
+  newItemCard: PropTypes.bool,
 };

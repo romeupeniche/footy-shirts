@@ -1,14 +1,13 @@
-import { Box } from "@mui/material";
 import Form from "./Form";
 import { useSelector } from "react-redux";
 import Profile from "./Profile";
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 
 function Account() {
   const currentUser = useSelector((state) => state.account).user;
   const [isLogged, setIsLogged] = useState(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (currentUser.email) {
       setIsLogged(true);
     } else {
@@ -16,21 +15,7 @@ function Account() {
     }
   }, [currentUser]);
 
-  return (
-    <Box
-      component="form"
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-      noValidate
-      autoComplete="off"
-    >
-      {isLogged ? <Profile /> : <Form />}
-    </Box>
-  );
+  return <>{isLogged ? <Profile /> : <Form />}</>;
 }
 
 export default Account;

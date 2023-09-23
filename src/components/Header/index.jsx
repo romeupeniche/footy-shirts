@@ -57,9 +57,8 @@ function Header(props) {
             sx={{
               display: "flex",
               justifyContent: "space-between",
-              minHeight: "56px",
+              minHeight: "64px",
               px: "30px",
-              minHeight: { xs: "64px" },
             }}
           >
             <Box

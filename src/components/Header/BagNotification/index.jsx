@@ -40,6 +40,7 @@ function BagNotification() {
       }}
     >
       <Typography
+        component="span"
         textAlign="center"
         sx={{ fontSize: { xs: ".8rem", md: "1rem" } }}
       >

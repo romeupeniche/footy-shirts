@@ -5,10 +5,9 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLoaderData } from "react-router-dom";
-import AddNewItemBox from "./AddNewItemBox";
 import Filter from "../../components/Filter";
 import Card from "../../components/Card";
 
@@ -28,12 +27,12 @@ function GenderPage() {
     { name: "Extra Large", value: "XL" },
   ];
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setIsLoading(true);
     if (Object.keys(currentShirts.shirts).length) {
       const shirts = currentShirts.shirts[gender];
       const loadedShirts = Object.keys(shirts).map(
-        (shirtTitle) => shirts[shirtTitle],
+        (shirtTitle) => shirts[shirtTitle]
       );
       setGenderShirts(loadedShirts);
     }
@@ -44,7 +43,7 @@ function GenderPage() {
     selectedOptions.length === 0
       ? genderShirts
       : genderShirts.filter((shirt) =>
-          selectedOptions.every((size) => shirt.sizes[size]),
+          selectedOptions.every((size) => shirt.sizes[size])
         );
 
   return (
@@ -52,7 +51,7 @@ function GenderPage() {
       <Box
         sx={{
           display: "flex",
-          alignItems: "flex-end",
+          flexDirection: "column",
           justifyContent: "space-between",
         }}
       >
@@ -65,11 +64,13 @@ function GenderPage() {
             /{gender}
           </Typography>
         </Box>
-        <Filter
-          options={filterOptions}
-          label="Filter By Size"
-          onSelectOptions={setSelectedOptions}
-        />
+        <Box sx={{ alignSelf: "flex-end" }}>
+          <Filter
+            options={filterOptions}
+            label="Filter By Size"
+            onSelectOptions={setSelectedOptions}
+          />
+        </Box>
       </Box>
       {isLoading ? (
         <CircularProgress />
@@ -84,7 +85,7 @@ function GenderPage() {
         >
           {filteredShirts.length > 0 ? (
             filteredShirts.map((shirt) => {
-              return <Card key={shirt.id} shirt={shirt} gender={gender} />;
+              return <Card key={shirt.id} shirt={shirt} />;
             })
           ) : (
             <Typography mt={10}>
@@ -93,7 +94,7 @@ function GenderPage() {
                 : "No shirts are currently available. Check back later for more selections."}
             </Typography>
           )}
-          {isAdmin && <AddNewItemBox />}
+          {isAdmin && <Card newItemCard={true} />}
         </Grid>
       )}
     </Container>

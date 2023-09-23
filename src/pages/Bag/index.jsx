@@ -1,8 +1,7 @@
-import { Box, Container, Typography } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
-import ItemBox from "./ItemBox";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
-import BagSummary from "../../components/BagSummary";
+import BagItems from "../../components/BagItems";
 
 function Bag() {
   const currentBag = useSelector((state) => state.bag);
@@ -27,24 +26,7 @@ function Bag() {
       {!currentBag.items.length ? (
         <Typography>Your bag is empty! Start buying!</Typography>
       ) : (
-        <>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              flexDirection: { xs: "column-reverse", md: "row" },
-            }}
-          >
-            <Box>
-              {currentBag.items.map((item) => {
-                const uniqueItemId = item.gender + item.id + item.size;
-
-                return <ItemBox item={item} key={uniqueItemId} />;
-              })}
-            </Box>
-            <BagSummary checkoutButton={true} />
-          </Box>
-        </>
+        <BagItems />
       )}
     </Container>
   );

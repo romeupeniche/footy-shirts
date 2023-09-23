@@ -1,8 +1,9 @@
 import { Box, CircularProgress, Grid, Typography } from "@mui/material";
-import PropTypes from "prop-types";
 import Card from "../../../components/Card";
+import useNewShirtsByGender from "../../../hooks/useNewShirtsByGender";
 
-function NewReleases({ newShirts, isLoading }) {
+function NewReleases() {
+  const [newShirts, isLoading] = useNewShirtsByGender();
   return (
     <>
       <Typography
@@ -44,8 +45,3 @@ function NewReleases({ newShirts, isLoading }) {
 }
 
 export default NewReleases;
-
-NewReleases.propTypes = {
-  newShirts: PropTypes.array,
-  isLoading: PropTypes.bool.isRequired,
-};

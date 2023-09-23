@@ -9,6 +9,7 @@ import {
   RadioGroup,
   Typography,
   Modal,
+  IconButton,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { addItem } from "../../store/bagSlice";
@@ -17,6 +18,8 @@ import { ref, remove } from "firebase/database";
 import { db } from "../../firebase-config";
 import ZoomableImage from "./ZoomableImage";
 import useBagNotification from "../../hooks/useBagNotification";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const modalStyle = {
   position: "absolute",
@@ -191,9 +194,23 @@ function Item() {
                 }}
               >
                 <Box>
-                  <Typography variant="h4" fontWeight={500} sx={{ mt: 3 }}>
-                    {shirt.name}
-                  </Typography>
+                  <Box display="flex">
+                    <Typography variant="h4" fontWeight={500} sx={{ mt: 3 }}>
+                      {shirt.name}
+                    </Typography>
+                    {isAdmin && (
+                      <>
+                        <IconButton onClick={editHandler}>
+                          <EditIcon color="secondary" />
+                        </IconButton>
+                        <IconButton
+                          onClick={setIsConfirmDeleteModalOpenHandler}
+                        >
+                          <DeleteIcon color="error" />
+                        </IconButton>
+                      </>
+                    )}
+                  </Box>
                   <Typography fontWeight={400}>
                     {capitalizedGender}&apos;s Nike Dri-FIT ADV Football Shirt
                   </Typography>
@@ -234,30 +251,6 @@ function Item() {
                 >
                   Add To Bag
                 </Button>
-                {isAdmin && (
-                  <Box
-                    sx={{
-                      bgcolor: "primary.darker",
-                      width: "90%",
-                      display: "flex",
-                      justifyContent: "space-around",
-                      alignItems: "center",
-                      py: 1,
-                      borderRadius: 5,
-                    }}
-                  >
-                    <Button variant="outlined" onClick={editHandler}>
-                      Edit
-                    </Button>
-                    <Button
-                      color="error"
-                      variant="outlined"
-                      onClick={setIsConfirmDeleteModalOpenHandler}
-                    >
-                      Delete
-                    </Button>
-                  </Box>
-                )}
               </Box>
             </Box>
             <Modal

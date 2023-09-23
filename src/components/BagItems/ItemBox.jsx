@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import { useDispatch } from "react-redux";
 import { useState } from "react";
 
-function ItemBox({ item }) {
+function ItemBox({ item, readOnly }) {
   const dispatch = useDispatch();
   const [quantity, setQuantity] = useState(item.quantity);
   const capitalizedGender =
@@ -47,7 +47,7 @@ function ItemBox({ item }) {
         component="img"
         src={item.img}
         m={{ xs: 1 }}
-        sx={{ width: { xs: 250 } }}
+        sx={{ width: { xs: 250 }, borderRadius: 10 }}
       />
       <Box
         sx={{
@@ -73,16 +73,20 @@ function ItemBox({ item }) {
             sx={{ textAlign: { xs: "center", md: "start" } }}
             lineHeight={1}
           >
-            <Link
-              to={`/${item.gender}/${item.id}`}
-              component={RouterLink}
-              sx={{
-                color: "primary.main",
-                textDecoration: "none",
-              }}
-            >
-              {item.name}
-            </Link>
+            {readOnly ? (
+              item.name
+            ) : (
+              <Link
+                to={`/${item.gender}/${item.id}`}
+                component={RouterLink}
+                sx={{
+                  color: "primary.main",
+                  textDecoration: "none",
+                }}
+              >
+                {item.name}
+              </Link>
+            )}
           </Typography>
           <Typography fontWeight={500}>
             {capitalizedGender}&apos;s Nike Dri-FIT ADV Football Shirt
@@ -103,20 +107,26 @@ function ItemBox({ item }) {
               <Typography fontSize="inherit" fontWeight={400} mr={1}>
                 Qty.
               </Typography>
-              <TextField
-                type="number"
-                size="small"
-                sx={{ width: "45px", p: 0 }}
-                onChange={setQuantityHandler}
-                onBlur={handleQuantityBlur}
-                value={quantity}
-                inputProps={{
-                  style: { padding: 1, paddingLeft: 8 },
-                }}
-              />
+              {readOnly ? (
+                <Typography fontSize="inherit" fontWeight={400}>
+                  {quantity}
+                </Typography>
+              ) : (
+                <TextField
+                  type="number"
+                  size="small"
+                  sx={{ width: "45px", p: 0 }}
+                  onChange={setQuantityHandler}
+                  onBlur={handleQuantityBlur}
+                  value={quantity}
+                  inputProps={{
+                    style: { padding: 1, paddingLeft: 8 },
+                  }}
+                />
+              )}
             </Box>
           </Box>
-          <Box>
+          {!readOnly && (
             <Box
               sx={{
                 cursor: "pointer",
@@ -132,7 +142,7 @@ function ItemBox({ item }) {
             >
               Remove
             </Box>
-          </Box>
+          )}
         </Box>
         <Box>
           <Typography
@@ -154,4 +164,5 @@ export default ItemBox;
 
 ItemBox.propTypes = {
   item: PropTypes.object.isRequired,
+  readOnly: PropTypes.bool.isRequired,
 };

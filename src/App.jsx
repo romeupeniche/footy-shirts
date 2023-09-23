@@ -7,7 +7,7 @@ import { auth, db } from "./firebase-config";
 import { useDispatch } from "react-redux";
 import { setUser } from "./store/accountSlice";
 import { setItems } from "./store/bagSlice";
-import { onValue, ref } from "firebase/database";
+import { get, onValue, ref } from "firebase/database";
 import { useEffect } from "react";
 import { setShirts } from "./store/shirtsSlice";
 import ScrollToTop from "./helpers/ScrollToTop";
@@ -17,46 +17,46 @@ function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    onValue(ref(db), (snapshot) => {
-      const data = snapshot.val();
+    onValue(ref(db, "shirts/"), async (snapshot) => {
+      const data = await snapshot.val();
       if (data !== null) {
-        const shirts = data.shirts;
+        const shirts = data;
 
         dispatch(setShirts(shirts));
+      } else {
+        dispatch(setShirts(null));
       }
     });
   }, [dispatch]);
 
-  onAuthStateChanged(auth, (user) => {
-    onValue(ref(db), async (snapshot) => {
-      const data = await snapshot.val();
-      if (data !== null) {
-        const admins = data.admins;
-        if (user) {
-          const isAdmin =
-            admins.filter((adminId) => adminId === user?.uid).length > 0;
-          dispatch(
-            setUser({
-              user: {
-                displayName: user.displayName,
-                email: user.email,
-                photoURL: user.photoURL,
-                uid: user.uid,
-              },
-              isAdmin,
-            }),
-          );
+  onAuthStateChanged(auth, async (user) => {
+    const dataSnapshot = await get(ref(db));
+    const data = dataSnapshot.val();
 
-          const userBagRef = ref(db, "carts/" + user.uid + "/cart");
-          onValue(userBagRef, (snapshot) => {
-            const currentBag = snapshot.val();
-            dispatch(setItems(currentBag));
-          });
-        } else {
-          dispatch(setUser(null));
-        }
-      }
-    });
+    if (data !== null) {
+      const admins = data.admins || [];
+      const isAdmin = admins.includes(user?.uid);
+
+      dispatch(
+        setUser({
+          user: {
+            displayName: user.displayName, // remove
+            email: user.email,
+            photoURL: user.photoURL, // remove
+            uid: user.uid,
+          },
+          isAdmin,
+        })
+      );
+
+      const userBagRef = ref(db, "carts/" + user.uid + "/cart");
+      onValue(userBagRef, (snapshot) => {
+        const currentBag = snapshot.val();
+        dispatch(setItems(currentBag));
+      });
+    } else {
+      dispatch(setUser(null));
+    }
   });
 
   return (

@@ -6,7 +6,7 @@ function CustomerQuotation({ img, location, quotation, name }) {
   return (
     <Box
       sx={{
-        width: 600,
+        width: { xs: 400, sm: 600 },
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
@@ -16,7 +16,7 @@ function CustomerQuotation({ img, location, quotation, name }) {
       <Typography
         fontWeight="medium"
         fontSize="1.4rem"
-        sx={{ width: { xs: 300, lg: "fit-content" } }}
+        sx={{ width: { xs: 300, sm: 500 } }}
       >
         &quot;{quotation}&quot;
       </Typography>

@@ -12,15 +12,19 @@ import {
   RadioGroup,
   TextField,
   Typography,
+  InputAdornment,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import InfoIcon from "@mui/icons-material/Info";
+import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 
 function Form({
   submitHandler,
   isNotAbleToChangeGender,
   currentGender,
   currentItem,
+  setInputs,
 }) {
   const [name, setName] = useState(currentItem ? currentItem.name : "");
   const [img1, setImg1] = useState(currentItem ? currentItem.imgs[0] : "");
@@ -47,6 +51,17 @@ function Form({
           sizeXL: false,
         }
   );
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setInputs({
+      name,
+      imgs: [img1, img2],
+      gender,
+      price,
+      sizes: availableSizes,
+    });
+  }, [name, img1, img2, gender, price, availableSizes, setInputs]);
 
   const handlePriceChange = (value) => {
     if (value <= 500 && value >= 0) {
@@ -95,6 +110,10 @@ function Form({
 
   const handlePopoverClose = () => {
     setAnchorEl(null);
+  };
+
+  const cancelHandler = () => {
+    navigate(-1);
   };
   const urlPattern =
     /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-/]))?/;
@@ -202,112 +221,193 @@ function Form({
     },
   ];
 
+  const adornmentProps = {
+    fontSize: "10px",
+    onMouseEnter: handlePopoverOpen,
+    onMouseLeave: handlePopoverClose,
+    sx: {
+      color: "black",
+    },
+  };
+
   return (
-    <>
-      {neededTextInputs.map(
-        ({ title, value, onChange, error, infoText, type, inputs, isLink }) => {
-          const onChangeFunc = (e) => onChange(e.target.value);
-          return (
-            <Box key={`${title} box`} my={2} onFocus={resetInvalidHandler}>
-              {!type ? (
-                <TextField
-                  id={title}
-                  label={title}
-                  variant="standard"
-                  required
-                  type="text"
-                  value={value}
-                  onChange={onChangeFunc}
-                  error={error && isInvalid}
-                  helperText={
-                    error &&
-                    isInvalid &&
-                    (!isLink
-                      ? `Your shirt ${title.toLowerCase()} must be > 12.`
-                      : "Please give a valid url.")
-                  }
-                />
-              ) : type === "radio" ? (
-                <FormControl error={error && isInvalid} required>
-                  <FormLabel>{title}</FormLabel>
-                  <RadioGroup row value={value} onChange={onChangeFunc}>
-                    {inputs.map((label) => (
-                      <FormControlLabel
-                        key={`${title} radio ${label}`}
-                        value={label.toLowerCase()}
-                        control={<Radio />}
-                        disabled={isNotAbleToChangeGender}
-                        label={label}
-                      />
-                    ))}
-                  </RadioGroup>
-                </FormControl>
-              ) : type === "checkbox" ? (
-                <FormControl error={error && isInvalid} required>
-                  <FormLabel>{title}</FormLabel>
-                  <FormGroup row>
-                    {inputs.map(({ title, value, name }) => {
-                      return (
-                        <FormControlLabel
-                          key={`${title} checkbox`}
-                          control={
-                            <Checkbox checked={value} onChange={onChange} />
-                          }
-                          label={title}
-                          name={name}
-                        />
-                      );
-                    })}
-                  </FormGroup>
-                </FormControl>
-              ) : (
-                <FormControl variant="standard" required>
-                  <FormLabel>{title}</FormLabel>
-                  <Input
-                    startAdornment="$"
-                    type="number"
-                    onChange={onChangeFunc}
-                    value={value}
-                    error={error && isInvalid}
-                  />
-                </FormControl>
-              )}
-              <InfoIcon
-                fontSize="10px"
-                id={title}
-                onMouseEnter={handlePopoverOpen}
-                onMouseLeave={handlePopoverClose}
-              />
-              <Popover
-                sx={{
-                  pointerEvents: "none",
-                }}
-                open={open && anchorEl.id === title}
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "left",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "left",
-                }}
-                onClose={handlePopoverClose}
-                disableRestoreFocus
+    <Box>
+      <FormGroup>
+        {neededTextInputs.map(
+          ({
+            title,
+            value,
+            onChange,
+            error,
+            infoText,
+            type,
+            inputs,
+            isLink,
+          }) => {
+            const onChangeFunc = (e) => onChange(e.target.value);
+            return (
+              <Box
+                key={`${title} box`}
+                width={300}
+                my={2}
+                onFocus={resetInvalidHandler}
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
               >
-                <Typography sx={{ p: 1, width: "300px" }}>
-                  {infoText}
-                </Typography>
-              </Popover>
-            </Box>
-          );
-        }
-      )}
-      <Button onClick={verifySubmitHandler}>
-        {isNotAbleToChangeGender ? "Update Shirt" : "Add New Shirt"}
-      </Button>
-    </>
+                {!type ? (
+                  <TextField
+                    id={title}
+                    label={title}
+                    required
+                    type="text"
+                    value={value}
+                    onChange={onChangeFunc}
+                    error={error && isInvalid}
+                    fullWidth
+                    helperText={
+                      error &&
+                      isInvalid &&
+                      (!isLink
+                        ? `Your shirt ${title.toLowerCase()} must be > 12.`
+                        : "Please give a valid url.")
+                    }
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <InfoIcon id={title} {...adornmentProps} />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                ) : type === "radio" ? (
+                  <>
+                    <FormControl error={error && isInvalid} required fullWidth>
+                      <FormLabel>{title}</FormLabel>
+                      <RadioGroup row value={value} onChange={onChangeFunc}>
+                        {inputs.map((label) => (
+                          <FormControlLabel
+                            key={`${title} radio ${label}`}
+                            value={label.toLowerCase()}
+                            control={<Radio />}
+                            disabled={isNotAbleToChangeGender}
+                            label={label}
+                          />
+                        ))}
+                      </RadioGroup>
+                    </FormControl>
+                    <InfoIcon id={title} {...adornmentProps} />
+                  </>
+                ) : type === "checkbox" ? (
+                  <>
+                    <FormControl error={error && isInvalid} required fullWidth>
+                      <FormLabel>{title}</FormLabel>
+                      <FormGroup
+                        row
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-evenly",
+                        }}
+                      >
+                        {inputs.map(({ title, value, name }) => {
+                          return (
+                            <FormControlLabel
+                              key={`${title} checkbox`}
+                              control={
+                                <Checkbox checked={value} onChange={onChange} />
+                              }
+                              label={title}
+                              name={name}
+                            />
+                          );
+                        })}
+                      </FormGroup>
+                    </FormControl>
+                    <InfoIcon id={title} {...adornmentProps} />
+                  </>
+                ) : (
+                  <FormControl variant="standard" required fullWidth>
+                    <FormLabel>{title}</FormLabel>
+                    <Input
+                      startAdornment="$"
+                      type="number"
+                      onChange={onChangeFunc}
+                      value={value}
+                      fullWidth
+                      error={error && isInvalid}
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <InfoIcon id={title} {...adornmentProps} />
+                        </InputAdornment>
+                      }
+                    />
+                  </FormControl>
+                )}
+                <Popover
+                  sx={{
+                    pointerEvents: "none",
+                  }}
+                  open={open && anchorEl.id === title}
+                  anchorEl={anchorEl}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "left",
+                  }}
+                  onClose={handlePopoverClose}
+                  disableRestoreFocus
+                >
+                  <Typography sx={{ p: 1, width: "300px" }}>
+                    {infoText}
+                  </Typography>
+                </Popover>
+              </Box>
+            );
+          }
+        )}
+        <Box my={2}>
+          <Button
+            variant="contained"
+            onClick={verifySubmitHandler}
+            size="large"
+            sx={{
+              borderRadius: 5,
+              mr: 2,
+            }}
+          >
+            {isNotAbleToChangeGender ? "Update Shirt" : "Add New Shirt"}
+          </Button>
+          <Button
+            variant="outlined"
+            size="large"
+            onClick={cancelHandler}
+            sx={{
+              borderRadius: 2,
+              borderColor: "utils.delete",
+              color: "utils.delete",
+              "&:hover": {
+                borderColor: "utils.darkerDelete",
+                color: "utils.darkerDelete",
+              },
+            }}
+          >
+            Cancel
+          </Button>
+        </Box>
+      </FormGroup>
+    </Box>
   );
 }
 
 export default Form;
+
+Form.propTypes = {
+  submitHandler: PropTypes.func.isRequired,
+  isNotAbleToChangeGender: PropTypes.bool.isRequired,
+  currentGender: PropTypes.string.isRequired,
+  currentItem: PropTypes.object.isRequired,
+  setInputs: PropTypes.func.isRequired,
+};

@@ -14,6 +14,8 @@ const ChangeURL = () => {
     } else if (formattedPageName.includes("Search")) {
       const search = formattedPageName.split("Search")[1];
       document.title = `Footy Shirts | Search | "${search}"`;
+    } else if (formattedPageName.includes("checkout")) {
+      document.title = `Footy Shirts | Checkout`;
     } else {
       document.title = `Footy Shirts | ${formattedPageName}`;
     }

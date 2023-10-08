@@ -3,12 +3,13 @@ import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 
-const Search = styled("div")(({ theme }) => ({
+const Search = styled("div")(({ theme, isFilter }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
   marginLeft: 0,
-  width: "100%",
+  width: isFilter ? "auto" : "100%",
   [theme.breakpoints.up("sm")]: {
     marginLeft: theme.spacing(1),
     width: "auto",
@@ -50,7 +51,13 @@ const ResponsiveStyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-function SearchButton(props) {
+function SearchButton({
+  closeMenuWhenDoneSearchHandler,
+  disableAnimation,
+  color,
+  isFilter = false,
+  setInput,
+}) {
   const [searchInputValue, setSearchInputValue] = useState("");
   const navigate = useNavigate();
 
@@ -59,25 +66,28 @@ function SearchButton(props) {
 
     if (input.length <= 24 && !input.match(/[^a-zA-Z0-9 ]/g)) {
       setSearchInputValue(input);
+      if (isFilter) {
+        setInput(input);
+      }
     }
   };
 
   const submitSearchHandler = (e) => {
     e.preventDefault();
-    if (searchInputValue.trim().length) {
+    if (searchInputValue.trim().length && !isFilter) {
       navigate(`/search/${searchInputValue}`);
       setSearchInputValue("");
-      props?.closeMenuWhenDoneSearchHandler();
+      closeMenuWhenDoneSearchHandler && closeMenuWhenDoneSearchHandler();
     }
   };
 
   return (
     <>
-      {props.disableAnimation ? (
+      {disableAnimation ? (
         <>
-          <Search>
+          <Search isFilter={isFilter}>
             <SearchIconWrapper>
-              <SearchIcon color="primary" />
+              <SearchIcon sx={{ color: color }} />
             </SearchIconWrapper>
             <form onSubmit={submitSearchHandler}>
               <ResponsiveStyledInputBase
@@ -93,7 +103,7 @@ function SearchButton(props) {
         <>
           <Search>
             <SearchIconWrapper>
-              <SearchIcon color="primary" />
+              <SearchIcon sx={{ color: color }} />
             </SearchIconWrapper>
             <form onSubmit={submitSearchHandler}>
               <StyledInputBase
@@ -111,3 +121,11 @@ function SearchButton(props) {
 }
 
 export default SearchButton;
+
+SearchButton.propTypes = {
+  disableAnimation: PropTypes.bool,
+  color: PropTypes.string.isRequired,
+  closeMenuWhenDoneSearchHandler: PropTypes.func,
+  isFilter: PropTypes.bool,
+  setInput: PropTypes.func,
+};

@@ -194,7 +194,11 @@ function Item() {
                 }}
               >
                 <Box>
+<<<<<<< HEAD
                   <Box display="flex" alignItems="center">
+=======
+                  <Box display="flex">
+>>>>>>> 399de2e9d7f36096ed398b5be37e6d0332fbe13f
                     <Typography variant="h4" fontWeight={500} sx={{ mt: 3 }}>
                       {shirt.name}
                     </Typography>

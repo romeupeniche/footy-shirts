@@ -102,7 +102,10 @@ function Root() {
       },
       utils: {
         delete: "#ba0c00",
+<<<<<<< HEAD
         darkerDelete: "#780000",
+=======
+>>>>>>> 399de2e9d7f36096ed398b5be37e6d0332fbe13f
       },
     },
     typography: {

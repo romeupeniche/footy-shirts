@@ -15,7 +15,11 @@ import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import PersonIcon from "@mui/icons-material/Person";
 import { useSelector } from "react-redux";
+<<<<<<< HEAD
 import SearchButton from "../SearchInput";
+=======
+import SearchButton from "./Search";
+>>>>>>> 399de2e9d7f36096ed398b5be37e6d0332fbe13f
 import ResponsiveMenu from "./ResponsiveMenu";
 import BagNotification from "./BagNotification";
 import PropTypes from "prop-types";

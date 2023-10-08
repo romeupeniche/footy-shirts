@@ -10,7 +10,10 @@ import { useSelector } from "react-redux";
 import { useLoaderData } from "react-router-dom";
 import Filter from "../../components/Filter";
 import Card from "../../components/Card";
+<<<<<<< HEAD
 import SearchButton from "../../components/SearchInput";
+=======
+>>>>>>> 399de2e9d7f36096ed398b5be37e6d0332fbe13f
 
 function GenderPage() {
   const gender = useLoaderData();
@@ -19,7 +22,10 @@ function GenderPage() {
   const [genderShirts, setGenderShirts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const capitalizedGender = gender.charAt(0).toUpperCase() + gender.slice(1);
+<<<<<<< HEAD
   const [searchInput, setSearchInput] = useState("");
+=======
+>>>>>>> 399de2e9d7f36096ed398b5be37e6d0332fbe13f
 
   const [selectedOptions, setSelectedOptions] = useState([]);
   const filterOptions = [
@@ -82,6 +88,13 @@ function GenderPage() {
       "No shirts found for this search. Refine criteria for more options.";
   }
 
+  const filteredShirts =
+    selectedOptions.length === 0
+      ? genderShirts
+      : genderShirts.filter((shirt) =>
+          selectedOptions.every((size) => shirt.sizes[size])
+        );
+
   return (
     <Container>
       <Box
@@ -96,6 +109,7 @@ function GenderPage() {
             {capitalizedGender}
             {`'`}s Jerseys
           </Typography>
+<<<<<<< HEAD
           <Typography variant="h6" sx={{ ml: 1, mb: 5 }}>
             /{gender}
           </Typography>
@@ -109,6 +123,13 @@ function GenderPage() {
           }}
         >
           <SearchButton isFilter setInput={setSearchInput} disableAnimation />
+=======
+          <Typography variant="h6" sx={{ ml: 1, mb: 10 }}>
+            /{gender}
+          </Typography>
+        </Box>
+        <Box sx={{ alignSelf: "flex-end" }}>
+>>>>>>> 399de2e9d7f36096ed398b5be37e6d0332fbe13f
           <Filter
             options={filterOptions}
             label="Filter By Size"
@@ -132,7 +153,15 @@ function GenderPage() {
               return <Card key={shirt.id} shirt={shirt} />;
             })
           ) : (
+<<<<<<< HEAD
             <Typography mt={10}>{fallbackText}</Typography>
+=======
+            <Typography mt={10}>
+              {selectedOptions.length > 0
+                ? "No shirts are available in the selected size(s). Please explore other options."
+                : "No shirts are currently available. Check back later for more selections."}
+            </Typography>
+>>>>>>> 399de2e9d7f36096ed398b5be37e6d0332fbe13f
           )}
           {isAdmin && <Card newItemCard={true} />}
         </Grid>

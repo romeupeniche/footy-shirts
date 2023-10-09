@@ -75,7 +75,7 @@ function Faq() {
         fontSize="1rem"
         color="typography.ghost"
         textAlign="center"
-        sx={{ mb: 5, width: { xs: 400, sm: 500 } }}
+        sx={{ mb: 5, width: { xs: 350, sm: 500 } }}
       >
         Discover Answers to Common Questions About Ordering Soccer Jerseys:
         Clearing Up Your Doubts and Providing Useful Information.

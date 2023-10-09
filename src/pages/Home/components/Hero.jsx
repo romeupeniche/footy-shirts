@@ -80,13 +80,14 @@ function Hero() {
             sx={{
               display: "flex",
               flexDirection: "column",
-              width: { lg: 170, md: 300 },
+              width: { lg: 200, xs: 300 },
             }}
           >
             {["Men", "Women", "Kids"].map((gender) => (
               <ShopButton
                 key={gender.toLowerCase()}
                 variant="outlined"
+                sx={{ width: "inherit" }}
                 onClick={() => navigate("/" + gender.toLowerCase())}
                 endIcon={
                   <OpenInNewIcon

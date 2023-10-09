@@ -77,12 +77,7 @@ function SearchButton({
     if (searchInputValue.trim().length && !isFilter) {
       navigate(`/search/${searchInputValue}`);
       setSearchInputValue("");
-<<<<<<< HEAD:src/components/SearchInput/index.jsx
       closeMenuWhenDoneSearchHandler && closeMenuWhenDoneSearchHandler();
-=======
-      props.closeMenuWhenDoneSearchHandler &&
-        props.closeMenuWhenDoneSearchHandler();
->>>>>>> 399de2e9d7f36096ed398b5be37e6d0332fbe13f:src/components/Header/Search/index.jsx
     }
   };
 
@@ -92,11 +87,7 @@ function SearchButton({
         <>
           <Search isFilter={isFilter}>
             <SearchIconWrapper>
-<<<<<<< HEAD:src/components/SearchInput/index.jsx
               <SearchIcon sx={{ color: color }} />
-=======
-              <SearchIcon sx={{ color: props.color }} />
->>>>>>> 399de2e9d7f36096ed398b5be37e6d0332fbe13f:src/components/Header/Search/index.jsx
             </SearchIconWrapper>
             <form onSubmit={submitSearchHandler}>
               <ResponsiveStyledInputBase
@@ -112,11 +103,7 @@ function SearchButton({
         <>
           <Search>
             <SearchIconWrapper>
-<<<<<<< HEAD:src/components/SearchInput/index.jsx
               <SearchIcon sx={{ color: color }} />
-=======
-              <SearchIcon sx={{ color: props.color }} />
->>>>>>> 399de2e9d7f36096ed398b5be37e6d0332fbe13f:src/components/Header/Search/index.jsx
             </SearchIconWrapper>
             <form onSubmit={submitSearchHandler}>
               <StyledInputBase
@@ -139,9 +126,6 @@ SearchButton.propTypes = {
   disableAnimation: PropTypes.bool,
   color: PropTypes.string.isRequired,
   closeMenuWhenDoneSearchHandler: PropTypes.func,
-<<<<<<< HEAD:src/components/SearchInput/index.jsx
   isFilter: PropTypes.bool,
   setInput: PropTypes.func,
-=======
->>>>>>> 399de2e9d7f36096ed398b5be37e6d0332fbe13f:src/components/Header/Search/index.jsx
 };

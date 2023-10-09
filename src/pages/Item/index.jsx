@@ -194,16 +194,17 @@ function Item() {
                 }}
               >
                 <Box>
-<<<<<<< HEAD
-                  <Box display="flex" alignItems="center">
-=======
-                  <Box display="flex">
->>>>>>> 399de2e9d7f36096ed398b5be37e6d0332fbe13f
-                    <Typography variant="h4" fontWeight={500} sx={{ mt: 3 }}>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    // flexDirection="column-reverse"
+                  >
+                    <Typography variant="h4" fontWeight={500}>
                       {shirt.name}
                     </Typography>
                     {isAdmin && (
-                      <>
+                      <Box sx={{ ml: 1 }}>
                         <IconButton onClick={editHandler}>
                           <EditIcon color="secondary" />
                         </IconButton>
@@ -212,7 +213,7 @@ function Item() {
                         >
                           <DeleteIcon color="error" />
                         </IconButton>
-                      </>
+                      </Box>
                     )}
                   </Box>
                   <Typography fontWeight={400}>

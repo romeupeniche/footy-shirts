@@ -6,7 +6,7 @@ function CustomerQuotation({ img, location, quotation, name }) {
   return (
     <Box
       sx={{
-        width: { xs: 400, sm: 600 },
+        width: { xs: 350, sm: 600 },
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
@@ -29,7 +29,12 @@ function CustomerQuotation({ img, location, quotation, name }) {
           mb: { xs: 5, lg: 2 },
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
           <Avatar
             src={img}
             sx={{ width: 70, height: "auto", pointerEvents: "none" }}

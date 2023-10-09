@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   InputAdornment,
-  Paper,
   Table,
   TableBody,
   TableCell,
@@ -28,11 +27,11 @@ function calculateSize(userChest, userWaist) {
   for (const size of sizes) {
     const chestDistance = Math.min(
       Math.abs(userChest - size.chestRange[0]),
-      Math.abs(userChest - size.chestRange[1]),
+      Math.abs(userChest - size.chestRange[1])
     );
     const waistDistance = Math.min(
       Math.abs(userWaist - size.waistRange[0]),
-      Math.abs(userWaist - size.waistRange[1]),
+      Math.abs(userWaist - size.waistRange[1])
     );
     const totalDistance = chestDistance + waistDistance;
 
@@ -96,7 +95,7 @@ function GetSize() {
     <Box
       sx={{
         mt: 10,
-        p: 10,
+        p: { xs: 5, md: 10 },
         display: "flex",
         flexDirection: "column",
         alignItems: "center",

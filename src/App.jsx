@@ -33,14 +33,14 @@ function App() {
     const dataSnapshot = await get(ref(db));
     const data = dataSnapshot.val();
 
-    if (data !== null) {
+    if (user !== null) {
       const admins = data.admins || [];
       const isAdmin = admins.includes(user?.uid);
+      console.log(user);
 
       dispatch(
         setUser({
           user: {
-            displayName: user.displayName, // remove
             email: user.email,
             photoURL: user.photoURL, // remove
             uid: user.uid,

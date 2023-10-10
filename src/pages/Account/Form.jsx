@@ -4,6 +4,7 @@ import {
   TextField,
   Typography,
   Container,
+  Box,
 } from "@mui/material";
 import { auth } from "../../firebase-config";
 import { useState } from "react";
@@ -12,20 +13,40 @@ import {
   signInWithEmailAndPassword,
 } from "@firebase/auth";
 
+const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+
 function Form() {
   const [isSigningUp, setIsSigningUp] = useState(false);
   const [currentEmail, setCurrentEmail] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [checkPass, setCheckPass] = useState("");
-  const [isWrongPass, setIsWrongPass] = useState(false);
+  const [passInvalid, setPassInvalid] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isEmailInvalid, setIsEmailInvalid] = useState(false);
+
+  const isAbleToSubmit = !!passInvalid;
 
   const toggleSignIn = () => {
     setIsSigningUp(!isSigningUp);
   };
 
+  const submitHandler = (e) => {
+    e.preventDefault();
+    if (currentPassword.length < 6) {
+      setPassInvalid("invalid");
+    } else if (emailRegex.test(currentEmail) === false) {
+      setIsEmailInvalid(true);
+    } else {
+      if (isSigningUp) {
+        registerHandler();
+      } else {
+        logInHandler();
+      }
+    }
+  };
+
   const registerHandler = async () => {
-    if (isAbleToRegister) {
+    if (isAbleToSubmit) {
       setIsLoading(true);
       try {
         await createUserWithEmailAndPassword(
@@ -56,8 +77,7 @@ function Form() {
         if (isSigningUp) {
           setIsSigningUp(false);
         }
-        setIsWrongPass(true);
-        setCurrentEmail("");
+        setPassInvalid("wrong");
         setCurrentPassword("");
       } else if (err.code == "auth/user-not-found") {
         setIsSigningUp(true);
@@ -70,25 +90,61 @@ function Form() {
     }
   };
 
-  const resetWrongPassHandler = () => {
-    if (isWrongPass) {
-      setIsWrongPass(false);
+  const resetPasswordErrorsHandler = () => {
+    setPassInvalid(null);
+  };
+
+  const resetEmailErrorsHandler = () => {
+    setIsEmailInvalid(false);
+  };
+
+  const checkIfPasswordMatchesHandler = () => {
+    if (currentPassword !== checkPass) {
+      setPassInvalid("not-matching");
     }
   };
 
-  const isAbleToRegister =
-    currentPassword.length >= 6 && currentPassword == checkPass;
-  const isAbleToLogIn = currentPassword.length >= 6;
+  const checkIfPasswordIsValidHandler = () => {
+    if (isSigningUp) {
+      checkIfPasswordMatchesHandler();
+    }
+    if (currentPassword.length < 6) {
+      setPassInvalid("invalid");
+    }
+  };
+
+  const checkIfEmailIsValidHandler = () => {
+    if (emailRegex.test(currentEmail) === false) {
+      setIsEmailInvalid(true);
+    }
+  };
+
+  let emailHelperText = "";
+  let passwordHelperText = "";
+  const emailError = isEmailInvalid;
+  const passwordError = !!passInvalid;
+
+  if (passInvalid === "invalid") {
+    passwordHelperText = "Password must be at least 6 characters long.";
+  } else if (passInvalid === "wrong") {
+    passwordHelperText = "Your password is wrong.";
+  } else if (passInvalid === "not-matching") {
+    passwordHelperText = "Passwords do not match.";
+  }
+
+  if (isEmailInvalid) {
+    emailHelperText = "Your email is invalid.";
+  }
 
   return (
     <Container
+      maxWidth="sm"
       sx={{
         display: "flex",
         alignItems: "center",
         flexDirection: "column",
         justifyContent: "space-around",
         height: "60vh",
-        width: 600,
       }}
     >
       {isLoading ? (
@@ -114,7 +170,9 @@ function Form() {
               ? "Become one of us!"
               : "You are not logged in yet. Log in now!"}
           </Typography>
-          <Container
+          <Box
+            onSubmit={submitHandler}
+            component="form"
             sx={{ display: "flex", flexDirection: "column", width: "70%" }}
           >
             <TextField
@@ -124,9 +182,10 @@ function Form() {
               type="email"
               value={currentEmail}
               onChange={(e) => setCurrentEmail(e.target.value)}
-              error={isWrongPass}
-              helperText={isWrongPass && "Your e-mail may be wrong."}
-              onFocus={resetWrongPassHandler}
+              error={emailError}
+              helperText={emailHelperText}
+              onFocus={resetEmailErrorsHandler}
+              onBlur={checkIfEmailIsValidHandler}
             />
             <TextField
               id="logInPassword"
@@ -135,10 +194,12 @@ function Form() {
               type="password"
               sx={{ my: 3 }}
               value={currentPassword}
+              // autoComplete={isSigningUp ? false : true}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              error={isWrongPass}
-              helperText={isWrongPass && "Your password may be wrong."}
-              onFocus={resetWrongPassHandler}
+              error={passwordError}
+              helperText={passwordHelperText}
+              onFocus={resetPasswordErrorsHandler}
+              onBlur={checkIfPasswordIsValidHandler}
             />
             {isSigningUp && (
               <TextField
@@ -147,16 +208,22 @@ function Form() {
                 variant="standard"
                 type="password"
                 value={checkPass}
+                error={passInvalid === "not-matching"}
+                helperText={
+                  passInvalid === "not-matching"
+                    ? "Passwords do not match."
+                    : ""
+                }
                 onChange={(e) => setCheckPass(e.target.value)}
+                onBlur={checkIfPasswordMatchesHandler}
+                onFocus={resetPasswordErrorsHandler}
               />
             )}
 
             <Button
+              type="submit"
               sx={{ mt: 2 }}
-              disabled={
-                isLoading || isSigningUp ? !isAbleToRegister : !isAbleToLogIn
-              }
-              onClick={isSigningUp ? registerHandler : logInHandler}
+              disabled={(isLoading || isSigningUp) && isAbleToSubmit}
             >
               {isSigningUp ? "Register" : "Login"}
             </Button>
@@ -166,7 +233,7 @@ function Form() {
                 ? "I do have an account"
                 : "I do not have an account"}
             </Button>
-          </Container>
+          </Box>
         </>
       )}
     </Container>

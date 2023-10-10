@@ -116,6 +116,13 @@ function Root() {
       fontWeightLight: "400",
     },
     components: {
+      // MuiTextField: {
+      //   styleOverrides: {
+      //     root: {
+      //       color: "#000",
+      //     },
+      //   },
+      // },
       MuiTypography: {
         styleOverrides: {
           root: {

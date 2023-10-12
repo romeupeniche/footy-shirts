@@ -69,40 +69,24 @@ function Root() {
       ...Array(20).fill("none"),
     ],
     palette: {
-      // light mode settings
       background: {
-        default: "#f6f6f6",
-        dark: "#f6f6f6af",
-        transparentBlack: "rgba(0, 0, 0, .5)",
+        default: "#f6f6f6", // background color (predefined word)
         header: "rgba(246, 246, 246, 0.7)", // header and bagNotification
       },
       primary: {
         main: "#000",
-        dark: "#00009b",
-        darker: "#75b1ff",
-        darkest: "#888",
+        dark: "#00009b", // hovering buttons
       },
       secondary: {
         main: "#3741ff",
         light: "#75b1ff",
         shade: "rgba(55, 65, 255, 0.25)",
       },
-      bg: {
-        // remove
-        main: "#f6f6f6",
-        light: "#c8c8c8",
-        lighter: "#b4b4b4",
-        lightest: "#ccc",
-        gray: "#999",
-      },
       typography: {
         money: "#3e9c35",
         light: "#b7b7b7",
         ghost: "#888",
-      },
-      utils: {
         delete: "#ba0c00",
-        darkerDelete: "#780000",
       },
     },
     typography: {
@@ -116,13 +100,6 @@ function Root() {
       fontWeightLight: "400",
     },
     components: {
-      // MuiTextField: {
-      //   styleOverrides: {
-      //     root: {
-      //       color: "#000",
-      //     },
-      //   },
-      // },
       MuiTypography: {
         styleOverrides: {
           root: {

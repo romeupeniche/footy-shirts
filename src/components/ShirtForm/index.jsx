@@ -71,6 +71,7 @@ function ShirtForm({ currentGender, item = defaultItem }) {
               fontSize={{ xs: "2rem", sm: "3rem" }}
               ml={1}
               fontWeight="inherit"
+              noWrap
             >
               {item.name}
             </Typography>

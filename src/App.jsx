@@ -36,20 +36,18 @@ function App() {
     if (user !== null) {
       const admins = data.admins || [];
       const isAdmin = admins.includes(user?.uid);
-      console.log(user);
 
       dispatch(
         setUser({
           user: {
             email: user.email,
-            photoURL: user.photoURL, // remove
             uid: user.uid,
           },
           isAdmin,
         })
       );
 
-      const userBagRef = ref(db, "carts/" + user.uid + "/cart");
+      const userBagRef = ref(db, "carts/" + user.uid + "/bag");
       onValue(userBagRef, (snapshot) => {
         const currentBag = snapshot.val();
         dispatch(setItems(currentBag));

@@ -73,7 +73,7 @@ function Footer() {
           <MUILink
             underline="none"
             sx={{
-              color: "bg.gray",
+              color: "#999",
               cursor: "pointer",
               fontWeight: "light",
               mt: 1,
@@ -84,7 +84,7 @@ function Footer() {
           <MUILink
             underline="none"
             sx={{
-              color: "bg.gray",
+              color: "#999",
               cursor: "pointer",
               fontWeight: "light",
               mt: 1,
@@ -95,7 +95,7 @@ function Footer() {
           <MUILink
             underline="none"
             sx={{
-              color: "bg.gray",
+              color: "#999",
               cursor: "pointer",
               fontWeight: "light",
               mt: 1,
@@ -106,7 +106,7 @@ function Footer() {
           <MUILink
             underline="none"
             sx={{
-              color: "bg.gray",
+              color: "#999",
               cursor: "pointer",
               fontWeight: "light",
               mt: 1,

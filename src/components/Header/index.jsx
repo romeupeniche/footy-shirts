@@ -1,6 +1,5 @@
 import {
   AppBar,
-  Avatar,
   Box,
   IconButton,
   List,
@@ -14,7 +13,6 @@ import SportsSoccerIcon from "@mui/icons-material/SportsSoccer";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import PersonIcon from "@mui/icons-material/Person";
-import { useSelector } from "react-redux";
 import SearchButton from "../SearchInput";
 import ResponsiveMenu from "./ResponsiveMenu";
 import BagNotification from "./BagNotification";
@@ -40,7 +38,6 @@ HideOnScroll.propTypes = {
 
 function Header(props) {
   const path = useLocation().pathname.split("/")[1];
-  const currentUser = useSelector((state) => state.account).user;
   const availablePaths = ["Men", "Women", "Kids"];
 
   return (
@@ -141,18 +138,11 @@ function Header(props) {
                   aria-label="menu"
                   sx={{ ml: 2 }}
                 >
-                  {currentUser.photoURL ? (
-                    <Avatar
-                      sx={{ width: 24, height: 24 }}
-                      src={currentUser.photoURL}
-                    />
-                  ) : (
-                    <PersonIcon />
-                  )}
+                  <PersonIcon />
                 </IconButton>
               </Link>
             </Box>
-            <ResponsiveMenu currentUser={currentUser} />
+            <ResponsiveMenu />
           </Toolbar>
         </AppBar>
       </HideOnScroll>

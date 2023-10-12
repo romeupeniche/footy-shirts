@@ -13,7 +13,7 @@ function CheckboxGroup({ data, setIsFullyChecked }) {
         i,
       };
     });
-    setInputs(newInputs); // Ta jogando erro no console. "bad setState"
+    setInputs(newInputs); // Ta jogando erro no console. "bad setState" - ta?
   }, [setInputs, data]);
 
   const handleChange = (event) => {
@@ -53,7 +53,7 @@ function CheckboxGroup({ data, setIsFullyChecked }) {
     } else {
       setIsFullyChecked(false);
     }
-  }, [allChecked]);
+  }, [allChecked, setIsFullyChecked]);
 
   return <>{content}</>;
 }

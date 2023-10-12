@@ -95,12 +95,13 @@ function GetSize() {
     <Box
       sx={{
         mt: 10,
-        p: { xs: 5, md: 10 },
+        p: { xs: 3, md: 10 },
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
         boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
+        borderRadius: 5,
       }}
     >
       <Typography variant="h4" sx={{ mb: 4 }}>
@@ -118,9 +119,9 @@ function GetSize() {
       )}
       <Box
         sx={{
-          ml: 3,
           display: "flex",
           flexDirection: { xs: "column", md: "row" },
+          justifyContent: "center",
           width: { xs: "100%", md: "fit-content" },
         }}
       >

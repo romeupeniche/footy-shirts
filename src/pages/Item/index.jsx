@@ -27,7 +27,6 @@ const modalStyle = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: 400,
-  bgcolor: "background.paper",
   borderRadius: 5,
   boxShadow: 24,
   p: 4,
@@ -35,6 +34,7 @@ const modalStyle = {
   flexDirection: "column",
   justifyContent: "space-between",
   alignItems: "center",
+  backgroundColor: "white",
 };
 
 function Item() {
@@ -265,7 +265,10 @@ function Item() {
               <Box sx={modalStyle}>
                 <Typography variant="h6" component="h2">
                   Are you sure you want to{" "}
-                  <Typography component="span" sx={{ color: "utils.delete" }}>
+                  <Typography
+                    component="span"
+                    sx={{ color: "typography.delete" }}
+                  >
                     DELETE
                   </Typography>{" "}
                   this item?

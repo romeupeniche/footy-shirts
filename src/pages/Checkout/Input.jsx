@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { addCheckoutInputValidity } from "../../store/bagSlice";
 
+const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+
 function Input({
   type = "string",
   label,
@@ -32,7 +34,7 @@ function Input({
     }
     const itemProps = [isInputValid, label];
     dispatch(addCheckoutInputValidity(itemProps));
-  }, [isError, input]);
+  }, [isError, input, defaultValue, label, required, dispatch]);
 
   const onStringChange = (e) => {
     setIsError(false);
@@ -40,7 +42,11 @@ function Input({
   };
 
   const onBlur = () => {
-    if (input.trim().length === 0 && required) {
+    if (type === "email") {
+      if (!emailRegex.test(input)) {
+        setIsError(true);
+      }
+    } else if (input.trim().length === 0 && required) {
       setIsError(true);
     }
   };

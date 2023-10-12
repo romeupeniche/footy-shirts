@@ -49,8 +49,6 @@ function ItemCard({ itemCardProps }) {
   const [capitalizedGender, setCapitalizedGender] = useState("No Gender");
   const [shirt, setShirt] = useState(defaultShirt);
 
-  console.log(itemCardProps);
-
   useEffect(() => {
     setShirt({
       name,

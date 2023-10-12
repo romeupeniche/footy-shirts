@@ -27,7 +27,7 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: `${theme.palette.mode === "dark" ? "#fff" : "#000"}`,
+  color: "#000",
   "& .MuiInputBase-input": {
     padding: theme.spacing(1, 1, 1, 0),
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
@@ -124,7 +124,7 @@ export default SearchButton;
 
 SearchButton.propTypes = {
   disableAnimation: PropTypes.bool,
-  color: PropTypes.string.isRequired,
+  color: PropTypes.string,
   closeMenuWhenDoneSearchHandler: PropTypes.func,
   isFilter: PropTypes.bool,
   setInput: PropTypes.func,

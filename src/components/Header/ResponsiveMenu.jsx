@@ -1,6 +1,5 @@
 import MenuIcon from "@mui/icons-material/Menu";
 import {
-  Avatar,
   Divider,
   IconButton,
   Menu,
@@ -16,7 +15,7 @@ import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import PersonIcon from "@mui/icons-material/Person";
 import PropTypes from "prop-types";
 
-export default function ResponsiveMenu({ currentUser }) {
+export default function ResponsiveMenu() {
   const currentBag = useSelector((state) => state.bag);
   const path = useLocation().pathname.split("/")[1];
   const [anchorEl, setAnchorEl] = useState(null);
@@ -72,7 +71,6 @@ export default function ResponsiveMenu({ currentUser }) {
               right: 14,
               width: 10,
               height: 10,
-              bgcolor: "background.paper",
               transform: "translateY(-50%) rotate(45deg)",
               zIndex: 1,
             },
@@ -106,14 +104,7 @@ export default function ResponsiveMenu({ currentUser }) {
           sx={{ color: "primary.main" }}
         >
           <MenuItem>
-            {currentUser.photoURL ? (
-              <Avatar
-                sx={{ width: 24, height: 24, mr: 1 }}
-                src={currentUser.photoURL}
-              />
-            ) : (
-              <PersonIcon sx={{ width: 24, height: 24, mr: 1.35 }} />
-            )}{" "}
+            <PersonIcon sx={{ width: 24, height: 24, mr: 1.35 }} />
             <Typography>Account</Typography>
           </MenuItem>
         </Link>

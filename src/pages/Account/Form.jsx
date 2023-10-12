@@ -5,7 +5,11 @@ import {
   Typography,
   Container,
   Box,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { auth } from "../../firebase-config";
 import { useState } from "react";
 import {
@@ -23,15 +27,66 @@ function Form() {
   const [passInvalid, setPassInvalid] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isEmailInvalid, setIsEmailInvalid] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showCheckPassword, setShowCheckPassword] = useState(false);
 
   const isAbleToSubmit = !!passInvalid;
 
+  const handleClickShowPassword = () => {
+    setShowPassword((prev) => !prev);
+  };
+  const handleClickShowCheckPassword = () => {
+    setShowCheckPassword((prev) => !prev);
+  };
+
+  const handleMouseDownPassword = (e) => {
+    e.preventDefault();
+  };
+
+  const resetPasswordErrorsHandler = () => {
+    setPassInvalid(null);
+  };
+
+  const resetCheckPasswordErrorsHandler = () => {
+    if (passInvalid !== "invalid") {
+      setPassInvalid(null);
+    }
+  };
+
+  const resetEmailErrorsHandler = () => {
+    setIsEmailInvalid(false);
+  };
+
+  const checkIfPasswordMatchesHandler = () => {
+    if (currentPassword !== checkPass) {
+      setPassInvalid("not-matching");
+    }
+  };
+
+  const checkIfPasswordIsValidHandler = (notSigningUp = false) => {
+    if (isSigningUp && !notSigningUp) {
+      checkIfPasswordMatchesHandler();
+    } else if (currentPassword.length < 6) {
+      setPassInvalid("invalid");
+    } else {
+      resetPasswordErrorsHandler();
+    }
+  };
+
+  const checkIfEmailIsValidHandler = () => {
+    if (emailRegex.test(currentEmail) === false) {
+      setIsEmailInvalid(true);
+    }
+  };
+
   const toggleSignIn = () => {
-    setIsSigningUp(!isSigningUp);
+    checkIfPasswordIsValidHandler(true);
+    setIsSigningUp((prev) => !prev);
   };
 
   const submitHandler = (e) => {
     e.preventDefault();
+    checkIfPasswordIsValidHandler();
     if (currentPassword.length < 6) {
       setPassInvalid("invalid");
     } else if (emailRegex.test(currentEmail) === false) {
@@ -89,36 +144,6 @@ function Form() {
       }
     }
   };
-
-  const resetPasswordErrorsHandler = () => {
-    setPassInvalid(null);
-  };
-
-  const resetEmailErrorsHandler = () => {
-    setIsEmailInvalid(false);
-  };
-
-  const checkIfPasswordMatchesHandler = () => {
-    if (currentPassword !== checkPass) {
-      setPassInvalid("not-matching");
-    }
-  };
-
-  const checkIfPasswordIsValidHandler = () => {
-    if (isSigningUp) {
-      checkIfPasswordMatchesHandler();
-    }
-    if (currentPassword.length < 6) {
-      setPassInvalid("invalid");
-    }
-  };
-
-  const checkIfEmailIsValidHandler = () => {
-    if (emailRegex.test(currentEmail) === false) {
-      setIsEmailInvalid(true);
-    }
-  };
-
   let emailHelperText = "";
   let passwordHelperText = "";
   const emailError = isEmailInvalid;
@@ -173,6 +198,7 @@ function Form() {
           <Box
             onSubmit={submitHandler}
             component="form"
+            autoComplete={isSigningUp ? "off" : "on"}
             sx={{ display: "flex", flexDirection: "column", width: "70%" }}
           >
             <TextField
@@ -191,7 +217,7 @@ function Form() {
               id="logInPassword"
               label="Password"
               variant="standard"
-              type="password"
+              type={showPassword ? "text" : "password"}
               sx={{ my: 3 }}
               value={currentPassword}
               // autoComplete={isSigningUp ? false : true}
@@ -200,13 +226,31 @@ function Form() {
               helperText={passwordHelperText}
               onFocus={resetPasswordErrorsHandler}
               onBlur={checkIfPasswordIsValidHandler}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                    >
+                      {showPassword ? (
+                        <VisibilityOffIcon />
+                      ) : (
+                        <VisibilityIcon />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
+
             {isSigningUp && (
               <TextField
                 id="registerCheckPass"
                 label="Re-Enter Password"
                 variant="standard"
-                type="password"
+                type={showCheckPassword ? "text" : "password"}
                 value={checkPass}
                 error={passInvalid === "not-matching"}
                 helperText={
@@ -216,7 +260,24 @@ function Form() {
                 }
                 onChange={(e) => setCheckPass(e.target.value)}
                 onBlur={checkIfPasswordMatchesHandler}
-                onFocus={resetPasswordErrorsHandler}
+                onFocus={resetCheckPasswordErrorsHandler}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowCheckPassword}
+                        onMouseDown={handleMouseDownPassword}
+                      >
+                        {showCheckPassword ? (
+                          <VisibilityOffIcon />
+                        ) : (
+                          <VisibilityIcon />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
             )}
 

@@ -12,6 +12,11 @@
   -webkit-text-size-adjust: 100%;
 }
 
+input::-ms-clear,
+input::-ms-reveal {
+  display: none;
+}
+
 a {
   text-decoration: none !important;
 }

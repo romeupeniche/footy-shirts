@@ -386,11 +386,11 @@ function Form({
             onClick={cancelHandler}
             sx={{
               borderRadius: 2,
-              borderColor: "utils.delete",
-              color: "utils.delete",
+              borderColor: "typography.delete",
+              color: "typography.delete",
               "&:hover": {
-                borderColor: "utils.darkerDelete",
-                color: "utils.darkerDelete",
+                borderColor: "primary.dark",
+                color: "primary.dark",
               },
             }}
           >

@@ -30,7 +30,7 @@ function Hero() {
           justifyContent: "space-around",
           alignItems: "center",
           flexDirection: { xs: "column", lg: "row" },
-          mt: { xs: 40, md: 30, lg: 0 },
+          mt: { xs: 30, md: 30, lg: 0 },
           mb: { lg: 0, xs: 50 },
         }}
       >

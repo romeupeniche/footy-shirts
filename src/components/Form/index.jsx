@@ -1,23 +1,8 @@
-import {
-  Box,
-  Button,
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  FormGroup,
-  FormLabel,
-  Input,
-  Popover,
-  Radio,
-  RadioGroup,
-  TextField,
-  Typography,
-  InputAdornment,
-} from "@mui/material";
+import { Box, Button, FormGroup } from "@mui/material";
 import { useEffect, useState } from "react";
-import InfoIcon from "@mui/icons-material/Info";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
+import FormInput from "./FormInput";
 
 function Form({
   submitHandler,
@@ -35,7 +20,6 @@ function Form({
   const [commonTypos, setCommonTypos] = useState(
     currentItem ? currentItem.commonTypos : ""
   );
-  const [anchorEl, setAnchorEl] = useState(null);
   const [availableSizes, setAvailableSizes] = useState(
     currentItem
       ? {
@@ -52,6 +36,52 @@ function Form({
         }
   );
   const navigate = useNavigate();
+  const urlPattern =
+    /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-/]))?/;
+  const { sizeS, sizeM, sizeL, sizeXL } = availableSizes;
+  const isNameValid = name.trim().length > 12;
+  const areImgsEqual = img1 === img2;
+  const isImg1Valid = urlPattern.test(img1) && !areImgsEqual;
+  const isImg2Valid = urlPattern.test(img2) && !areImgsEqual;
+  const isCommonTyposValid = commonTypos.trim().length > 12;
+  const isPriceValid = price > 0;
+  const isGenderValid =
+    gender === "kids" || gender === "women" || gender === "men";
+  const isSizeValid =
+    [sizeS, sizeM, sizeL, sizeXL].filter((v) => v).length >= 1;
+  const isAllValid =
+    isNameValid &&
+    isImg1Valid &&
+    isImg2Valid &&
+    isCommonTyposValid &&
+    isPriceValid &&
+    isGenderValid &&
+    isSizeValid;
+
+  const resetInvalidHandler = () => {
+    setIsInvalid(false);
+  };
+
+  const handleNameChange = (text) => {
+    if (text.length <= 100) {
+      setName(text);
+    }
+  };
+  const handleImg1Change = (text) => {
+    if (text.length <= 300) {
+      setImg1(text);
+    }
+  };
+  const handleImg2Change = (text) => {
+    if (text.length <= 300) {
+      setImg2(text);
+    }
+  };
+  const handleCommonTyposChange = (text) => {
+    if (text.length <= 100) {
+      setCommonTypos(text);
+    }
+  };
 
   useEffect(() => {
     setInputs({
@@ -69,30 +99,24 @@ function Form({
     }
   };
 
-  const resetInvalidHandler = () => {
-    setIsInvalid(false);
-  };
-
   const verifySubmitHandler = () => {
     if (!isAllValid) {
       setIsInvalid(true);
       return;
     }
     submitHandler({
-      gender,
-      newItem: {
-        id: currentItem?.id,
-        name: name.trim(),
-        imgs: [img1.trim(), img2.trim()],
-        price: +price,
-        sizes: {
-          S: sizeS,
-          M: sizeM,
-          L: sizeL,
-          XL: sizeXL,
-        },
-        commonTypos: commonTypos.trim(),
+      id: currentItem?.id,
+      name: name.trim(),
+      imgs: [img1.trim(), img2.trim()],
+      price: +price,
+      sizes: {
+        S: sizeS,
+        M: sizeM,
+        L: sizeL,
+        XL: sizeXL,
       },
+      commonTypos: commonTypos.trim(),
+      gender,
     });
   };
 
@@ -103,46 +127,17 @@ function Form({
     }));
   };
 
-  const open = Boolean(anchorEl);
-  const handlePopoverOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-  };
-
   const cancelHandler = () => {
     navigate(-1);
   };
-  const urlPattern =
-    /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-/]))?/;
-
-  const { sizeS, sizeM, sizeL, sizeXL } = availableSizes;
-  const isNameValid = name.trim().length > 12;
-  const isImg1Valid = urlPattern.test(img1);
-  const isImg2Valid = urlPattern.test(img2);
-  const isCommonTyposValid = commonTypos.trim().length > 12;
-  const isPriceValid = price > 0;
-  const isGenderValid =
-    gender === "kids" || gender === "women" || gender === "men";
-  const isSizeValid =
-    [sizeS, sizeM, sizeL, sizeXL].filter((v) => v).length >= 1;
-  const isAllValid =
-    isNameValid &&
-    isImg1Valid &&
-    isImg2Valid &&
-    isCommonTyposValid &&
-    isPriceValid &&
-    isGenderValid &&
-    isSizeValid;
 
   const neededTextInputs = [
     {
       title: "Shirt Title",
       value: name,
-      onChange: setName,
+      onChange: handleNameChange,
       error: !isNameValid,
+      areImgsEqual: false,
       infoText:
         'This is the name that will appear for the shirt. Example: "Barcelona 2021/22 Vapor Match Home".',
     },
@@ -150,8 +145,9 @@ function Form({
       title: "Front Image (Link)",
       isLink: true,
       value: img1,
-      onChange: setImg1,
+      onChange: handleImg1Change,
       error: !isImg1Valid,
+      areImgsEqual,
       infoText:
         "This is the image that will appear on the front of the shirt page. You should add A LINK TO AN IMAGE of the front of your shirt.",
     },
@@ -159,16 +155,18 @@ function Form({
       title: "Secondary Image (Link)",
       value: img2,
       isLink: true,
-      onChange: setImg2,
+      onChange: handleImg2Change,
       error: !isImg2Valid,
+      areImgsEqual,
       infoText:
         "This is the image that will appear as the secondary image in the shirt page. You can add A LINK TO AN IMAGE of the back of your shirt.",
     },
     {
       title: "Common Typos",
       value: commonTypos,
-      onChange: setCommonTypos,
+      onChange: handleCommonTyposChange,
       error: !isCommonTyposValid,
+      areImgsEqual: false,
       infoText:
         "This is a helper for the search function. You may add some common typos, or names that you want your shirt to be displayed when typed, separated by commas.",
     },
@@ -221,153 +219,22 @@ function Form({
     },
   ];
 
-  const adornmentProps = {
-    fontSize: "10px",
-    onMouseEnter: handlePopoverOpen,
-    onMouseLeave: handlePopoverClose,
-    sx: {
-      color: "black",
-    },
-  };
-
   return (
     <Box>
       <FormGroup>
-        {neededTextInputs.map(
-          ({
-            title,
-            value,
-            onChange,
-            error,
-            infoText,
-            type,
-            inputs,
-            isLink,
-          }) => {
-            const onChangeFunc = (e) => onChange(e.target.value);
-            return (
-              <Box
-                key={`${title} box`}
-                width={300}
-                my={2}
-                onFocus={resetInvalidHandler}
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-              >
-                {!type ? (
-                  <TextField
-                    id={title}
-                    label={title}
-                    required
-                    type="text"
-                    value={value}
-                    onChange={onChangeFunc}
-                    error={error && isInvalid}
-                    fullWidth
-                    helperText={
-                      error &&
-                      isInvalid &&
-                      (!isLink
-                        ? `Your shirt ${title.toLowerCase()} must be > 12.`
-                        : "Please give a valid url.")
-                    }
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <InfoIcon id={title} {...adornmentProps} />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                ) : type === "radio" ? (
-                  <>
-                    <FormControl error={error && isInvalid} required fullWidth>
-                      <FormLabel>{title}</FormLabel>
-                      <RadioGroup row value={value} onChange={onChangeFunc}>
-                        {inputs.map((label) => (
-                          <FormControlLabel
-                            key={`${title} radio ${label}`}
-                            value={label.toLowerCase()}
-                            control={<Radio />}
-                            disabled={isNotAbleToChangeGender}
-                            label={label}
-                          />
-                        ))}
-                      </RadioGroup>
-                    </FormControl>
-                    <InfoIcon id={title} {...adornmentProps} />
-                  </>
-                ) : type === "checkbox" ? (
-                  <>
-                    <FormControl error={error && isInvalid} required fullWidth>
-                      <FormLabel>{title}</FormLabel>
-                      <FormGroup
-                        row
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-evenly",
-                        }}
-                      >
-                        {inputs.map(({ title, value, name }) => {
-                          return (
-                            <FormControlLabel
-                              key={`${title} checkbox`}
-                              control={
-                                <Checkbox checked={value} onChange={onChange} />
-                              }
-                              label={title}
-                              name={name}
-                            />
-                          );
-                        })}
-                      </FormGroup>
-                    </FormControl>
-                    <InfoIcon id={title} {...adornmentProps} />
-                  </>
-                ) : (
-                  <FormControl variant="standard" required fullWidth>
-                    <FormLabel>{title}</FormLabel>
-                    <Input
-                      startAdornment="$"
-                      type="number"
-                      onChange={onChangeFunc}
-                      value={value}
-                      fullWidth
-                      error={error && isInvalid}
-                      endAdornment={
-                        <InputAdornment position="end">
-                          <InfoIcon id={title} {...adornmentProps} />
-                        </InputAdornment>
-                      }
-                    />
-                  </FormControl>
-                )}
-                <Popover
-                  sx={{
-                    pointerEvents: "none",
-                  }}
-                  open={open && anchorEl.id === title}
-                  anchorEl={anchorEl}
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "left",
-                  }}
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "left",
-                  }}
-                  onClose={handlePopoverClose}
-                  disableRestoreFocus
-                >
-                  <Typography sx={{ p: 1, width: "300px" }}>
-                    {infoText}
-                  </Typography>
-                </Popover>
-              </Box>
-            );
-          }
-        )}
+        {neededTextInputs.map((inputProps) => {
+          return (
+            <FormInput
+              key={inputProps.title}
+              inputProps={{
+                ...inputProps,
+                isNotAbleToChangeGender,
+                isInvalid,
+                resetInvalidHandler,
+              }}
+            />
+          );
+        })}
         <Box my={2}>
           <Button
             variant="contained"
@@ -406,8 +273,8 @@ export default Form;
 
 Form.propTypes = {
   submitHandler: PropTypes.func.isRequired,
-  isNotAbleToChangeGender: PropTypes.bool.isRequired,
+  isNotAbleToChangeGender: PropTypes.bool,
   currentGender: PropTypes.string.isRequired,
-  currentItem: PropTypes.object.isRequired,
+  currentItem: PropTypes.object,
   setInputs: PropTypes.func.isRequired,
 };

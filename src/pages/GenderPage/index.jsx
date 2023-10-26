@@ -5,19 +5,22 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLoaderData } from "react-router-dom";
 import Filter from "../../components/Filter";
 import Card from "../../components/Card";
 import SearchButton from "../../components/SearchInput";
+import { ref } from "firebase/database";
+import { db } from "../../firebase-config";
+import { useDatabaseSnapshot } from "@react-query-firebase/database";
 
 function GenderPage() {
   const gender = useLoaderData();
-  const currentShirts = useSelector((state) => state.shirts);
+  const dbRef = ref(db, "shirts/" + gender);
+  const { data, isLoading } = useDatabaseSnapshot(["shirts", gender], dbRef);
   const isAdmin = useSelector((state) => state.account.isAdmin);
   const [genderShirts, setGenderShirts] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
   const capitalizedGender = gender.charAt(0).toUpperCase() + gender.slice(1);
   const [searchInput, setSearchInput] = useState("");
 
@@ -30,37 +33,38 @@ function GenderPage() {
   ];
 
   useLayoutEffect(() => {
-    setIsLoading(true);
-    let filteredByNameShirts = [];
-    if (Object.keys(currentShirts.shirts).length) {
-      const shirts = currentShirts.shirts[gender];
-      const loadedShirts = Object.keys(shirts).map(
-        (shirtTitle) => shirts[shirtTitle]
-      );
+    if (!isLoading) {
+      const loadedShirts = [];
+      data.forEach((snap) => {
+        loadedShirts.push(snap.val());
+      });
+
+      const filteredByNameShirts = [];
       if (searchInput.length > 2) {
-        for (let i in loadedShirts) {
+        loadedShirts.forEach((shirt) => {
           if (
-            loadedShirts[i].name
-              .toLowerCase()
-              .includes(searchInput.toLowerCase()) ||
-            loadedShirts[i].commonTypos
-              .toLowerCase()
-              .includes(searchInput.toLowerCase())
+            shirt.name.toLowerCase().includes(searchInput.toLowerCase()) ||
+            shirt.commonTypos.toLowerCase().includes(searchInput.toLowerCase())
           ) {
-            filteredByNameShirts.push({ ...loadedShirts[i], gender });
-            // setGenderShirts((prev) => [
-            //   ...prev,
-            //   { ...loadedShirts[i], gender },
-            // ]);
+            filteredByNameShirts.push({ ...shirt, gender });
           }
-        }
-        setGenderShirts(filteredByNameShirts);
+        });
       } else {
-        setGenderShirts(loadedShirts);
+        filteredByNameShirts.push(...loadedShirts);
       }
+
+      setGenderShirts(filteredByNameShirts);
     }
-    setIsLoading(false);
-  }, [gender, currentShirts, searchInput]);
+  }, [gender, data, searchInput, isLoading]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      const loadedShirts = [];
+      data.forEach((snap) => {
+        loadedShirts.push(snap.val());
+      });
+    }
+  }, [data, isLoading]);
 
   const filteredShirts =
     selectedOptions.length === 0
@@ -117,7 +121,9 @@ function GenderPage() {
         </Box>
       </Box>
       {isLoading ? (
-        <CircularProgress />
+        <Box display="flex" justifyContent="center" mt={8}>
+          <CircularProgress />
+        </Box>
       ) : (
         <Grid
           container
@@ -134,7 +140,7 @@ function GenderPage() {
           ) : (
             <Typography mt={10}>{fallbackText}</Typography>
           )}
-          {isAdmin && <Card newItemCard={true} />}
+          {isAdmin && <Card newItemCard={true} gender={gender} />}
         </Grid>
       )}
     </Container>

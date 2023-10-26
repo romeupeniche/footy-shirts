@@ -44,7 +44,7 @@ function ZoomableImage({ src, alt, sx }) {
 export default ZoomableImage;
 
 ZoomableImage.propTypes = {
-  src: PropTypes.string.isRequired,
+  src: PropTypes.string,
   alt: PropTypes.string.isRequired,
   sx: PropTypes.object,
 };

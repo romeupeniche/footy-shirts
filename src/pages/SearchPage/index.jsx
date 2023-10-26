@@ -1,39 +1,42 @@
 import { CircularProgress, Grid, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import Card from "../../components/Card";
+import { db } from "../../firebase-config";
+import { ref } from "firebase/database";
+import { useDatabaseSnapshot } from "@react-query-firebase/database";
 
 function SearchPage() {
-  const currentShirts = useSelector((state) => state.shirts);
+  const dbRef = ref(db, "shirts");
+  const { data, isLoading } = useDatabaseSnapshot(["shirts"], dbRef);
   const search = useParams().search;
   const [foundItems, setFoundItems] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setFoundItems([]);
-    setIsLoading(true);
-
-    for (let gender in currentShirts.shirts) {
-      for (let team in currentShirts.shirts[gender]) {
-        if (
-          currentShirts.shirts[gender][team].name
-            .toLowerCase()
-            .includes(search.toLowerCase()) ||
-          currentShirts.shirts[gender][team].commonTypos
-            .toLowerCase()
-            .includes(search.toLowerCase())
-        ) {
-          setFoundItems((prev) => [
-            ...prev,
-            { ...currentShirts.shirts[gender][team], gender },
-          ]);
+    if (!isLoading) {
+      const loadedShirts = [];
+      data.forEach((snap) => {
+        loadedShirts.push({ shirts: snap.val(), gender: snap.key });
+      });
+      const foundShirts = [];
+      loadedShirts.forEach((genderObj) => {
+        const gender = genderObj.gender;
+        for (let shirtId in genderObj.shirts) {
+          if (
+            genderObj.shirts[shirtId].name
+              .toLowerCase()
+              .includes(search.toLowerCase()) ||
+            genderObj.shirts[shirtId].commonTypos
+              .toLowerCase()
+              .includes(search.toLowerCase())
+          ) {
+            foundShirts.push({ ...genderObj.shirts[shirtId], gender });
+          }
         }
-      }
+      });
+      setFoundItems(foundShirts);
     }
-
-    setIsLoading(false);
-  }, [search, currentShirts.shirts]);
+  }, [data, isLoading, search]);
 
   return (
     <>

@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import Form from "../../components/Form";
-import { setNewShirt } from "../../store/shirtsSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { Box, Container, Typography } from "@mui/material";
 import ItemCard from "../../components/ItemCard";
@@ -19,15 +18,18 @@ const defaultItem = {
   },
 };
 
-function ShirtForm({ currentGender, item = defaultItem }) {
-  const dispatch = useDispatch();
+function ShirtForm({
+  currentGender,
+  item = defaultItem,
+  onSubmit,
+  isEditing = false,
+}) {
   const navigate = useNavigate();
   const isAdmin = useSelector((state) => state.account.isAdmin);
   const [itemCardProps, setItemCardProps] = useState(item);
 
   const submitHandler = (providedInfo) => {
-    dispatch(setNewShirt(providedInfo));
-    navigate("/" + providedInfo.gender);
+    onSubmit(providedInfo);
   };
 
   useEffect(() => {
@@ -36,17 +38,16 @@ function ShirtForm({ currentGender, item = defaultItem }) {
     }
   });
 
-  const isEditing = !!currentGender;
-
   let formProps = {
     submitHandler,
     setInputs: setItemCardProps,
+    currentGender,
   };
 
   if (isEditing) {
     formProps = {
       ...formProps,
-      isNotAbleToChangeGender: isEditing,
+      isNotAbleToChangeGender: true,
       currentGender,
       currentItem: item,
     };
@@ -55,7 +56,7 @@ function ShirtForm({ currentGender, item = defaultItem }) {
   return (
     <Container>
       <Typography
-        fontSize={{ xs: "3rem", sm: "4rem" }}
+        fontSize={{ xs: "2em", sm: "3rem" }}
         mt={5}
         sx={{
           display: "flex",
@@ -105,12 +106,14 @@ ShirtForm.propTypes = {
   item: PropTypes.shape({
     imgs: PropTypes.arrayOf(PropTypes.string).isRequired,
     name: PropTypes.string.isRequired,
-    price: PropTypes.string.isRequired,
+    price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     sizes: PropTypes.shape({
-      sizeS: PropTypes.bool.isRequired,
-      sizeM: PropTypes.bool.isRequired,
-      sizeL: PropTypes.bool.isRequired,
-      sizeXL: PropTypes.bool.isRequired,
-    }).isRequired,
-  }).isRequired,
+      sizeS: PropTypes.bool,
+      sizeM: PropTypes.bool,
+      sizeL: PropTypes.bool,
+      sizeXL: PropTypes.bool,
+    }),
+  }),
+  onSubmit: PropTypes.func.isRequired,
+  isEditing: PropTypes.bool,
 };

@@ -7,7 +7,7 @@ import {
   RadioGroup,
   Typography,
 } from "@mui/material";
-import ZoomableImage from "./ZoomableImage";
+import ZoomableImage from "../ZoomableImage";
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
@@ -215,7 +215,7 @@ ItemCard.propTypes = {
     imgs: PropTypes.arrayOf(PropTypes.string),
     name: PropTypes.string,
     gender: PropTypes.string,
-    price: PropTypes.string,
+    price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     sizes: PropTypes.shape({
       sizeS: PropTypes.bool,
       sizeM: PropTypes.bool,

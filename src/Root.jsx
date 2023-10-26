@@ -11,6 +11,8 @@ import Home from "./pages/Home";
 import Item from "./pages/Item";
 import App from "./App.jsx";
 import Checkout from "./pages/Checkout";
+import { QueryClientProvider } from "react-query";
+import { queryClient } from "./util/http";
 
 const router = createBrowserRouter([
   {
@@ -128,10 +130,12 @@ function Root() {
   });
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <RouterProvider router={router} />
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 }
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   Box,
   Button,
@@ -14,12 +14,14 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { addItem } from "../../store/bagSlice";
 import { changeURLWithShirtTitle } from "../../helpers/ChangeURL";
-import { ref, remove } from "firebase/database";
+import { ref } from "firebase/database";
 import { db } from "../../firebase-config";
-import ZoomableImage from "./ZoomableImage";
+import ZoomableImage from "../../components/ZoomableImage";
 import useBagNotification from "../../hooks/useBagNotification";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useDatabaseRemoveMutation } from "@react-query-firebase/database";
+import { queryClient } from "../../util/http";
 
 const modalStyle = {
   position: "absolute",
@@ -38,14 +40,22 @@ const modalStyle = {
 };
 
 function Item() {
-  const currentShirts = useSelector((state) => state.shirts);
+  const gender = useParams().gender;
+  const {
+    state: { shirt },
+  } = useLocation();
+  const shirtRef = ref(db, `/shirts/${gender}/${shirt.id}`);
+  const { mutate: deleteMutate } = useDatabaseRemoveMutation(shirtRef, {
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["shirts", gender] });
+      navigate(`/${gender}`);
+    },
+  });
   const isAdmin = useSelector((state) => state.account.isAdmin);
-  const [shirt, setShirt] = useState(null);
   const [shirtImg, setShirtImg] = useState(null);
   const [size, setSize] = useState(null);
   const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] =
     useState(false);
-  const gender = useParams().gender;
   const capitalizedGender = gender.charAt(0).toUpperCase() + gender.slice(1);
   const id = useParams().id;
   const dispatch = useDispatch();
@@ -53,17 +63,9 @@ function Item() {
   const triggerBagNotification = useBagNotification();
 
   useEffect(() => {
-    if (currentShirts !== null) {
-      let shirtsList = currentShirts.shirts[gender];
-      for (let team in shirtsList) {
-        if (shirtsList[team].id === id) {
-          setShirt(shirtsList[team]);
-          setShirtImg(shirtsList[team].imgs[0]);
-          changeURLWithShirtTitle(shirtsList[team].name);
-        }
-      }
-    }
-  }, [gender, id, currentShirts]);
+    changeURLWithShirtTitle(shirt.name);
+    setShirtImg(shirt.imgs[0]);
+  }, [shirt]);
 
   const setSizeHandler = (e) => {
     const value = e.target.value;
@@ -101,9 +103,8 @@ function Item() {
   };
 
   const deleteHandler = () => {
-    remove(ref(db, `/shirts/${gender}/${shirt.id}`));
+    deleteMutate();
     closeConfirmDeleteModalHandler();
-    navigate(`/${gender}`);
   };
 
   const setIsConfirmDeleteModalOpenHandler = () => {

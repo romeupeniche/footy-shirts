@@ -5,22 +5,30 @@ import AddIcon from "@mui/icons-material/Add";
 
 function Card({ shirt = null, gender = null, newItemCard = false }) {
   let linkTo = "";
-  if (gender) {
+  if (newItemCard) {
+    linkTo = "/add";
+    shirt = {
+      gender,
+    };
+  } else if (gender) {
     linkTo = `/${gender}/${shirt.id}`;
   } else if (!gender && shirt) {
     linkTo = `${shirt.id}`;
-  } else {
-    linkTo = "/add";
   }
 
   let title = "";
 
-  if (gender) {
+  if (gender && !newItemCard) {
     title = gender.toUpperCase();
   }
   return (
     <Grid item xs={2} sm={4}>
-      <Link component={RouterLink} to={linkTo} sx={{ textDecoration: "none" }}>
+      <Link
+        component={RouterLink}
+        to={linkTo}
+        state={{ shirt }}
+        sx={{ textDecoration: "none" }}
+      >
         <Container
           sx={{
             display: "flex",

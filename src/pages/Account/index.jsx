@@ -15,7 +15,7 @@ function Account() {
     }
   }, [currentUser]);
 
-  return <>{isLogged ? <Profile /> : <Form />}</>;
+  return <>{isLogged ? <Profile /> : <Form />} </>;
 }
 
 export default Account;

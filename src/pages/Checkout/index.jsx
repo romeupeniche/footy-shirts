@@ -13,6 +13,7 @@ function Checkout() {
   const navigate = useNavigate();
 
   const setIsProceedingToPaymentHandler = () => {
+    window.scrollTo(0, 0);
     setIsProceedingToPayment(true);
   };
 
@@ -37,7 +38,12 @@ function Checkout() {
         Checkout
         <LocalShippingOutlinedIcon
           fontSize="inherit"
-          sx={{ color: "secondary.light", fontWeight: "100", ml: 2 }}
+          sx={{
+            color: "secondary.light",
+            fontWeight: "100",
+            ml: 2,
+            display: { xs: "none", md: "inline-block" },
+          }}
         />
       </Typography>
       {isProceedingToPayment ? (

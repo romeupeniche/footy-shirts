@@ -20,7 +20,11 @@ function Bag() {
         Your Bag
         <ShoppingBagOutlinedIcon
           fontSize="inherit"
-          sx={{ color: "secondary.light", fontWeight: "100" }}
+          sx={{
+            color: "secondary.light",
+            fontWeight: "100",
+            display: { xs: "none", md: "inline-block" },
+          }}
         />
       </Typography>
       {!currentBag.items.length ? (

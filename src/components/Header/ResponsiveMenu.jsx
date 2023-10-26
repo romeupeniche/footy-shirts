@@ -13,7 +13,6 @@ import { Link as RouterLink, useLocation } from "react-router-dom";
 import SearchButton from "../SearchInput";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import PersonIcon from "@mui/icons-material/Person";
-import PropTypes from "prop-types";
 
 export default function ResponsiveMenu() {
   const currentBag = useSelector((state) => state.bag);
@@ -112,7 +111,3 @@ export default function ResponsiveMenu() {
     </>
   );
 }
-
-ResponsiveMenu.propTypes = {
-  currentUser: PropTypes.object.isRequired,
-};

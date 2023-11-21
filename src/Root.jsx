@@ -66,7 +66,7 @@ function Root() {
     spacing: 10,
     shadows: [
       "none",
-      "rgba(55, 65, 255, 0.25) 0px 30px 60px -12px, rgba(0, 0, 155) 0px 18px 36px -18px",
+      "rgba(55, 65, 255, 0.25) 0px 20px 30px -12px, rgba(0, 0, 155) 0px 18px 26px -18px",
       "rgba(0, 0, 155, 0.15) 48px 0px 100px 0px", // header
       ...Array(20).fill("none"),
     ],

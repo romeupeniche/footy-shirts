@@ -6,6 +6,16 @@ import { addCheckoutInputValidity } from "../../store/bagSlice";
 
 const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 
+const capitalizeEveryWord = (string) => {
+  const words = string.split(" ");
+
+  for (let i = 0; i < words.length; i++) {
+    words[i] = words[i][0].toUpperCase() + words[i].substr(1);
+  }
+
+  return words.join(" ");
+};
+
 function Input({
   type = "string",
   label,
@@ -20,9 +30,6 @@ function Input({
   const [isError, setIsError] = useState(false);
   const dispatch = useDispatch();
 
-  // funcionando, porem nao ta na melhor execucao.
-  // useEffect ta reinicializando o componente toda vez que o input muda
-  // talvez olhar na resolucao do curso de react.
   useEffect(() => {
     let isInputValid;
     if (defaultValue !== "" || !required) {
@@ -42,6 +49,21 @@ function Input({
   };
 
   const onBlur = () => {
+    if (type === "string") {
+      let value;
+      if (input.length > 2) {
+        value = capitalizeEveryWord(input);
+      } else {
+        value = input;
+      }
+
+      setInput(value);
+
+      if (/\d/.test(value)) {
+        setIsError(true);
+      }
+    }
+
     if (type === "email") {
       if (!emailRegex.test(input)) {
         setIsError(true);

@@ -10,14 +10,7 @@ const HLText = styled(Typography)(({ theme }) => ({
 function BagNotification() {
   const trigger = useScrollTrigger();
   const [isBagShown, item] = useSelector((state) => state.bag.bagNotification);
-
-  // const isBagShown = true;
-  // const item = {
-  //   name: "Chelsea 2022/23 Stadium Home",
-  //   size: "S",
-  //   gender: "Men",
-  // };
-
+  const isRemoving = !!item.isRemoving;
   return (
     <Box
       sx={{
@@ -45,7 +38,8 @@ function BagNotification() {
         sx={{ fontSize: { xs: ".8rem", md: "1rem" } }}
       >
         <HLText>{item.name}</HLText> for <HLText>{item.gender}</HLText>, Size{" "}
-        <HLText>{item.size}</HLText>, was added to your bag.
+        <HLText>{item.size}</HLText>,{" "}
+        {isRemoving ? "was removed from your bag." : "was added to your bag."}
       </Typography>
     </Box>
   );

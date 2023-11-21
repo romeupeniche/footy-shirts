@@ -3,12 +3,14 @@ import { Box } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import BagItems from "../../../components/BagItems";
+import PropTypes from "prop-types";
 
-function ProfileBag() {
+function ProfileBag({ currentBag }) {
   const navigate = useNavigate();
   const navigateToBagHandler = () => {
     navigate("/bag");
   };
+
   return (
     <>
       <Typography mt={5} variant="h5" textAlign="center">
@@ -34,10 +36,14 @@ function ProfileBag() {
             Bag
           </Typography>
         </Box>
-        <BagItems disableSummary />
+        <BagItems disableSummary currentBag={currentBag} />
       </Box>
     </>
   );
 }
 
 export default ProfileBag;
+
+ProfileBag.propTypes = {
+  currentBag: PropTypes.object.isRequired,
+};

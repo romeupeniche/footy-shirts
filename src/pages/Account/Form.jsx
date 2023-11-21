@@ -84,39 +84,17 @@ function Form() {
     setIsSigningUp((prev) => !prev);
   };
 
-  const submitHandler = (e) => {
-    e.preventDefault();
-    checkIfPasswordIsValidHandler();
-    if (currentPassword.length < 6) {
-      setPassInvalid("invalid");
-    } else if (emailRegex.test(currentEmail) === false) {
-      setIsEmailInvalid(true);
-    } else {
-      if (isSigningUp) {
-        registerHandler();
-      } else {
-        logInHandler();
-      }
-    }
-  };
-
   const registerHandler = async () => {
-    if (isAbleToSubmit) {
-      setIsLoading(true);
-      try {
-        await createUserWithEmailAndPassword(
-          auth,
-          currentEmail,
-          currentPassword
-        );
-        setIsLoading(false);
-      } catch (err) {
-        setIsLoading(false);
-        if (err.code === "auth/email-already-in-use") {
-          logInHandler();
-        } else {
-          window.alert("Something went wrong. Error code: " + err.code);
-        }
+    setIsLoading(true);
+    try {
+      await createUserWithEmailAndPassword(auth, currentEmail, currentPassword);
+      setIsLoading(false);
+    } catch (err) {
+      setIsLoading(false);
+      if (err.code === "auth/email-already-in-use") {
+        logInHandler();
+      } else {
+        window.alert("Something went wrong. Error code: " + err.code);
       }
     }
   };
@@ -141,6 +119,22 @@ function Form() {
         window.alert("You have reached too many attempts.");
       } else {
         window.alert("Something went wrong. Error code: " + err.code);
+      }
+    }
+  };
+
+  const submitHandler = (e) => {
+    e.preventDefault();
+    checkIfPasswordIsValidHandler();
+    if (currentPassword.length < 6) {
+      setPassInvalid("invalid");
+    } else if (emailRegex.test(currentEmail) === false) {
+      setIsEmailInvalid(true);
+    } else {
+      if (isSigningUp) {
+        registerHandler();
+      } else {
+        logInHandler();
       }
     }
   };
@@ -220,7 +214,6 @@ function Form() {
               type={showPassword ? "text" : "password"}
               sx={{ my: 3 }}
               value={currentPassword}
-              // autoComplete={isSigningUp ? false : true}
               onChange={(e) => setCurrentPassword(e.target.value)}
               error={passwordError}
               helperText={passwordHelperText}

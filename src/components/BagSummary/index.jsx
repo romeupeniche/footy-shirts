@@ -1,18 +1,16 @@
 import { Box, Button, Typography } from "@mui/material";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import arrivingDatesFormatter from "../../helpers/ArrivingDatesFormatter";
 
-function BagSummary({ checkoutButton = false }) {
-  const currentBag = useSelector((state) => state.bag);
-  const shippingValue = currentBag.totalAmount > 250 ? 16.0 : 8.0;
+function BagSummary({ checkoutButton = false, currentBag }) {
+  const shippingValue = currentBag?.totalAmount > 250 ? 16.0 : 8.0;
   const navigate = useNavigate();
   const arrivingDates = arrivingDatesFormatter();
   const orderSummary = [
     {
       title: "Subtotal",
-      value: currentBag.totalAmount.toFixed(2),
+      value: currentBag?.totalAmount.toFixed(2),
     },
     {
       title: "Shipping",
@@ -20,7 +18,7 @@ function BagSummary({ checkoutButton = false }) {
     },
     {
       title: "Tax",
-      value: (currentBag.totalAmount * 0.13).toFixed(2),
+      value: (currentBag?.totalAmount * 0.13).toFixed(2),
     },
   ];
 
@@ -67,7 +65,7 @@ function BagSummary({ checkoutButton = false }) {
       >
         <Typography>Total:</Typography>
         <Typography fontWeight={600}>
-          ${(currentBag.totalAmount * 1.13 + shippingValue).toFixed(2)}
+          ${(currentBag?.totalAmount * 1.13 + shippingValue).toFixed(2)}
         </Typography>
       </Box>
       {checkoutButton ? (
@@ -89,4 +87,5 @@ export default BagSummary;
 
 BagSummary.propTypes = {
   checkoutButton: PropTypes.bool,
+  currentBag: PropTypes.object,
 };

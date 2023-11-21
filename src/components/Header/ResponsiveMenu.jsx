@@ -8,14 +8,13 @@ import {
   Link,
 } from "@mui/material";
 import { useState } from "react";
-import { useSelector } from "react-redux";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import SearchButton from "../SearchInput";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import PersonIcon from "@mui/icons-material/Person";
+import PropTypes from "prop-types";
 
-export default function ResponsiveMenu() {
-  const currentBag = useSelector((state) => state.bag);
+export default function ResponsiveMenu({ currentBag }) {
   const path = useLocation().pathname.split("/")[1];
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -34,6 +33,13 @@ export default function ResponsiveMenu() {
   const closeMenuWhenDoneSearchHandler = () => {
     setAnchorEl(null);
   };
+
+  let itemsQuantity = 0;
+  if (currentBag?.items) {
+    itemsQuantity = currentBag.items.reduce((total, item) => {
+      return total + item.quantity;
+    }, 0);
+  }
   return (
     <>
       <IconButton
@@ -94,7 +100,7 @@ export default function ResponsiveMenu() {
         <Link to="/bag" component={RouterLink} sx={{ color: "primary.main" }}>
           <MenuItem>
             <ShoppingBagIcon />{" "}
-            <Typography ml={1.35}> Bag ({currentBag.items?.length})</Typography>
+            <Typography ml={1.35}> Bag ({itemsQuantity})</Typography>
           </MenuItem>
         </Link>
         <Link
@@ -111,3 +117,7 @@ export default function ResponsiveMenu() {
     </>
   );
 }
+
+ResponsiveMenu.propTypes = {
+  currentBag: PropTypes.object,
+};

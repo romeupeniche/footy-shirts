@@ -2,9 +2,13 @@ import { Box, Button, FormGroup, Modal, Typography } from "@mui/material";
 import BagSummary from "../../components/BagSummary";
 import CardInput from "./CardInput";
 import { useState } from "react";
-import { clearBag } from "../../store/bagSlice";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { ref } from "firebase/database";
+import { db } from "../../firebase-config";
+import { useDatabaseTransaction } from "@react-query-firebase/database";
+import PropTypes from "prop-types";
+import { queryClient } from "../../util/http";
 
 const modalStyle = {
   position: "absolute",
@@ -22,9 +26,8 @@ const modalStyle = {
   backgroundColor: "white",
 };
 
-function PaymentInfo() {
+function PaymentInfo({ currentBag }) {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const [allInputsValidity, setAllInputsValidity] = useState([
     { key: "CVV", isValid: false },
     { key: "Card Number", isValid: false },
@@ -32,6 +35,34 @@ function PaymentInfo() {
     { key: "MM/YY", isValid: false },
   ]);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const currentUser = useSelector((state) => state.account).user;
+  const userBagRef = ref(db, "carts/" + currentUser.uid);
+  const { mutate: clearBagTrans } = useDatabaseTransaction(
+    userBagRef,
+    (currentBag) => {
+      if (currentBag) {
+        currentBag.items = [];
+        currentBag.totalAmount = 0;
+      }
+
+      return currentBag;
+    },
+    undefined,
+    {
+      onSuccess: async (data) => {
+        const snapshot = data.snapshot;
+        await queryClient.cancelQueries({ queryKey: ["bag", currentUser] });
+        const prevData = queryClient.getQueryData(["bag", currentUser]);
+        queryClient.setQueryData(["bag", currentUser], snapshot);
+        navigate("/");
+
+        return { prevData };
+      },
+      onError: (error, data, context) => {
+        queryClient.setQueryData(["bag", currentUser], context.prevData);
+      },
+    }
+  );
 
   const setAllInputsValidityHandler = (key, bool) => {
     setAllInputsValidity((prevState) => {
@@ -58,8 +89,7 @@ function PaymentInfo() {
 
   const confirmPaymentHandler = () => {
     closeConfirmModalHandler();
-    dispatch(clearBag());
-    navigate("/");
+    clearBagTrans();
   };
 
   return (
@@ -105,7 +135,7 @@ function PaymentInfo() {
             Confirm Payment
           </Button>
         </FormGroup>
-        <BagSummary />
+        <BagSummary currentBag={currentBag} />
       </Box>
       <Modal open={isConfirmModalOpen} onClose={closeConfirmModalHandler}>
         <Box sx={modalStyle}>
@@ -150,3 +180,7 @@ function PaymentInfo() {
 }
 
 export default PaymentInfo;
+
+PaymentInfo.propTypes = {
+  currentBag: PropTypes.object,
+};

@@ -147,7 +147,6 @@ function CardInput({
           fontWeight: 200,
         },
       }}
-      //   type={inputType}
     />
   );
 

@@ -21,7 +21,7 @@ const useUpdateShirt = () => {
     isError: setMutIsError,
     error: setMutError,
   } = useDatabaseSetMutation(shirtRef, undefined, {
-    onSettled: () => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["shirts", gender],
       });
@@ -35,7 +35,7 @@ const useUpdateShirt = () => {
     isError: updateMutIsError,
     error: updateMutError,
   } = useDatabaseUpdateMutation(shirtRef, {
-    onSettled: () => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["shirts", gender],
       });

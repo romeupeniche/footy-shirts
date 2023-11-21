@@ -6,19 +6,12 @@ import { onAuthStateChanged } from "@firebase/auth";
 import { auth, db } from "./firebase-config";
 import { useDispatch } from "react-redux";
 import { setUser } from "./store/accountSlice";
-import { setItems } from "./store/bagSlice";
-import { get, onValue, ref } from "firebase/database";
+import { get, ref } from "firebase/database";
 import ScrollToTop from "./helpers/ScrollToTop";
 import ChangeURL from "./helpers/ChangeURL";
-// import { useDatabaseSnapshot } from "@react-query-firebase/database";
-// import { useState } from "react";
 
 function App() {
   const dispatch = useDispatch();
-  // const [currentUser, setCurrentUser] = useState(null);
-  // const userBagRef = ref(db, "carts/" + currentUser.uid + "/bag");
-  // const {data: bagData} = useDatabaseSnapshot(["shirts", "bag"], userBagRef);
-
   onAuthStateChanged(auth, async (user) => {
     const dataSnapshot = await get(ref(db));
     const data = dataSnapshot.val();
@@ -36,13 +29,6 @@ function App() {
           isAdmin,
         })
       );
-
-      // setCurrentUser(user)
-      const userBagRef = ref(db, "carts/" + user.uid + "/bag");
-      onValue(userBagRef, (snapshot) => {
-        const currentBag = snapshot.val();
-        dispatch(setItems(currentBag));
-      });
     } else {
       dispatch(setUser(null));
     }

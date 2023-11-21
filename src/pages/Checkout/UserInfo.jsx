@@ -48,7 +48,7 @@ const firstInputs = [
   "Address Line 2",
 ];
 
-function UserInfo({ setIsProceedingToPaymentHandler }) {
+function UserInfo({ setIsProceedingToPaymentHandler, currentBag }) {
   const [isAllCheckboxesChecked, setIsAllCheckboxesChecked] = useState(false);
   const allInputsValidity = useSelector((state) => state.bag.checkoutInputs);
   const setIsAllCheckboxesCheckedHandler = (value) => {
@@ -122,7 +122,7 @@ function UserInfo({ setIsProceedingToPaymentHandler }) {
             </Box>
           </Box>
         </FormGroup>
-        <BagSummary />
+        <BagSummary currentBag={currentBag} />
       </Box>
     </>
   );
@@ -132,4 +132,5 @@ export default UserInfo;
 
 UserInfo.propTypes = {
   setIsProceedingToPaymentHandler: PropTypes.func.isRequired,
+  currentBag: PropTypes.object,
 };

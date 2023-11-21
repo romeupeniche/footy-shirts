@@ -11,8 +11,7 @@ import {
   Modal,
   IconButton,
 } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
-import { addItem } from "../../store/bagSlice";
+import { useSelector } from "react-redux";
 import { changeURLWithShirtTitle } from "../../helpers/ChangeURL";
 import { ref } from "firebase/database";
 import { db } from "../../firebase-config";
@@ -20,8 +19,13 @@ import ZoomableImage from "../../components/ZoomableImage";
 import useBagNotification from "../../hooks/useBagNotification";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useDatabaseRemoveMutation } from "@react-query-firebase/database";
+import {
+  useDatabaseRemoveMutation,
+  useDatabaseSnapshot,
+  useDatabaseTransaction,
+} from "@react-query-firebase/database";
 import { queryClient } from "../../util/http";
+import SkeletonCard from "../../components/SkeletonCard";
 
 const modalStyle = {
   position: "absolute",
@@ -40,32 +44,106 @@ const modalStyle = {
 };
 
 function Item() {
-  const gender = useParams().gender;
-  const {
-    state: { shirt },
-  } = useLocation();
-  const shirtRef = ref(db, `/shirts/${gender}/${shirt.id}`);
+  const { gender, id } = useParams();
+  const shirtRef = ref(db, `shirts/${gender}/${id}`);
+  const { data, isLoading: isSnapLoading } = useDatabaseSnapshot(
+    ["shirts", gender, id],
+    shirtRef
+  );
+
+  const { state: locationState } = useLocation();
+
+  const [shirt, setShirt] = useState(null);
+
+  useEffect(() => {
+    if (!isSnapLoading) {
+      let _shirt;
+      if (!locationState) {
+        _shirt = data.val();
+      } else {
+        _shirt = locationState.shirt;
+      }
+
+      setShirt(_shirt);
+      changeURLWithShirtTitle(_shirt.name);
+      setShirtImg(_shirt.imgs[0]);
+    }
+  }, [locationState, isSnapLoading, data]);
+
   const { mutate: deleteMutate } = useDatabaseRemoveMutation(shirtRef, {
-    onSettled: () => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["shirts", gender] });
       navigate(`/${gender}`);
     },
   });
   const isAdmin = useSelector((state) => state.account.isAdmin);
+  const currentUser = useSelector((state) => state.account).user;
+  const userBagRef = ref(db, "carts/" + currentUser.uid);
+  const triggerBagNotification = useBagNotification();
+
+  const { mutate: addToBagTrans, isLoading: isAddLoading } =
+    useDatabaseTransaction(
+      userBagRef,
+      (currentBag) => {
+        const item = {
+          id,
+          gender,
+          quantity: 1,
+          name: shirt.name,
+          price: shirt.price,
+          imgs: shirt.imgs,
+          size,
+          sizes: shirt.sizes,
+        };
+        if (!isAddLoading) {
+          if (!currentBag?.items) {
+            currentBag = { totalAmount: 0, items: [] };
+          }
+
+          const existingItemIndex = currentBag.items.findIndex(
+            (prevItem) => prevItem.id === item.id && prevItem.size === item.size
+          );
+
+          if (existingItemIndex !== -1) {
+            currentBag.items[existingItemIndex].quantity++;
+            item.price = currentBag.items[existingItemIndex].price;
+          } else {
+            currentBag.items.push(item);
+          }
+
+          currentBag.totalAmount += item.price;
+        }
+
+        return currentBag;
+      },
+      undefined,
+      {
+        onSuccess: async (data) => {
+          const snapshot = data.snapshot;
+          await queryClient.cancelQueries({ queryKey: ["bag", currentUser] });
+          const prevData = queryClient.getQueryData(["bag", currentUser]);
+          queryClient.setQueryData(["bag", currentUser], snapshot);
+          triggerBagNotification({
+            name: shirt.name,
+            gender: capitalizedGender,
+            size,
+          });
+
+          return { prevData };
+        },
+        onError: (error, data, context) => {
+          queryClient.setQueryData(["bag", currentUser], context.prevData);
+        },
+      }
+    );
+
   const [shirtImg, setShirtImg] = useState(null);
+  const [pageIsLoading, setPageIsLoading] = useState(true);
   const [size, setSize] = useState(null);
   const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] =
     useState(false);
   const capitalizedGender = gender.charAt(0).toUpperCase() + gender.slice(1);
-  const id = useParams().id;
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const triggerBagNotification = useBagNotification();
-
-  useEffect(() => {
-    changeURLWithShirtTitle(shirt.name);
-    setShirtImg(shirt.imgs[0]);
-  }, [shirt]);
 
   const setSizeHandler = (e) => {
     const value = e.target.value;
@@ -75,22 +153,11 @@ function Item() {
   };
 
   const addToBagHandler = () => {
-    triggerBagNotification({
-      name: shirt.name,
-      gender: capitalizedGender,
-      size,
-    });
-    const item = {
-      id,
-      gender,
-      quantity: 1,
-      totalPrice: shirt.price,
-      name: shirt.name,
-      price: shirt.price,
-      img: shirt.imgs[0],
-      size,
-    };
-    dispatch(addItem(item));
+    if (Object.keys(currentUser).length === 0) {
+      navigate("/account");
+    } else {
+      addToBagTrans();
+    }
   };
 
   const editHandler = () => {
@@ -107,6 +174,19 @@ function Item() {
     closeConfirmDeleteModalHandler();
   };
 
+  useEffect(() => {
+    const onPageLoad = () => {
+      setPageIsLoading(false);
+    };
+
+    if (document.readyState === "complete") {
+      onPageLoad();
+    } else {
+      window.addEventListener("load", onPageLoad, false);
+      return () => window.removeEventListener("load", onPageLoad);
+    }
+  }, []);
+
   const setIsConfirmDeleteModalOpenHandler = () => {
     setIsConfirmDeleteModalOpen(true);
   };
@@ -114,6 +194,10 @@ function Item() {
   const closeConfirmDeleteModalHandler = () => {
     setIsConfirmDeleteModalOpen(false);
   };
+
+  if (isSnapLoading || pageIsLoading) {
+    return <SkeletonCard type="item" />;
+  }
 
   return (
     <>
@@ -199,7 +283,6 @@ function Item() {
                     display="flex"
                     alignItems="center"
                     justifyContent="center"
-                    // flexDirection="column-reverse"
                   >
                     <Typography variant="h4" fontWeight={500}>
                       {shirt.name}

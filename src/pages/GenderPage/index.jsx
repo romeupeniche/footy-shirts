@@ -1,10 +1,4 @@
-import {
-  Box,
-  CircularProgress,
-  Container,
-  Grid,
-  Typography,
-} from "@mui/material";
+import { Box, Container, Grid, Typography } from "@mui/material";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLoaderData } from "react-router-dom";
@@ -14,9 +8,11 @@ import SearchButton from "../../components/SearchInput";
 import { ref } from "firebase/database";
 import { db } from "../../firebase-config";
 import { useDatabaseSnapshot } from "@react-query-firebase/database";
+import SkeletonCard from "../../components/SkeletonCard";
 
 function GenderPage() {
   const gender = useLoaderData();
+  const [pageIsLoading, setPageIsLoading] = useState(true);
   const dbRef = ref(db, "shirts/" + gender);
   const { data, isLoading } = useDatabaseSnapshot(["shirts", gender], dbRef);
   const isAdmin = useSelector((state) => state.account.isAdmin);
@@ -57,15 +53,6 @@ function GenderPage() {
     }
   }, [gender, data, searchInput, isLoading]);
 
-  useEffect(() => {
-    if (!isLoading) {
-      const loadedShirts = [];
-      data.forEach((snap) => {
-        loadedShirts.push(snap.val());
-      });
-    }
-  }, [data, isLoading]);
-
   const filteredShirts =
     selectedOptions.length === 0
       ? genderShirts
@@ -85,6 +72,19 @@ function GenderPage() {
     fallbackText =
       "No shirts found for this search. Refine criteria for more options.";
   }
+
+  useEffect(() => {
+    const onPageLoad = () => {
+      setPageIsLoading(false);
+    };
+
+    if (document.readyState === "complete") {
+      onPageLoad();
+    } else {
+      window.addEventListener("load", onPageLoad, false);
+      return () => window.removeEventListener("load", onPageLoad);
+    }
+  }, []);
 
   return (
     <Container>
@@ -120,29 +120,27 @@ function GenderPage() {
           />
         </Box>
       </Box>
-      {isLoading ? (
-        <Box display="flex" justifyContent="center" mt={8}>
-          <CircularProgress />
-        </Box>
-      ) : (
-        <Grid
-          container
-          justifyContent="center"
-          rowSpacing={4}
-          spacing={{ xs: 2, md: 3 }}
-          columns={{ xs: 2, sm: 6, md: 12 }}
-          columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-        >
-          {filteredShirts.length > 0 ? (
-            filteredShirts.map((shirt) => {
-              return <Card key={shirt.id} shirt={shirt} />;
-            })
-          ) : (
-            <Typography mt={10}>{fallbackText}</Typography>
-          )}
-          {isAdmin && <Card newItemCard={true} gender={gender} />}
-        </Grid>
-      )}
+      <Grid
+        container
+        justifyContent="center"
+        rowSpacing={4}
+        spacing={{ xs: 2, md: 3 }}
+        columns={{ xs: 2, sm: 6, md: 12 }}
+        columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+      >
+        {pageIsLoading || isLoading ? (
+          [1, 2, 3, 4, 5, 6].map((i) => {
+            return <SkeletonCard key={i} />;
+          })
+        ) : filteredShirts.length > 0 ? (
+          filteredShirts.map((shirt) => {
+            return <Card key={shirt.id} shirt={shirt} />;
+          })
+        ) : (
+          <Typography mt={10}>{fallbackText}</Typography>
+        )}
+        {isAdmin && <Card newItemCard={true} gender={gender} />}
+      </Grid>
     </Container>
   );
 }

@@ -17,6 +17,11 @@ import SearchButton from "../SearchInput";
 import ResponsiveMenu from "./ResponsiveMenu";
 import BagNotification from "./BagNotification";
 import PropTypes from "prop-types";
+import { useDatabaseSnapshot } from "@react-query-firebase/database";
+import { useSelector } from "react-redux";
+import { ref } from "firebase/database";
+import { db } from "../../firebase-config";
+import { useEffect, useState } from "react";
 
 function HideOnScroll(props) {
   const { children, window } = props;
@@ -37,8 +42,21 @@ HideOnScroll.propTypes = {
 };
 
 function Header(props) {
+  const [currentBag, setCurrentBag] = useState({ items: [] });
+  const currentUser = useSelector((state) => state.account).user;
+  const userBagRef = ref(db, "carts/" + currentUser.uid);
   const path = useLocation().pathname.split("/")[1];
   const availablePaths = ["Men", "Women", "Kids"];
+  const { data, isLoading } = useDatabaseSnapshot(
+    ["bag", currentUser],
+    userBagRef
+  );
+
+  useEffect(() => {
+    if (!isLoading && currentUser.uid) {
+      setCurrentBag(data.val());
+    }
+  }, [data, currentUser, isLoading]);
 
   return (
     <>
@@ -142,7 +160,7 @@ function Header(props) {
                 </IconButton>
               </Link>
             </Box>
-            <ResponsiveMenu />
+            <ResponsiveMenu currentBag={currentBag} />
           </Toolbar>
         </AppBar>
       </HideOnScroll>

@@ -5,9 +5,15 @@ import { useLocation, useNavigate } from "react-router-dom";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import UserInfo from "./userInfo";
 import PaymentInfo from "./PaymentInfo";
+import { useDatabaseSnapshot } from "@react-query-firebase/database";
+import { db } from "../../firebase-config";
+import { ref } from "firebase/database";
 
 function Checkout() {
-  const currentBagItems = useSelector((state) => state.bag.items);
+  const currentUser = useSelector((state) => state.account).user;
+  const userBagRef = ref(db, "carts/" + currentUser.uid);
+  const { data } = useDatabaseSnapshot(["bag", currentUser], userBagRef);
+
   const [isProceedingToPayment, setIsProceedingToPayment] = useState(false);
   const { state } = useLocation();
   const navigate = useNavigate();
@@ -18,7 +24,7 @@ function Checkout() {
   };
 
   useEffect(() => {
-    if (!state?.isFromBagPage || currentBagItems.length <= 0) {
+    if (!state?.isFromBagPage || data.val().items.length <= 0) {
       navigate("/bag");
       return;
     }
@@ -47,10 +53,11 @@ function Checkout() {
         />
       </Typography>
       {isProceedingToPayment ? (
-        <PaymentInfo />
+        <PaymentInfo currentBag={data.val()} />
       ) : (
         <UserInfo
           setIsProceedingToPaymentHandler={setIsProceedingToPaymentHandler}
+          currentBag={data.val()}
         />
       )}
     </Container>

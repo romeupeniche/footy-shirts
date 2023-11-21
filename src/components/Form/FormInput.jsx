@@ -30,6 +30,7 @@ function FormInput({
     isNotAbleToChangeGender,
     isInvalid,
     resetInvalidHandler,
+    areImgsEqual,
   },
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -59,6 +60,8 @@ function FormInput({
           isInvalid &&
           (!isLink
             ? `Your shirt ${title.toLowerCase()} must be > 12.`
+            : areImgsEqual
+            ? "Images cannot be equal."
             : "Please give a valid url.")
         }
         InputProps={{
@@ -191,5 +194,6 @@ FormInput.propTypes = {
     isNotAbleToChangeGender: PropTypes.bool,
     inputs: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
     resetInvalidHandler: PropTypes.func.isRequired,
+    areImgsEqual: PropTypes.bool,
   }).isRequired,
 };

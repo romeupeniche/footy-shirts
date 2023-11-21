@@ -1,11 +1,9 @@
 import { Box } from "@mui/material";
 import ItemBox from "./ItemBox";
 import BagSummary from "../BagSummary";
-import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
 
-function BagItems({ disableSummary = false }) {
-  const currentBag = useSelector((state) => state.bag);
+function BagItems({ disableSummary = false, currentBag }) {
   return (
     <Box
       sx={{
@@ -23,7 +21,9 @@ function BagItems({ disableSummary = false }) {
           );
         })}
       </Box>
-      {!disableSummary && <BagSummary checkoutButton={true} />}
+      {!disableSummary && (
+        <BagSummary checkoutButton={true} currentBag={currentBag} />
+      )}
     </Box>
   );
 }
@@ -32,4 +32,5 @@ export default BagItems;
 
 BagItems.propTypes = {
   disableSummary: PropTypes.bool,
+  currentBag: PropTypes.object.isRequired,
 };

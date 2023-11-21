@@ -70,7 +70,6 @@ function ItemCard({ itemCardProps }) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            // flexDirection: { xs: "column", sm: "row" },
             flexDirection: { xs: "column", lg: "row" },
             border: "2px dashed",
             borderColor: "secondary.main",
@@ -145,18 +144,6 @@ function ItemCard({ itemCardProps }) {
                 <Typography variant="h4" fontWeight={500} sx={{ mt: 3 }}>
                   {shirt.name}
                 </Typography>
-                {/* {isAdmin && (
-                        <>
-                          <IconButton onClick={editHandler}>
-                            <EditIcon color="secondary" />
-                          </IconButton>
-                          <IconButton
-                            onClick={setIsConfirmDeleteModalOpenHandler}
-                          >
-                            <DeleteIcon color="error" />
-                          </IconButton>
-                        </>
-                      )} */}
               </Box>
               <Typography fontWeight={400}>
                 {capitalizedGender}&apos;s Nike Dri-FIT ADV Football Shirt
@@ -177,7 +164,6 @@ function ItemCard({ itemCardProps }) {
                         value={shirt.sizes[size] ? size : "disabled"}
                         disabled={!shirt.sizes[size]}
                         control={<Radio />}
-                        // onClick={setSizeHandler}
                         label={trimmedSize}
                       />
                     );
@@ -196,8 +182,6 @@ function ItemCard({ itemCardProps }) {
                   md: "inherit",
                 },
               }}
-              // disabled={!size}
-              // onClick={addToBagHandler}
             >
               Add To Bag
             </Button>

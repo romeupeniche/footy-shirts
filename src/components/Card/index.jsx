@@ -21,6 +21,7 @@ function Card({ shirt = null, gender = null, newItemCard = false }) {
   if (gender && !newItemCard) {
     title = gender.toUpperCase();
   }
+
   return (
     <Grid item xs={2} sm={4}>
       <Link

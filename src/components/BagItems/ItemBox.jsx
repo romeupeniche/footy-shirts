@@ -1,18 +1,94 @@
 import { Box, Typography, Link, TextField } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
-import { changeItemQuantity, deleteAllItems } from "../../store/bagSlice";
 import PropTypes from "prop-types";
-import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { useState } from "react";
+import { useDatabaseTransaction } from "@react-query-firebase/database";
+import { db } from "../../firebase-config";
+import { ref } from "firebase/database";
+import { queryClient } from "../../util/http";
+import useBagNotification from "../../hooks/useBagNotification";
 
 function ItemBox({ item, readOnly }) {
-  const dispatch = useDispatch();
   const [quantity, setQuantity] = useState(item.quantity);
+  const currentUser = useSelector((state) => state.account).user;
+  const userBagRef = ref(db, "carts/" + currentUser.uid);
+  const triggerBagNotification = useBagNotification();
+
+  const { mutate: removeAllItemsTrans } = useDatabaseTransaction(
+    userBagRef,
+    (currentBag) => {
+      if (currentBag) {
+        const { id, size } = item;
+
+        const existingItemIdx = currentBag.items.findIndex(
+          (item) => item.id === id && item.size === size
+        );
+
+        const existingItem = currentBag.items[existingItemIdx];
+
+        const itemTotal = existingItem.price * existingItem.quantity;
+        currentBag.totalAmount -= itemTotal;
+
+        currentBag.items = currentBag.items.filter(
+          (item, idx) => idx !== existingItemIdx
+        );
+      }
+      return currentBag;
+    },
+    undefined,
+    {
+      onSuccess: async (data) => {
+        const snapshot = data.snapshot;
+        await queryClient.cancelQueries({ queryKey: ["bag", currentUser] });
+        const prevData = queryClient.getQueryData(["bag", currentUser]);
+        queryClient.setQueryData(["bag", currentUser], snapshot);
+
+        triggerBagNotification({
+          name: item.name,
+          gender: capitalizedGender,
+          size: item.size,
+          isRemoving: true,
+        });
+
+        return { prevData };
+      },
+      onError: (error, data, context) => {
+        queryClient.setQueryData(["bag", currentUser], context.prevData);
+      },
+    }
+  );
+  const { mutate: changeItemQuantityTrans } = useDatabaseTransaction(
+    userBagRef,
+    (currentBag) => {
+      if (currentBag) {
+        const { id, size } = item;
+        const existingItemIndex = currentBag.items.findIndex(
+          (item) => item.id === id && item.size === size
+        );
+        const existingItem = currentBag.items[existingItemIndex];
+        const valueToBeAdded =
+          existingItem.price * (+quantity - existingItem.quantity);
+        currentBag.totalAmount += valueToBeAdded;
+        currentBag.items[existingItemIndex].quantity = +quantity;
+      }
+
+      return currentBag;
+    },
+    undefined,
+    {
+      onSuccess: async (data) => {
+        const snapshot = data.snapshot;
+        await queryClient.cancelQueries({ queryKey: ["bag", currentUser] });
+        queryClient.setQueryData(["bag", currentUser], snapshot);
+      },
+    }
+  );
   const capitalizedGender =
     item.gender.charAt(0).toUpperCase() + item.gender.slice(1);
 
-  const deleteAllItemsHandler = (id, size) => {
-    dispatch(deleteAllItems({ id, size }));
+  const deleteAllItemsHandler = () => {
+    removeAllItemsTrans();
   };
 
   const setQuantityHandler = (event) => {
@@ -27,9 +103,7 @@ function ItemBox({ item, readOnly }) {
       setQuantity("1");
     }
 
-    dispatch(
-      changeItemQuantity({ id: item.id, quantity: +quantity, size: item.size })
-    );
+    changeItemQuantityTrans();
   };
   return (
     <Box
@@ -45,7 +119,7 @@ function ItemBox({ item, readOnly }) {
     >
       <Box
         component="img"
-        src={item.img}
+        src={item.imgs[0]}
         m={{ xs: 1 }}
         sx={{ width: { xs: 250 }, borderRadius: 10 }}
       />
@@ -78,6 +152,7 @@ function ItemBox({ item, readOnly }) {
             ) : (
               <Link
                 to={`/${item.gender}/${item.id}`}
+                state={{ shirt: item }}
                 component={RouterLink}
                 sx={{
                   color: "primary.main",
@@ -138,7 +213,7 @@ function ItemBox({ item, readOnly }) {
                   color: "typography.light",
                 },
               }}
-              onClick={() => deleteAllItemsHandler(item.id, item.size)}
+              onClick={deleteAllItemsHandler}
             >
               Remove
             </Box>

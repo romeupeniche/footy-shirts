@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
-import UserInfo from "./userInfo";
+import UserInfo from "./UserInfo";
 import PaymentInfo from "./PaymentInfo";
 import { useDatabaseSnapshot } from "@react-query-firebase/database";
 import { db } from "../../firebase-config";

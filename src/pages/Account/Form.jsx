@@ -4,12 +4,7 @@ import {
   TextField,
   Typography,
   Container,
-  Box,
-  InputAdornment,
-  IconButton,
 } from "@mui/material";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { auth } from "../../firebase-config";
 import { useState } from "react";
 import {
@@ -17,84 +12,35 @@ import {
   signInWithEmailAndPassword,
 } from "@firebase/auth";
 
-const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-
 function Form() {
   const [isSigningUp, setIsSigningUp] = useState(false);
   const [currentEmail, setCurrentEmail] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [checkPass, setCheckPass] = useState("");
-  const [passInvalid, setPassInvalid] = useState(null);
+  const [isWrongPass, setIsWrongPass] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isEmailInvalid, setIsEmailInvalid] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showCheckPassword, setShowCheckPassword] = useState(false);
-
-  const isAbleToSubmit = !!passInvalid;
-
-  const handleClickShowPassword = () => {
-    setShowPassword((prev) => !prev);
-  };
-  const handleClickShowCheckPassword = () => {
-    setShowCheckPassword((prev) => !prev);
-  };
-
-  const handleMouseDownPassword = (e) => {
-    e.preventDefault();
-  };
-
-  const resetPasswordErrorsHandler = () => {
-    setPassInvalid(null);
-  };
-
-  const resetCheckPasswordErrorsHandler = () => {
-    if (passInvalid !== "invalid") {
-      setPassInvalid(null);
-    }
-  };
-
-  const resetEmailErrorsHandler = () => {
-    setIsEmailInvalid(false);
-  };
-
-  const checkIfPasswordMatchesHandler = () => {
-    if (currentPassword !== checkPass) {
-      setPassInvalid("not-matching");
-    }
-  };
-
-  const checkIfPasswordIsValidHandler = (notSigningUp = false) => {
-    if (isSigningUp && !notSigningUp) {
-      checkIfPasswordMatchesHandler();
-    } else if (currentPassword.length < 6) {
-      setPassInvalid("invalid");
-    } else {
-      resetPasswordErrorsHandler();
-    }
-  };
-
-  const checkIfEmailIsValidHandler = () => {
-    if (emailRegex.test(currentEmail) === false) {
-      setIsEmailInvalid(true);
-    }
-  };
 
   const toggleSignIn = () => {
-    checkIfPasswordIsValidHandler(true);
-    setIsSigningUp((prev) => !prev);
+    setIsSigningUp(!isSigningUp);
   };
 
   const registerHandler = async () => {
-    setIsLoading(true);
-    try {
-      await createUserWithEmailAndPassword(auth, currentEmail, currentPassword);
-      setIsLoading(false);
-    } catch (err) {
-      setIsLoading(false);
-      if (err.code === "auth/email-already-in-use") {
-        logInHandler();
-      } else {
-        window.alert("Something went wrong. Error code: " + err.code);
+    if (isAbleToRegister) {
+      setIsLoading(true);
+      try {
+        await createUserWithEmailAndPassword(
+          auth,
+          currentEmail,
+          currentPassword
+        );
+        setIsLoading(false);
+      } catch (err) {
+        setIsLoading(false);
+        if (err.code === "auth/email-already-in-use") {
+          logInHandler();
+        } else {
+          window.alert("Something went wrong. Error code: " + err.code);
+        }
       }
     }
   };
@@ -110,7 +56,8 @@ function Form() {
         if (isSigningUp) {
           setIsSigningUp(false);
         }
-        setPassInvalid("wrong");
+        setIsWrongPass(true);
+        setCurrentEmail("");
         setCurrentPassword("");
       } else if (err.code == "auth/user-not-found") {
         setIsSigningUp(true);
@@ -123,47 +70,25 @@ function Form() {
     }
   };
 
-  const submitHandler = (e) => {
-    e.preventDefault();
-    checkIfPasswordIsValidHandler();
-    if (currentPassword.length < 6) {
-      setPassInvalid("invalid");
-    } else if (emailRegex.test(currentEmail) === false) {
-      setIsEmailInvalid(true);
-    } else {
-      if (isSigningUp) {
-        registerHandler();
-      } else {
-        logInHandler();
-      }
+  const resetWrongPassHandler = () => {
+    if (isWrongPass) {
+      setIsWrongPass(false);
     }
   };
-  let emailHelperText = "";
-  let passwordHelperText = "";
-  const emailError = isEmailInvalid;
-  const passwordError = !!passInvalid;
 
-  if (passInvalid === "invalid") {
-    passwordHelperText = "Password must be at least 6 characters long.";
-  } else if (passInvalid === "wrong") {
-    passwordHelperText = "Your password is wrong.";
-  } else if (passInvalid === "not-matching") {
-    passwordHelperText = "Passwords do not match.";
-  }
-
-  if (isEmailInvalid) {
-    emailHelperText = "Your email is invalid.";
-  }
+  const isAbleToRegister =
+    currentPassword.length >= 6 && currentPassword == checkPass;
+  const isAbleToLogIn = currentPassword.length >= 6;
 
   return (
     <Container
-      maxWidth="sm"
       sx={{
         display: "flex",
         alignItems: "center",
         flexDirection: "column",
         justifyContent: "space-around",
         height: "60vh",
+        width: 600,
       }}
     >
       {isLoading ? (
@@ -189,10 +114,7 @@ function Form() {
               ? "Become one of us!"
               : "You are not logged in yet. Log in now!"}
           </Typography>
-          <Box
-            onSubmit={submitHandler}
-            component="form"
-            autoComplete={isSigningUp ? "off" : "on"}
+          <Container
             sx={{ display: "flex", flexDirection: "column", width: "70%" }}
           >
             <TextField
@@ -202,82 +124,39 @@ function Form() {
               type="email"
               value={currentEmail}
               onChange={(e) => setCurrentEmail(e.target.value)}
-              error={emailError}
-              helperText={emailHelperText}
-              onFocus={resetEmailErrorsHandler}
-              onBlur={checkIfEmailIsValidHandler}
+              error={isWrongPass}
+              helperText={isWrongPass && "Your e-mail may be wrong."}
+              onFocus={resetWrongPassHandler}
             />
             <TextField
               id="logInPassword"
               label="Password"
               variant="standard"
-              type={showPassword ? "text" : "password"}
+              type="password"
               sx={{ my: 3 }}
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              error={passwordError}
-              helperText={passwordHelperText}
-              onFocus={resetPasswordErrorsHandler}
-              onBlur={checkIfPasswordIsValidHandler}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                    >
-                      {showPassword ? (
-                        <VisibilityOffIcon />
-                      ) : (
-                        <VisibilityIcon />
-                      )}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
+              error={isWrongPass}
+              helperText={isWrongPass && "Your password may be wrong."}
+              onFocus={resetWrongPassHandler}
             />
-
             {isSigningUp && (
               <TextField
                 id="registerCheckPass"
                 label="Re-Enter Password"
                 variant="standard"
-                type={showCheckPassword ? "text" : "password"}
+                type="password"
                 value={checkPass}
-                error={passInvalid === "not-matching"}
-                helperText={
-                  passInvalid === "not-matching"
-                    ? "Passwords do not match."
-                    : ""
-                }
                 onChange={(e) => setCheckPass(e.target.value)}
-                onBlur={checkIfPasswordMatchesHandler}
-                onFocus={resetCheckPasswordErrorsHandler}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowCheckPassword}
-                        onMouseDown={handleMouseDownPassword}
-                      >
-                        {showCheckPassword ? (
-                          <VisibilityOffIcon />
-                        ) : (
-                          <VisibilityIcon />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
               />
             )}
 
             <Button
-              type="submit"
               sx={{ mt: 2 }}
-              disabled={(isLoading || isSigningUp) && isAbleToSubmit}
+              disabled={
+                isLoading || isSigningUp ? !isAbleToRegister : !isAbleToLogIn
+              }
+              onClick={isSigningUp ? registerHandler : logInHandler}
             >
               {isSigningUp ? "Register" : "Login"}
             </Button>
@@ -287,7 +166,7 @@ function Form() {
                 ? "I do have an account"
                 : "I do not have an account"}
             </Button>
-          </Box>
+          </Container>
         </>
       )}
     </Container>

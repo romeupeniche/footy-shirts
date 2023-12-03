@@ -6,36 +6,62 @@ import { onAuthStateChanged } from "@firebase/auth";
 import { auth, db } from "./firebase-config";
 import { useDispatch } from "react-redux";
 import { setUser } from "./store/accountSlice";
-import { get, ref } from "firebase/database";
+import { setItems } from "./store/cartSlice";
+import { onValue, ref } from "firebase/database";
+import { useEffect } from "react";
+import { setShirts } from "./store/shirtsSlice";
 import ScrollToTop from "./helpers/ScrollToTop";
 import ChangeURL from "./helpers/ChangeURL";
 
 function App() {
   const dispatch = useDispatch();
-  onAuthStateChanged(auth, async (user) => {
-    const dataSnapshot = await get(ref(db));
-    const data = dataSnapshot.val();
 
-    if (user !== null) {
-      const admins = data.admins || [];
-      const isAdmin = admins.includes(user?.uid);
+  useEffect(() => {
+    onValue(ref(db), (snapshot) => {
+      const data = snapshot.val();
+      if (data !== null) {
+        const shirts = data.shirts;
 
-      dispatch(
-        setUser({
-          user: {
-            email: user.email,
-            uid: user.uid,
-          },
-          isAdmin,
-        })
-      );
-    } else {
-      dispatch(setUser(null));
-    }
+        dispatch(setShirts(shirts));
+      }
+    });
+  }, [dispatch]);
+
+  onAuthStateChanged(auth, (user) => {
+    onValue(ref(db), async (snapshot) => {
+      const data = await snapshot.val();
+      if (data !== null) {
+        const admins = data.admins;
+        if (user) {
+          const isAdmin =
+            admins.filter((adminId) => adminId === user?.uid).length > 0;
+          dispatch(
+            setUser({
+              user: {
+                displayName: user.displayName,
+                email: user.email,
+                photoURL: user.photoURL,
+                uid: user.uid,
+              },
+              isAdmin,
+            })
+          );
+
+          const userCartRef = ref(db, "carts/" + user.uid + "/cart");
+          onValue(userCartRef, (snapshot) => {
+            const currentCart = snapshot.val();
+            dispatch(setItems(currentCart));
+          });
+        } else {
+          dispatch(setUser(null));
+        }
+      }
+    });
   });
 
   return (
     <>
+      <Header />
       <Container
         sx={{
           display: "flex",
@@ -46,7 +72,6 @@ function App() {
           mt: 8,
         }}
       >
-        <Header />
         <Outlet />
         <ScrollToTop />
         <ChangeURL />

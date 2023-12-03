@@ -2,29 +2,24 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
-    <!-- <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin /> -->
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap"
       rel="stylesheet"
     />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Footy Shirts</title>
   </head>
   <body>
+    <style>
+      html,
+      body {
+        overflow-x: hidden;
+      }
+    </style>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
-    <script>
-      // Here to remove the "React DevTools" message in the console
-        try {
-          console.info = new Proxy(console.info, {
-            apply: (target, thisArg, args) => {
-              if (args?.[0]?.includes?.("React DevTools")) return;
-              return Reflect.apply(target, thisArg, args);
-            },
-          });
-        } catch {}
-    </script>
   </body>
 </html>

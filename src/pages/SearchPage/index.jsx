@@ -1,99 +1,119 @@
-import { Grid, Typography } from "@mui/material";
+import {
+  CircularProgress,
+  Grid,
+  ImageListItem,
+  Typography,
+  Link,
+} from "@mui/material";
+import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import Card from "../../components/Card";
-import { db } from "../../firebase-config";
-import { ref } from "firebase/database";
-import { useDatabaseSnapshot } from "@react-query-firebase/database";
-import SkeletonCard from "../../components/SkeletonCard";
+import { useSelector } from "react-redux";
+import { Link as RouterLink, useParams } from "react-router-dom";
 
 function SearchPage() {
-  const dbRef = ref(db, "shirts");
-  const [pageIsLoading, setPageIsLoading] = useState(true);
-  const { data, isLoading } = useDatabaseSnapshot(["shirts"], dbRef);
+  const currentShirts = useSelector((state) => state.shirts);
   const search = useParams().search;
   const [foundItems, setFoundItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!isLoading) {
-      const loadedShirts = [];
-      data.forEach((snap) => {
-        loadedShirts.push({ shirts: snap.val(), gender: snap.key });
-      });
-      const foundShirts = [];
-      loadedShirts.forEach((genderObj) => {
-        const gender = genderObj.gender;
-        for (let shirtId in genderObj.shirts) {
-          if (
-            genderObj.shirts[shirtId].name
-              .toLowerCase()
-              .includes(search.toLowerCase()) ||
-            genderObj.shirts[shirtId].commonTypos
-              .toLowerCase()
-              .includes(search.toLowerCase())
-          ) {
-            foundShirts.push({ ...genderObj.shirts[shirtId], gender });
-          }
+    setFoundItems([]);
+    setIsLoading(true);
+
+    for (let gender in currentShirts.shirts) {
+      for (let team in currentShirts.shirts[gender]) {
+        if (
+          currentShirts.shirts[gender][team].name
+            .toLowerCase()
+            .includes(search.toLowerCase()) ||
+          currentShirts.shirts[gender][team].commonTypos
+            .toLowerCase()
+            .includes(search.toLowerCase())
+        ) {
+          setFoundItems((prev) => [
+            ...prev,
+            { ...currentShirts.shirts[gender][team], gender },
+          ]);
         }
-      });
-      setFoundItems(foundShirts);
+      }
     }
-  }, [data, isLoading, search]);
 
-  useEffect(() => {
-    const onPageLoad = () => {
-      setPageIsLoading(false);
-    };
-
-    if (document.readyState === "complete") {
-      onPageLoad();
-    } else {
-      window.addEventListener("load", onPageLoad, false);
-      return () => window.removeEventListener("load", onPageLoad);
-    }
-  }, []);
+    setIsLoading(false);
+  }, [search, currentShirts.shirts]);
 
   return (
     <>
       <Typography variant="h3" mt={2} maxWidth="80vw">
-        Showing results for: &quot;
-        <Typography component="span" variant="h3" color="secondary">
+        Showing results for: "
+        <Box display="inline" color="primary.main">
           {search}
-        </Typography>
-        &quot;
+        </Box>
+        "
       </Typography>
-      <Grid
-        container
-        justifyContent="center"
-        rowSpacing={4}
-        mt={2}
-        spacing={{ xs: 2, md: 3 }}
-        columns={{ xs: 2, sm: 6, md: 12 }}
-        columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-      >
-        {isLoading || pageIsLoading ? (
-          [1, 2, 3, 4, 5, 6].map((i) => {
-            return <SkeletonCard key={i} />;
-          })
-        ) : (
-          <>
-            {foundItems.length ? (
-              foundItems.map((shirt) => {
+      {isLoading ? (
+        <CircularProgress />
+      ) : (
+        <>
+          {foundItems.length ? (
+            <Grid
+              container
+              justifyContent="center"
+              rowSpacing={4}
+              mt={2}
+              spacing={{ xs: 2, md: 3 }}
+              columns={{ xs: 2, sm: 6, md: 12 }}
+              columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+            >
+              {foundItems.map((shirt, i) => {
                 return (
-                  <Card key={shirt.id} shirt={shirt} gender={shirt.gender} />
+                  <Grid item xs={2} sm={4} key={i}>
+                    <Typography variant="h6" textAlign="center">
+                      {shirt.gender.toUpperCase()}
+                    </Typography>
+                    <Link
+                      to={`/${shirt.gender}/${shirt.id}`}
+                      component={RouterLink}
+                      sx={{ color: "primary.main" }}
+                    >
+                      <ImageListItem
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          bgcolor: "bg.light",
+                          p: 1,
+                          borderRadius: 2,
+                        }}
+                      >
+                        <Typography
+                          variant="h5"
+                          sx={{
+                            my: 1,
+                          }}
+                        ></Typography>
+                        <img src={shirt.imgs[0]} width={300} />
+                        <Typography fontSize="1.1rem" mt={2}>
+                          {shirt.name}
+                        </Typography>
+                        <Typography variant="h6" color="green">
+                          ${shirt.price}
+                        </Typography>
+                      </ImageListItem>
+                    </Link>
+                  </Grid>
                 );
-              })
-            ) : (
-              <Typography mt={10} variant="h5" mb={30}>
-                No items were found.{" "}
-                {search.length > 15
-                  ? "Try being less especific."
-                  : "Check if there's a typo."}
-              </Typography>
-            )}
-          </>
-        )}
-      </Grid>
+              })}
+            </Grid>
+          ) : (
+            <Typography mt={10} variant="h5" mb={30}>
+              No items were found.{" "}
+              {search.length > 15
+                ? "Try being less especific."
+                : "Check if there's a typo."}
+            </Typography>
+          )}
+        </>
+      )}
     </>
   );
 }

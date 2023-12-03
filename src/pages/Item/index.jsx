@@ -1,31 +1,22 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Box,
   Button,
   Container,
   FormControlLabel,
+  ImageList,
+  ImageListItem,
   Radio,
   RadioGroup,
   Typography,
   Modal,
-  IconButton,
 } from "@mui/material";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { addItem } from "../../store/cartSlice";
 import { changeURLWithShirtTitle } from "../../helpers/ChangeURL";
-import { ref } from "firebase/database";
+import { ref, remove } from "firebase/database";
 import { db } from "../../firebase-config";
-import ZoomableImage from "../../components/ZoomableImage";
-import useBagNotification from "../../hooks/useBagNotification";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import {
-  useDatabaseRemoveMutation,
-  useDatabaseSnapshot,
-  useDatabaseTransaction,
-} from "@react-query-firebase/database";
-import { queryClient } from "../../util/http";
-import SkeletonCard from "../../components/SkeletonCard";
 
 const modalStyle = {
   position: "absolute",
@@ -33,6 +24,7 @@ const modalStyle = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: 400,
+  bgcolor: "background.paper",
   borderRadius: 5,
   boxShadow: 24,
   p: 4,
@@ -40,110 +32,38 @@ const modalStyle = {
   flexDirection: "column",
   justifyContent: "space-between",
   alignItems: "center",
-  backgroundColor: "white",
 };
 
 function Item() {
-  const { gender, id } = useParams();
-  const shirtRef = ref(db, `shirts/${gender}/${id}`);
-  const { data, isLoading: isSnapLoading } = useDatabaseSnapshot(
-    ["shirts", gender, id],
-    shirtRef
-  );
-
-  const { state: locationState } = useLocation();
-
-  const [shirt, setShirt] = useState(null);
-
-  useEffect(() => {
-    if (!isSnapLoading) {
-      let _shirt;
-      if (!locationState) {
-        _shirt = data.val();
-      } else {
-        _shirt = locationState.shirt;
-      }
-
-      setShirt(_shirt);
-      changeURLWithShirtTitle(_shirt.name);
-      setShirtImg(_shirt.imgs[0]);
-    }
-  }, [locationState, isSnapLoading, data]);
-
-  const { mutate: deleteMutate } = useDatabaseRemoveMutation(shirtRef, {
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["shirts", gender] });
-      navigate(`/${gender}`);
-    },
-  });
+  const currentShirts = useSelector((state) => state.shirts);
   const isAdmin = useSelector((state) => state.account.isAdmin);
-  const currentUser = useSelector((state) => state.account).user;
-  const userBagRef = ref(db, "carts/" + currentUser.uid);
-  const triggerBagNotification = useBagNotification();
-
-  const { mutate: addToBagTrans, isLoading: isAddLoading } =
-    useDatabaseTransaction(
-      userBagRef,
-      (currentBag) => {
-        const item = {
-          id,
-          gender,
-          quantity: 1,
-          name: shirt.name,
-          price: shirt.price,
-          imgs: shirt.imgs,
-          size,
-          sizes: shirt.sizes,
-        };
-        if (!isAddLoading) {
-          if (!currentBag?.items) {
-            currentBag = { totalAmount: 0, items: [] };
-          }
-
-          const existingItemIndex = currentBag.items.findIndex(
-            (prevItem) => prevItem.id === item.id && prevItem.size === item.size
-          );
-
-          if (existingItemIndex !== -1) {
-            currentBag.items[existingItemIndex].quantity++;
-            item.price = currentBag.items[existingItemIndex].price;
-          } else {
-            currentBag.items.push(item);
-          }
-
-          currentBag.totalAmount += item.price;
-        }
-
-        return currentBag;
-      },
-      undefined,
-      {
-        onSuccess: async (data) => {
-          const snapshot = data.snapshot;
-          await queryClient.cancelQueries({ queryKey: ["bag", currentUser] });
-          const prevData = queryClient.getQueryData(["bag", currentUser]);
-          queryClient.setQueryData(["bag", currentUser], snapshot);
-          triggerBagNotification({
-            name: shirt.name,
-            gender: capitalizedGender,
-            size,
-          });
-
-          return { prevData };
-        },
-        onError: (error, data, context) => {
-          queryClient.setQueryData(["bag", currentUser], context.prevData);
-        },
-      }
-    );
-
-  const [shirtImg, setShirtImg] = useState(null);
-  const [pageIsLoading, setPageIsLoading] = useState(true);
+  const [shirt, setShirt] = useState(null);
+  const [img, setImg] = useState(null);
   const [size, setSize] = useState(null);
   const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] =
     useState(false);
-  const capitalizedGender = gender.charAt(0).toUpperCase() + gender.slice(1);
+  const gender = useParams().gender;
+  const id = useParams().id;
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (currentShirts !== null) {
+      let shirtsList = currentShirts.shirts[gender];
+      for (let team in shirtsList) {
+        if (shirtsList[team].id === id) {
+          setShirt(shirtsList[team]);
+          setImg(shirtsList[team].imgs[0]);
+          changeURLWithShirtTitle(shirtsList[team].name);
+        }
+      }
+    }
+  }, [gender, id, currentShirts]);
+
+  const changeImg = (e) => {
+    const i = e.target.value;
+    setImg(shirt.imgs[i]);
+  };
 
   const setSizeHandler = (e) => {
     const value = e.target.value;
@@ -152,12 +72,18 @@ function Item() {
     }
   };
 
-  const addToBagHandler = () => {
-    if (Object.keys(currentUser).length === 0) {
-      navigate("/account");
-    } else {
-      addToBagTrans();
-    }
+  const addToCartHandler = async () => {
+    const item = {
+      id,
+      gender,
+      quantity: 1,
+      totalPrice: shirt.price,
+      name: shirt.name,
+      price: shirt.price,
+      img: shirt.imgs[0],
+      size,
+    };
+    dispatch(addItem(item));
   };
 
   const editHandler = () => {
@@ -170,22 +96,10 @@ function Item() {
   };
 
   const deleteHandler = () => {
-    deleteMutate();
+    remove(ref(db, `/shirts/${gender}/${shirt.id}`));
     closeConfirmDeleteModalHandler();
+    navigate(`/${gender}`);
   };
-
-  useEffect(() => {
-    const onPageLoad = () => {
-      setPageIsLoading(false);
-    };
-
-    if (document.readyState === "complete") {
-      onPageLoad();
-    } else {
-      window.addEventListener("load", onPageLoad, false);
-      return () => window.removeEventListener("load", onPageLoad);
-    }
-  }, []);
 
   const setIsConfirmDeleteModalOpenHandler = () => {
     setIsConfirmDeleteModalOpen(true);
@@ -195,16 +109,15 @@ function Item() {
     setIsConfirmDeleteModalOpen(false);
   };
 
-  if (isSnapLoading || pageIsLoading) {
-    return <SkeletonCard type="item" />;
-  }
-
   return (
     <>
       {shirt && (
         <>
+          <Typography variant="h3" sx={{ mb: 5 }}>
+            {gender.toUpperCase()}
+          </Typography>
           <Container>
-            <Box
+            <ImageList
               sx={{
                 display: "flex",
                 alignItems: "center",
@@ -215,14 +128,13 @@ function Item() {
                 },
               }}
             >
-              <Box
+              <ImageListItem
                 sx={{
                   width: {
                     xs: 300,
-                    md: 600,
+                    md: 400,
                   },
                   display: "flex",
-                  alignItems: "center",
                   flexDirection: {
                     xs: "column-reverse",
                     md: "row",
@@ -230,38 +142,33 @@ function Item() {
                 }}
               >
                 <RadioGroup
+                  row
+                  aria-labelledby="demo-row-radio-buttons-group-label"
+                  name="row-radio-buttons-group"
                   defaultValue="0"
-                  sx={{
-                    flexDirection: { xs: "row", md: "column" },
-                    mt: { xs: 4, md: 0 },
-                  }}
+                  sx={{ ml: 1 }}
                 >
-                  {shirt.imgs.map((img, i) => {
-                    return (
-                      <FormControlLabel
-                        key={i}
-                        sx={{ height: "45px", mb: 10 }}
-                        control={
-                          <Box
-                            component="img"
-                            sx={{
-                              transition: "400ms",
-                              boxShadow: shirtImg === img ? 1 : 0,
-                              borderRadius: 5,
-                            }}
-                            onMouseOver={() => setShirtImg(img)}
-                            width={80}
-                            src={img}
-                          />
-                        }
-                      />
-                    );
-                  })}
+                  <FormControlLabel
+                    value="0"
+                    sx={{ height: "45px" }}
+                    control={<Radio />}
+                    onChange={changeImg}
+                  />
+                  <FormControlLabel
+                    value="1"
+                    sx={{ height: "45px" }}
+                    control={<Radio />}
+                    onChange={changeImg}
+                  />
                 </RadioGroup>
-                <ZoomableImage src={shirtImg} alt={shirt.name} />
-              </Box>
+                <img
+                  src={img}
+                  style={{ borderRadius: "20px", width: "100%" }}
+                />
+              </ImageListItem>
               <Box
                 sx={{
+                  bgcolor: "bg.light",
                   minHeight: "60vh",
                   mt: {
                     xs: 4,
@@ -278,52 +185,47 @@ function Item() {
                   alignItems: "center",
                 }}
               >
-                <Box>
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    <Typography variant="h4" fontWeight={500}>
-                      {shirt.name}
-                    </Typography>
-                    {isAdmin && (
-                      <Box sx={{ ml: 1 }}>
-                        <IconButton onClick={editHandler}>
-                          <EditIcon color="secondary" />
-                        </IconButton>
-                        <IconButton
-                          onClick={setIsConfirmDeleteModalOpenHandler}
-                        >
-                          <DeleteIcon color="error" />
-                        </IconButton>
-                      </Box>
-                    )}
-                  </Box>
-                  <Typography fontWeight={400}>
-                    {capitalizedGender}&apos;s Nike Dri-FIT ADV Football Shirt
-                  </Typography>
-                  <Typography variant="h5" sx={{ mt: 2 }} fontWeight={400}>
-                    ${shirt.price}
-                  </Typography>
-                </Box>
-                <Box width="100%">
-                  <Typography sx={{ mt: 6 }}>Sizes:</Typography>
-                  <Box sx={{ display: "flex", justifyContent: "center" }}>
-                    <RadioGroup row>
-                      {["S", "M", "L", "XL"].map((size) => (
-                        <FormControlLabel
-                          key={size}
-                          value={shirt.sizes[size] ? size : "disabled"}
-                          disabled={!shirt.sizes[size]}
-                          control={<Radio />}
-                          onClick={setSizeHandler}
-                          label={size}
-                        />
-                      ))}
-                    </RadioGroup>
-                  </Box>
-                </Box>
+                <Typography variant="h4" sx={{ mt: 3, ml: 2 }}>
+                  {shirt.name}
+                </Typography>
+                <Typography color="green" variant="h5">
+                  ${shirt.price}
+                </Typography>
+                <Typography sx={{ mt: 6 }}>Sizes:</Typography>
+                <RadioGroup
+                  row
+                  aria-labelledby="demo-row-radio-buttons-group-label"
+                  name="row-radio-buttons-group"
+                >
+                  <FormControlLabel
+                    value={shirt.sizes.S ? "s" : "disabled"}
+                    disabled={!shirt.sizes.S}
+                    control={<Radio />}
+                    onClick={setSizeHandler}
+                    label="S"
+                  />
+                  <FormControlLabel
+                    value={shirt.sizes.M ? "m" : "disabled"}
+                    disabled={!shirt.sizes.M}
+                    control={<Radio />}
+                    onClick={setSizeHandler}
+                    label="M"
+                  />
+                  <FormControlLabel
+                    value={shirt.sizes.L ? "l" : "disabled"}
+                    disabled={!shirt.sizes.L}
+                    control={<Radio />}
+                    onClick={setSizeHandler}
+                    label="L"
+                  />
+                  <FormControlLabel
+                    value={shirt.sizes.XL ? "xl" : "disabled"}
+                    disabled={!shirt.sizes.XL}
+                    control={<Radio />}
+                    onClick={setSizeHandler}
+                    label="XL"
+                  />
+                </RadioGroup>
                 <Button
                   variant="contained"
                   sx={{
@@ -336,12 +238,36 @@ function Item() {
                     },
                   }}
                   disabled={!size}
-                  onClick={addToBagHandler}
+                  onClick={addToCartHandler}
                 >
-                  Add To Bag
+                  Add To Cart
                 </Button>
+                {isAdmin && (
+                  <Box
+                    sx={{
+                      bgcolor: "primary.darker",
+                      width: "90%",
+                      display: "flex",
+                      justifyContent: "space-around",
+                      alignItems: "center",
+                      py: 1,
+                      borderRadius: 5,
+                    }}
+                  >
+                    <Button variant="outlined" onClick={editHandler}>
+                      Edit
+                    </Button>
+                    <Button
+                      color="error"
+                      variant="outlined"
+                      onClick={setIsConfirmDeleteModalOpenHandler}
+                    >
+                      Delete
+                    </Button>
+                  </Box>
+                )}
               </Box>
-            </Box>
+            </ImageList>
             <Modal
               open={isConfirmDeleteModalOpen}
               onClose={closeConfirmDeleteModalHandler}
@@ -349,12 +275,9 @@ function Item() {
               <Box sx={modalStyle}>
                 <Typography variant="h6" component="h2">
                   Are you sure you want to{" "}
-                  <Typography
-                    component="span"
-                    sx={{ color: "typography.delete" }}
-                  >
+                  <Box component="span" sx={{ color: "utils.delete" }}>
                     DELETE
-                  </Typography>{" "}
+                  </Box>{" "}
                   this item?
                 </Typography>
                 <Box

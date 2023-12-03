@@ -1,157 +1,118 @@
-import { Box, Container, Grid, Typography } from "@mui/material";
-import { useEffect, useLayoutEffect, useState } from "react";
+import {
+  Box,
+  CircularProgress,
+  Container,
+  Grid,
+  Link,
+  Typography,
+} from "@mui/material";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useLoaderData } from "react-router-dom";
-import Filter from "../../components/Filter";
-import Card from "../../components/Card";
-import SearchButton from "../../components/SearchInput";
-import { ref } from "firebase/database";
-import { db } from "../../firebase-config";
-import { useDatabaseSnapshot } from "@react-query-firebase/database";
-import SkeletonCard from "../../components/SkeletonCard";
+import { Link as RouterLink, useLocation } from "react-router-dom";
+import AddNewItemBox from "./AddNewItemBox";
 
 function GenderPage() {
-  const gender = useLoaderData();
-  const [pageIsLoading, setPageIsLoading] = useState(true);
-  const dbRef = ref(db, "shirts/" + gender);
-  const { data, isLoading } = useDatabaseSnapshot(["shirts", gender], dbRef);
+  const gender = useLocation().pathname.replace("/", "");
+  const currentShirts = useSelector((state) => state.shirts);
   const isAdmin = useSelector((state) => state.account.isAdmin);
   const [genderShirts, setGenderShirts] = useState([]);
-  const capitalizedGender = gender.charAt(0).toUpperCase() + gender.slice(1);
-  const [searchInput, setSearchInput] = useState("");
-
-  const [selectedOptions, setSelectedOptions] = useState([]);
-  const filterOptions = [
-    { name: "Small", value: "S" },
-    { name: "Medium", value: "M" },
-    { name: "Large", value: "L" },
-    { name: "Extra Large", value: "XL" },
-  ];
-
-  useLayoutEffect(() => {
-    if (!isLoading) {
-      const loadedShirts = [];
-      data.forEach((snap) => {
-        loadedShirts.push(snap.val());
-      });
-
-      const filteredByNameShirts = [];
-      if (searchInput.length > 2) {
-        loadedShirts.forEach((shirt) => {
-          if (
-            shirt.name.toLowerCase().includes(searchInput.toLowerCase()) ||
-            shirt.commonTypos.toLowerCase().includes(searchInput.toLowerCase())
-          ) {
-            filteredByNameShirts.push({ ...shirt, gender });
-          }
-        });
-      } else {
-        filteredByNameShirts.push(...loadedShirts);
-      }
-
-      setGenderShirts(filteredByNameShirts);
-    }
-  }, [gender, data, searchInput, isLoading]);
-
-  const filteredShirts =
-    selectedOptions.length === 0
-      ? genderShirts
-      : genderShirts.filter((shirt) =>
-          selectedOptions.every((size) => shirt.sizes[size])
-        );
-
-  let fallbackText =
-    "No shirts are currently available. Check back later for more selections.";
-  if (selectedOptions.length > 0 && searchInput.length > 2) {
-    fallbackText =
-      "The selected size(s) have no available shirts in your search. Try different sizes or refine your search for other options.";
-  } else if (selectedOptions.length > 0 && !(searchInput.length > 2)) {
-    fallbackText =
-      "No shirts are available in the selected size(s). Please explore other options.";
-  } else {
-    fallbackText =
-      "No shirts found for this search. Refine criteria for more options.";
-  }
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const onPageLoad = () => {
-      setPageIsLoading(false);
-    };
-
-    if (document.readyState === "complete") {
-      onPageLoad();
-    } else {
-      window.addEventListener("load", onPageLoad, false);
-      return () => window.removeEventListener("load", onPageLoad);
+    setIsLoading(true);
+    if (Object.keys(currentShirts.shirts).length) {
+      const shirts = currentShirts.shirts[gender];
+      const loadedShirts = Object.keys(shirts).map(
+        (shirtTitle) => shirts[shirtTitle]
+      );
+      setGenderShirts(loadedShirts);
     }
-  }, []);
+    setIsLoading(false);
+  }, [gender, currentShirts]);
 
   return (
-    <Container>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-        }}
-      >
-        <Box>
-          <Typography variant="h2" sx={{ mt: 5 }} fontWeight={500}>
-            {capitalizedGender}
-            {`'`}s Jerseys
-          </Typography>
-          <Typography variant="h6" sx={{ ml: 1, mb: 5 }}>
-            /{gender}
-          </Typography>
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: { xs: "center", sm: "space-between" },
-            alignItems: "center",
-            flexDirection: { xs: "column", sm: "row" },
-          }}
+    <>
+      <Typography variant="h2" sx={{ mt: 5, mb: 10 }}>
+        {gender.toUpperCase()}
+        {`'`}s JERSEYS
+      </Typography>
+      {isLoading ? (
+        <CircularProgress />
+      ) : (
+        <Grid
+          container
+          justifyContent="center"
+          rowSpacing={4}
+          spacing={{ xs: 2, md: 3 }}
+          columns={{ xs: 2, sm: 6, md: 12 }}
+          columnSpacing={{ xs: 1, sm: 2, md: 3 }}
         >
-          <SearchButton isFilter setInput={setSearchInput} disableAnimation />
-          <Filter
-            options={filterOptions}
-            label="Filter By Size"
-            onSelectOptions={setSelectedOptions}
-          />
-        </Box>
-      </Box>
-      <Grid
-        container
-        justifyContent="center"
-        rowSpacing={4}
-        spacing={{ xs: 2, md: 3 }}
-        columns={{ xs: 2, sm: 6, md: 12 }}
-        columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-      >
-        {pageIsLoading || isLoading ? (
-          [1, 2, 3, 4, 5, 6].map((i) => {
-            return <SkeletonCard key={i} />;
-          })
-        ) : filteredShirts.length > 0 ? (
-          filteredShirts.map((shirt) => {
-            return <Card key={shirt.id} shirt={shirt} />;
-          })
-        ) : (
-          <Typography mt={10}>{fallbackText}</Typography>
-        )}
-        {isAdmin && <Card newItemCard={true} gender={gender} />}
-      </Grid>
-    </Container>
+          {genderShirts.map((shirt) => {
+            return (
+              <Grid item xs={2} sm={4} key={shirt.id}>
+                <Link
+                  component={RouterLink}
+                  to={`${shirt.id}`}
+                  sx={{ textDecoration: "none" }}
+                >
+                  <Container
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      bgcolor: "bg.light",
+                      p: 1,
+                      borderRadius: 2,
+                      pt: 1,
+                      height: 480,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        height: "100%",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Box
+                        component="img"
+                        src={shirt.imgs[0]}
+                        sx={{
+                          maxHeight: "380px",
+                          borderRadius: 2,
+                          width: "100%",
+                          alignItems: "center",
+                        }}
+                      />
+                    </Box>
+                    <Box textAlign="center">
+                      <Typography
+                        fontSize="1.1rem"
+                        mt={2}
+                        maxWidth={{
+                          lg: 300,
+                          md: 200,
+                          xs: 300,
+                        }}
+                        noWrap
+                      >
+                        {shirt.name}
+                      </Typography>
+                      <Typography variant="h6" color="green">
+                        ${shirt.price}
+                      </Typography>
+                    </Box>
+                  </Container>
+                </Link>
+              </Grid>
+            );
+          })}
+          {isAdmin && <AddNewItemBox />}
+        </Grid>
+      )}
+    </>
   );
 }
 
 export default GenderPage;
-
-export function loader({ params }) {
-  const gender = params.gender;
-  if (gender !== "men" && gender !== "women" && gender !== "kids") {
-    throw new Response("Not Found", { status: 404 });
-  }
-
-  return gender;
-}

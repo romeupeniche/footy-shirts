@@ -118,7 +118,7 @@ function ItemCard({ itemCardProps }) {
             <ZoomableImage
               src={shirtImg}
               alt={shirt.name}
-              sx={{ width: "auto", height: 400 }}
+              sx={{ width: "auto", height: { xs: 260, md: 400 } }}
             />
           </Box>
           <Box
